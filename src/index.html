@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MapFindIT</title>
+
+
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+
+  </head>
+  <body>
+
+    <div class="container-fluid">
+	<div class="row">
+		<div class="col-md-4">
+			<img alt="Logo" src="img/LogoBackGreen.jpg" id="logo">
+		</div>
+		<div class="col-md-8" id= "menu_pesquisa">
+			<nav class="navbar navbar-default" role="navigation">
+				<div class="navbar-header">
+
+				</div>
+
+				<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+
+					<form class="navbar-form navbar-left" role="search">
+						<div class="form-group">
+							<input type="text" class="form-control" id="campo">
+						</div>
+						<button type="submit" class="btn btn-default">
+							pesquisar
+						</button>
+					</form>
+
+				</div>
+
+			</nav>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col-md-4" id="form1">
+			<form role="form">
+				<div class="form-group">
+
+					<label for="exampleInputEmail1">
+						Email
+					</label>
+					<input type="email" class="form-control" id="exampleInputEmail1">
+				</div>
+				<div class="form-group">
+
+					<label for="exampleInputPassword1">
+						senha
+					</label>
+					<input type="password" class="form-control" id="exampleInputPassword1">
+				</div>
+				<div class="form-group">
+				</div>
+				<div class="checkbox">
+
+					<label>
+						<input type="checkbox">Permanecer logado
+					</label>
+				</div>
+				<button type="submit" class="btn btn-default" id="Logar">
+					Logar
+				</button>
+        <button type="submit" class="btn btn-default" id="Cadastrar">
+					Cadastrar
+				</button>
+			</form>
+		</div>
+		<div class="col-md-8" id="feed">
+			 <a id="modal-925678" href="#modal-container-925678" role="button" class="btn" data-toggle="modal" id="modal_exemplo" style="background-image:url("img/google-maps-rotas.jpg")">Exemplo</a>
+       <br>
+       <img alt="Mapa de exemplo" src="img/google-maps-rotas.jpg" id="exemploicon">
+			<div class="modal fade" id="modal-container-925678" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+
+							<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+								×
+							</button>
+							<h4 class="modal-title" id="myModalLabel">
+								exemplo mapa
+							</h4>
+						</div>
+						<div class="modal-body">
+							<img alt="Mapa de exemplo" src="img/google-maps-rotas.jpg" id="exemplo_mapa">
+						</div>
+						<div class="modal-footer">
+						</div>
+					</div>
+
+				</div>
+
+			</div>
+
+		</div>
+	</div>
+</div>
+
+    <script src="js/jquery.min.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/scripts.js"></script>
+  </body>
+</html>
