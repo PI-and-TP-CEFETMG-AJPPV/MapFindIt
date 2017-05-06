@@ -235,8 +235,8 @@ class Usuario(models.Model):
     datanascimento = models.DateField(db_column='dataNascimento')  # Field name made lowercase.
     idtsexo = models.CharField(db_column='idtSexo', max_length=1)  # Field name made lowercase.
     ultnomeusuario = models.CharField(db_column='ultNomeUsuario', max_length=50)  # Field name made lowercase.
-    txtfrase = models.CharField(db_column="txtFrase", max_length=100) #Field name made lowercase
-    foto = models.ImageField(upload_to='topics/%Y/%m/%d/', null=True, blank=True)
+    txtfrase = models.CharField(db_column="txtFrase", max_length=100, default="No que você está pensando?") #Field name made lowercase
+    foto = models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemUsers/', null=True, blank=True)
 
     def __str__(self):
         return self.emailusuario

@@ -7,6 +7,9 @@ from .models import Amizade
 import datetime
 from django.http import JsonResponse, HttpResponseForbidden
 from django.forms.models import model_to_dict
+import io, os
+import base64
+from django.core.files.base import ContentFile
 
 def home(request):
 	if request.method=="POST":
@@ -39,8 +42,57 @@ def checkarLogin(request):
 	}
 	return JsonResponse(data)
 
+def checkarSenha(request):
+	senha = request.GET.get('senha', None)
+	id = request.GET.get('id', None)
+	data = {
+    	'incorreta': (Usuario.objects.filter(idusuario=id).first().senhausuario)!=(hashlib.md5((senha+'cockles').encode()).hexdigest())
+	}
+	return JsonResponse(data)
+
 def perfil(request, idusuario):
-	usuario = get_object_or_404(Usuario, idusuario=idusuario)
-	usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
-	amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
-	return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+	if request.method=="POST" and request.POST.__contains__('primNome'):
+		usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+		usuarioFull.datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'), "%d/%m/%Y").strftime("%Y-%m-%d")
+		usuarioFull.primnomeusuario=request.POST.get('primNome')
+		usuarioFull.ultnomeusuario=request.POST.get('ultimoNome')
+		usuarioFull.idtsexo=request.POST.get('gender')[:1]
+		usuarioFull.save()
+		usuario = get_object_or_404(Usuario, idusuario=idusuario)
+		amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+		return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+	else:
+	  if request.method=="GET" and request.GET.__contains__('fraseUsuario'):
+		  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+		  usuarioFull.txtfrase=request.GET.get('fraseUsuario')
+		  usuarioFull.save()
+		  usuario = get_object_or_404(Usuario, idusuario=idusuario)
+		  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+		  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+	  else:
+		  if request.method=="POST" and request.POST.__contains__('senhaAtual'):
+			  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+			  usuarioFull.senhausuario=hashlib.md5((request.POST.get('password')+'cockles').encode()).hexdigest()
+			  usuarioFull.save()
+			  usuario = get_object_or_404(Usuario, idusuario=idusuario)
+			  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+			  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+		  else:
+			  if request.method=="POST" and request.POST.__contains__('blob'):
+				  blobStr=request.POST.get('blob')
+				  format, imgstr = blobStr.split(';base64,')
+				  ext = format.split('/')[-1]
+				  if os.path.exists("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session['usuarioLogado'])+"."+ext):
+					  os.remove("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session['usuarioLogado'])+"."+ext)
+				  data = ContentFile(base64.b64decode(imgstr), name=str(request.session['usuarioLogado']) + "." + ext)
+				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+				  usuarioFull.foto=data
+				  usuarioFull.save()
+				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
+				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+			  else:
+				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
+				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})

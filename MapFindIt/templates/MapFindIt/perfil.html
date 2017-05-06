@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% static "" as baseUrl %}
 <html lang="pt-br">
   <head>
     <meta charset="utf-8">
@@ -9,7 +10,8 @@
     <title>MapFindIt</title>
 
     <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet"%}">
+    <link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+    <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
   </head>
   <body>
     {% include "./menu.html" with user=usuario %}
@@ -18,7 +20,7 @@
           <div class="col-md-8 col-md-offset-2 white" >
             <div class="center">
               {% if usuario.foto %}
-                 <img id="img" style="display:block; margin:auto;" class="img-responsive" src="{{usuario.foto.url}}"></img>
+                 <img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png"></img>
               {% else %}
                  <img id="img" class="img-responsive" style="width:20%;display:block;margin:auto;" src="{% static "MapFindIt/img/default_user.png" %}"></img>
               {% endif %}
@@ -30,7 +32,14 @@
         <div class="row">
           <div class="col-md-8 col-md-offset-2 white">
             <div class="center">
-              <p>{{idPag.txtfrase}}</p>
+              {% if usuario.idusuario != idPag.idusuario %}
+                <p>{{idPag.txtfrase}}</p>
+              {% else %}
+                <form class="navbar-form" method="GET">
+                  <textarea style="width: 80%; border: 1; padding: 0; margin: 0; resize: none;" name="fraseUsuario" class="form-control" rows="2" id="fraseUsuario">{{idPag.txtfrase}}</textarea>
+                  <button type="submit" class="btn btn-default">Alterar</button>
+                </form>
+              {% endif %}
             </div>
           </div>
         </div>
@@ -67,7 +76,146 @@
             </div>
             <div class="col-md-2 col-md-offset-1">
               &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-default">Editar meus dados</button>
+              <button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
+            </div>
+          </div>
+          <div class="modal fade" id="modal-editar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">
+                    Alterar dados
+                  </h4>
+                </div>
+                <div class="modal-body">
+                  <form id="formAlteracao" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                          <div class="form-group">
+                              <input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" value="{{usuario.primnomeusuario}}" required>
+                          </div>
+                        </div>
+                        <div class="col-xs-12 col-sm-6 col-md-6">
+                          <div class="form-group">
+                            <input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" value="{{usuario.ultnomeusuario}}" tabindex="2" required>
+                          </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                      <label for="datetimepicker1">Data de Nascimento</label>
+                      <div class='input-group date' id='datetimepicker1'>
+                                <input type='text' name="nascimento" value="{{usuario.datanascimento|date:"d/m/Y"}}" id="dataNascimento"
+                                placeholder="__/__/____" required class="form-control" />
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="form-group">
+                          <div class="radio">
+                              <label><input type="radio" name="gender" id="masc" {% if usuario.idtsexo == 'm' %} checked {% endif %} value="masculino">Masculino</label>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="form-group">
+                          <div class="radio">
+                              <label><input type="radio"
+                              id="femin" name="gender" {% if usuario.idtsexo == 'f' %} checked {% endif %} value="feminino">Feminino</label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-default" href="#modal-enviarImagem" data-toggle="modal"> Alterar Imagem do Perfil </button>
+                  <button type="button" class="btn btn-default" href="#modal-alterarSenha" data-toggle="modal" > Alterar Senha </button>
+                  <button type="button" onclick="validateAlteracao();" class="btn btn-success"> Salvar Mudanças </button>
+                  <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" style="top:5%;" id="modal-alterarSenha" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">
+                    Alterar Senha
+                  </h4>
+                </div>
+                <div class="modal-body">
+                  <form id="formSenha" method="POST">
+                    {% csrf_token %}
+                    <div class="row">
+                      <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="form-group">
+                          <input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-6 col-md-6">
+                        <div class="form-group">
+                          <input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
+                        </div>
+                        <input type="hidden" id="userId" name="id" value="{{usuario.idusuario}}">
+                      </div>
+                    </div>
+                    <div class="row">
+                      <div class="col-md-12">
+                        <div class="form-group">
+                          <input type="password" name="senhaAtual" id="senhaAtual" class="form-control input-lg" required placeholder="Digite sua senha atual">
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" onclick="validateNovaSenha();" class="btn btn-success"> Alterar Senha </button>
+                  <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal fade" style="top:-5%;" id="modal-enviarImagem" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    ×
+                  </button>
+                  <h4 class="modal-title" id="myModalLabel">
+                    Alterar Imagem
+                  </h4>
+                </div>
+                <div class="modal-body">
+                  <form id="formImagem" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group" height="800px">
+                      <div class="input-group">
+                          <span class="input-group-btn center">
+                              <span class="btn btn-default btn-file">
+                                  Escolher Imagem... <input accept="image/*" type="file" id="imgInp">
+                              </span>
+                          </span>
+                      </div>
+                      <br>
+                      <input type="hidden" id="blob" name="blob">
+                      <img id='novaImg'/>
+                    </div>
+                  </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" onclick="mudarImagem();" class="btn btn-success"> Alterar Imagem </button>
+                  <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                </div>
+              </div>
             </div>
           </div>
           <br>
@@ -82,6 +230,8 @@
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
     </script>
+    <script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/perfil.js"%}"></script>
+    <script src="{% static "MapFindIt/js/menu.js" %}"></script>
   </body>
 </html>
