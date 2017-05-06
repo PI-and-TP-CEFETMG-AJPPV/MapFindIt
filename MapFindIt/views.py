@@ -1,10 +1,12 @@
 from __future__ import unicode_literals
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect, get_object_or_404
 import hashlib
 from .models import Usuario
+from .models import Amizade
 import datetime
-from django.http import JsonResponse
+from django.http import JsonResponse, HttpResponseForbidden
+from django.forms.models import model_to_dict
 
 def home(request):
 	if request.method=="POST":
@@ -14,8 +16,9 @@ def home(request):
 			return render(request, 'MapFindIt/cadastro.html', {})
 		else:
 			if request.POST.__contains__("email"):
-				usuarios = Usuario.objects.filter(emailusuario=request.POST.get('email')).filter(senhausuario=hashlib.md5((request.POST.get('senha')+'cockles').encode()).hexdigest())
-				return render(request, 'MapFindIt/logar.html', {'usuarios': usuarios})
+				usuarios = Usuario.objects.filter(emailusuario=request.POST.get('email')).filter(senhausuario=hashlib.md5((request.POST.get('senha')+'cockles').encode()).hexdigest()).first()
+				request.session['usuarioLogado']=usuarios.idusuario
+				return redirect("/perfil/"+str(usuarios.idusuario))
 			else:
 				return render(request, 'MapFindIt/home.html', {})
 	else:
@@ -35,3 +38,9 @@ def checkarLogin(request):
     	'existe': Usuario.objects.filter(emailusuario=email).filter(senhausuario=hashlib.md5((senha+'cockles').encode()).hexdigest()).exists()
 	}
 	return JsonResponse(data)
+
+def perfil(request, idusuario):
+	usuario = get_object_or_404(Usuario, idusuario=idusuario)
+	usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+	amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+	return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})

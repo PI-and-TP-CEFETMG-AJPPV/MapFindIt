@@ -1,0 +1,179 @@
+body{
+  background:#4388CC;
+}
+
+.tituloMapa{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.tituloMapa:hover{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.center p{
+  padding-top: 8px;
+  padding-bottom: 0px;
+}
+
+.verticalcenter {
+    display: flex;
+    align-items: center;
+}
+
+.white{
+  background: white;
+  border: 2px solid black;
+}
+
+.navbar{
+  border-bottom: 2px solid black;
+}
+
+.nav{
+  border-color: skyblue;
+}
+#wrapper {
+    padding-left: 0;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#wrapper.toggled {
+    padding-left: 250px;
+}
+
+#sidebar-wrapper {
+    position: fixed;
+    left: 250px;
+    z-index: 1000;
+    overflow-y: auto;
+    margin-left: -250px;
+    width: 0;
+    height: 100%;
+    background: skyblue;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+    border-right: 2px solid black;
+}
+
+#wrapper.toggled #sidebar-wrapper {
+    width: 250px;
+}
+
+#page-content-wrapper {
+    padding: 15px;
+    width: 100%;
+}
+
+.center{
+  text-align:center;
+}
+
+#wrapper.toggled #page-content-wrapper {
+    position: absolute;
+    margin-right: -250px;
+}
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 0;
+    margin: 0;
+    padding: 0;
+    width: 250px;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 20px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    color: #000;
+    text-decoration: none;
+}
+
+.sidebar-nav li a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: #000;
+    text-decoration: none;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}
+
+.sidebar-nav > .sidebar-brand {
+    height: 65px;
+    font-size: 18px;
+    line-height: 60px;
+}
+
+.sidebar-nav > .sidebar-brand a {
+    color: #000;
+}
+
+.sidebar-nav > .sidebar-brand a:hover {
+    background: none;
+    color: #000;
+}
+
+.navbar-center{
+    position: absolute;
+    width: 100%;
+    left: 0;
+    text-align: center;
+    margin:10 auto;
+}
+
+#menu-icon{
+  z-index: 3;
+}
+
+#menu-toggle{
+  z-index: 3;
+}
+
+@media (min-width: 768px) {
+    #wrapper {
+        padding-left: 250px;
+    }
+
+    #wrapper.toggled {
+        padding-left: 0;
+    }
+
+    #sidebar-wrapper {
+        width: 350px;
+    }
+
+    #wrapper.toggled #sidebar-wrapper {
+        width: 0;
+    }
+
+    #page-content-wrapper {
+        padding: 20px;
+    }
+
+    #wrapper.toggled #page-content-wrapper {
+        position: relative;
+        margin-right: 0;
+    }
+}
+
+.glyphicon{
+  color: dimgray;
+}
+#navBarSearchForm input[type=text]{
+  width:430px !important;
+}

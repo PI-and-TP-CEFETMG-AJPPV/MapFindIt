@@ -9,7 +9,7 @@
     <title>MapFindIt</title>
 
     <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href={% static "MapFindIt/css/style.css" %} rel="stylesheet">
+    <link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
 
 	<style>
        #map {
@@ -145,17 +145,15 @@
 				<div class="container-fluid">
 					<div class="row">
 						<br>
-						<div class="pesquisa">
-							<form class="form-inline" id="formPesquisa">
-									<div class="form-group">
-										<input type="text" class="form-control" id="campo" placeholder="Digite aqui o que será pesquisado">
-									</div>
-									<div class="form-group">
-										<button type="submit" class="btn btn-default">
-											Pesquisar
-										</button>
-									</div>
-							</form>
+						<div class="pesquisa navbar-collapse">
+              <form class="navbar-form" id="navBarSearchForm"  method="GET">
+              	<div class="input-group">
+        					<input type="text" class="form-control" style="width:430px" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="">
+                  <div class="input-group-btn">
+                	   <button type="submit" class="btn btn-default">Pesquisar</button>
+                  </div>
+      				  </div>
+              </form>
 						</div>
 					</div>
 					<div id="Mapas">
@@ -431,7 +429,7 @@
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
     </script>
-    <script src="{% static "MapFindIt/js/scripts.js" %}"></script>
+    <script src="{% static "MapFindIt/js/home.js" %}"></script>
 
   </body>
 </html>

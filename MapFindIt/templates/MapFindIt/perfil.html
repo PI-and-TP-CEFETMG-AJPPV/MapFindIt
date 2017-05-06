@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="pt-br">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>MapFindIt</title>
+
+    <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+    <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet"%}">
+  </head>
+  <body>
+    {% include "./menu.html" with user=usuario %}
+    <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2 white" >
+            <div class="center">
+              {% if usuario.foto %}
+                 <img id="img" style="display:block; margin:auto;" class="img-responsive" src="{{usuario.foto.url}}"></img>
+              {% else %}
+                 <img id="img" class="img-responsive" style="width:20%;display:block;margin:auto;" src="{% static "MapFindIt/img/default_user.png" %}"></img>
+              {% endif %}
+              <label for="imagemUser"><h2>{{idPag.primnomeusuario}} {{idPag.ultnomeusuario}}</h2></label>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2 white">
+            <div class="center">
+              <p>{{idPag.txtfrase}}</p>
+            </div>
+          </div>
+        </div>
+        <br>
+        {% if not amigos and usuario.idusuario != idPag.idusuario %}
+        <div class="row">
+          <div class="col-md-2 col-md-offset-4">
+            <button type="button" class="btn btn-default">Pesquisar</button>
+          </div>
+          <div class="col-md-2 col-md-offset-1">
+            <button type="button" class="btn btn-default">Solicitar Amizade</button>
+          </div>
+        </div>
+        <br>
+        {% endif %}
+        {% if amigos and usuario.idusuario != idPag.idusuario %}
+          <div class="row">
+            <div class="col-md-2 col-md-offset-5">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-default">Pesquisar</button>
+            </div>
+          </div>
+          <br>
+        {% endif %}
+        {% if usuario.idusuario == idPag.idusuario %}
+          <div class="row">
+            <div class="col-md-2 col-md-offset-2">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-default">Pesquisar</button>
+            </div>
+            <div class="col-md-2 col-md-offset-1">
+              &nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-default">Solicitações de Amizade</button>
+            </div>
+            <div class="col-md-2 col-md-offset-1">
+              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+              <button type="button" class="btn btn-default">Editar meus dados</button>
+            </div>
+          </div>
+          <br>
+        {% endif %}
+        <div id="divMapas">
+
+        </div>
+    </div>
+    <script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+    </script>
+    <script src="{% static "MapFindIt/js/perfil.js"%}"></script>
+  </body>
+</html>

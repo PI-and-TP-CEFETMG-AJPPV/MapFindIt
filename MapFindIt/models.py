@@ -28,6 +28,9 @@ class Comentario(models.Model):
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', primary_key=True)  # Field name made lowercase.
     idpostagem = models.ForeignKey('Postagem', models.DO_NOTHING, db_column='idPostagem')  # Field name made lowercase.
 
+    def __str__(self):
+        return self.tituloComentario
+
     class Meta:
         db_table = 'comentario'
         unique_together = (('idusuario', 'idpostagem'),)
@@ -40,6 +43,9 @@ class Cor(models.Model):
     g = models.IntegerField(db_column='G')  # Field name made lowercase.
     b = models.IntegerField(db_column='B')  # Field name made lowercase.
 
+    def __str__(self):
+        return self.nomecor
+
     class Meta:
         db_table = 'cor'
 
@@ -49,7 +55,10 @@ class Grupo(models.Model):
     nomegrupo = models.CharField(db_column='nomeGrupo', max_length=20, blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
-	
+
+    def __str__(self):
+        return self.nomegrupo
+
     class Meta:
         db_table = 'grupo'
 
@@ -58,6 +67,9 @@ class Iconespontos(models.Model):
     codicone = models.AutoField(db_column='codIcone', primary_key=True)  # Field name made lowercase.
     imgicone = models.TextField(db_column='imgIcone')  # Field name made lowercase.
     nomeicone = models.CharField(db_column='nomeIcone', max_length=20)  # Field name made lowercase.
+
+    def __str__(self):
+        return self.nomeicone
 
     class Meta:
         db_table = 'iconespontos'
@@ -78,6 +90,9 @@ class Legenda(models.Model):
     idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa', primary_key=True)  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone')  # Field name made lowercase.
 
+    def __str__(self):
+        return self.txtlegenda
+
     class Meta:
         db_table = 'legenda'
         unique_together = (('idmapa', 'codicone'),)
@@ -96,6 +111,9 @@ class Mapa(models.Model):
     valaprovados = models.IntegerField(db_column='valAprovados')  # Field name made lowercase.
     valreprovados = models.IntegerField(db_column='valReprovados')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return self.titulomapa
 
     class Meta:
         db_table = 'mapa'
@@ -130,6 +148,9 @@ class Ponto(models.Model):
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone', blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
+
+    def __str__(self):
+        return self.nomponto
 
     class Meta:
         db_table = 'ponto'
@@ -178,6 +199,9 @@ class Rota(models.Model):
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
 
+    def __str__(self):
+        return self.nomerota
+
     class Meta:
         db_table = 'rota'
 
@@ -196,6 +220,9 @@ class Tema(models.Model):
     codtema = models.IntegerField(db_column='codTema', primary_key=True)  # Field name made lowercase.
     nomtema = models.CharField(db_column='nomTema', max_length=20)  # Field name made lowercase.
 
+    def __str__(self):
+        return self.nomtema
+
     class Meta:
         db_table = 'tema'
 
@@ -208,6 +235,8 @@ class Usuario(models.Model):
     datanascimento = models.DateField(db_column='dataNascimento')  # Field name made lowercase.
     idtsexo = models.CharField(db_column='idtSexo', max_length=1)  # Field name made lowercase.
     ultnomeusuario = models.CharField(db_column='ultNomeUsuario', max_length=50)  # Field name made lowercase.
+    txtfrase = models.CharField(db_column="txtFrase", max_length=100) #Field name made lowercase
+    foto = models.ImageField(upload_to='topics/%Y/%m/%d/', null=True, blank=True)
 
     def __str__(self):
         return self.emailusuario
@@ -222,6 +251,9 @@ class Area(models.Model):
     nomarea = models.CharField(db_column='nomArea', max_length=20)  # Field name made lowercase.
     descarea = models.TextField(db_column='descArea')  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
+
+    def __str__(self):
+        return self.nomarea
 
     class Meta:
         db_table = 'Area'
