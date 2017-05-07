@@ -143,7 +143,7 @@ class Ponto(models.Model):
     idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
     nomponto = models.CharField(db_column='nomPonto', max_length=30, blank=True, null=True)  # Field name made lowercase.
     descponto = models.TextField(db_column='descPonto', blank=True, null=True)  # Field name made lowercase.
-    fotoponto = models.TextField(db_column='fotoPonto', blank=True, null=True)  # Field name made lowercase.
+    fotoponto = models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemPonto/', null=True, blank=True)  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone', blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.

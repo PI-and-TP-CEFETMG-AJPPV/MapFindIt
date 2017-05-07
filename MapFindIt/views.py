@@ -10,7 +10,7 @@ import io, os
 import base64
 from django.core.files.base import ContentFile
 from django.core import serializers
-import logging, json
+import json
 
 
 def home(request):
@@ -53,7 +53,6 @@ def checkarSenha(request):
 	return JsonResponse(data)
 
 def perfil(request, idusuario):
-	logging.debug("Oi")
 	if request.method=="POST" and request.POST.__contains__('primNome'):
 		usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
 		usuarioFull.datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'), "%d/%m/%Y").strftime("%Y-%m-%d")
@@ -110,14 +109,14 @@ def mapasPerfil(request):
 		todosPontos=Ponto.objects.filter(idmapa=todosMapas[num].idmapa)
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
-		for pt in todosPontos:
-			tempset=Iconespontos.filter(codicone=pt.codicone)
-			qset = qset | tempset
-		icones = serializers.serialize("json", qset)
+	#	for pt in todosPontos:
+	#		tempset=Iconespontos.objects.filter(codicone=pt.codicone)
+	#		qset = qset | tempset
+	#	icones = serializers.serialize("json", qset)
 		data = {
 			'mapa': mapa,
 			'pontos': pontos,
-			'icones': icones,
+			#'icones': icones,
 		}
 		return JsonResponse(data)
 	else:

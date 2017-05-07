@@ -138,7 +138,7 @@ function carregarMapas(){
 					let mapa=JSON.parse(data.mapa)[0];
 					mapa=mapa.fields;
 					console.log(mapa);
-					console.log(data.icones);
+					//console.log(data.icones);
 					console.log(data.pontos)
 					div.append(`
 						<div class='row'>
@@ -166,7 +166,7 @@ function carregarMapas(){
 					     </div>
 					  </div>
 					</div>`);
-					setMapa(mapa, JSON.parse(data.pontos); JSON.parse(data.icones), 10*(gruposCarregados-1)+i);
+					setMapa(mapa, JSON.parse(data.pontos), data.icones, 10*(gruposCarregados-1)+i);
 	      },
 				error: function(jqXHR, exception){
 
@@ -182,17 +182,19 @@ function setMapa(mapa, pontos, icones, id){
 			center: inicio
 		});
 		pontos.forEach(function(item, index){
-			let codIcone=item.codicone;
-			let iconePonto;
+			let codIcone=item.fields.codicone;
+			/*let iconePonto;
 			for(icon in icones){
 				if(icon.codicone==codicone){
 					iconePonto=icon;
 				}
-			}
+			}*/
+			console.log(item);
+			let pos = {lat: item.fields.coordy, lng: item.fields.coordx};
 			let marker = new google.maps.Marker({
-				 position: {lat:item.coordy, lng:item.coordx},
+				 position: pos,
 				 map: map,
-				 icon: iconePonto.imgicone.url
+				 //icon: iconePonto.imgicone.url
 			});
 		});
 }

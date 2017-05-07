@@ -36,6 +36,11 @@ body{
   color: rgb(51, 51, 51);
 }
 
+.tituloMapa:active{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
 .center p{
   padding-top: 8px;
   padding-bottom: 0px;
