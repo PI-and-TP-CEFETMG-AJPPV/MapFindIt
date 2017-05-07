@@ -132,18 +132,22 @@ function carregarMapas(){
 	      },
 	      dataType: 'json',
 	      success: function (data) {
-					let mapa=data.mapa;
-					console.log(data.mapa);
+					if(data.erro){
+						return;
+					}
+					let mapa=JSON.parse(data.mapa)[0];
+					mapa=mapa.fields;
+					console.log(mapa);
 					console.log(data.icones);
 					console.log(data.pontos)
 					div.append(`
 						<div class='row'>
 					  	<div class='col-md-8 col-md-offset-2 white'>
 					     <div class='center'>
-					      <a href='#modal-container-mapa' class='tituloMapa${10*(gruposCarregados-1)+i}' data-toggle='modal' id='modal_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
+					      <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 					     </div>
 					     <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
-					      <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+					     <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
 					        <div class='modal-dialog'>
 					          <div class='modal-content'>
 					            <div class='modal-header'>
@@ -159,11 +163,14 @@ function carregarMapas(){
 					            </div>
 					          </div>
 					        </div>
-					      </div>
+					     </div>
 					  </div>
 					</div>`);
-					setMapa(mapa, data.pontos, data.icones, 10*(gruposCarregados-1)+i);
-	      }
+					setMapa(mapa, JSON.parse(data.pontos); JSON.parse(data.icones), 10*(gruposCarregados-1)+i);
+	      },
+				error: function(jqXHR, exception){
+
+				}
 	  });
 	}
 }
@@ -190,9 +197,9 @@ function setMapa(mapa, pontos, icones, id){
 		});
 }
 
-$('document').ready(function(){
+function initMap(){
 		carregarMapas();
-});
+}
 
 $(window).on('scroll', function(){
     if( $(window).scrollTop() > $(document).height() - $(window).height() ) {

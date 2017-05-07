@@ -4,13 +4,13 @@ from django.shortcuts import render, redirect, get_object_or_404
 import hashlib
 from .models import *
 import datetime
-from django.http import JsonResponse, HttpResponseForbidden
+from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.forms.models import model_to_dict
 import io, os
 import base64
 from django.core.files.base import ContentFile
 from django.core import serializers
-import logging
+import logging, json
 
 
 def home(request):
@@ -102,10 +102,11 @@ def perfil(request, idusuario):
 
 def mapasPerfil(request):
 	num = request.GET.get('num', None)
+	num = int(num)
 	id = request.GET.get('id', None)
 	todosMapas=Mapa.objects.filter(idusuario=id).order_by('datamapa')
-	if todosMapas.count()>=int(num):
-		mapa = serializers.serialize("json", todosMapas[num])
+	if todosMapas.count()>int(num):
+		mapa = serializers.serialize('json', [ todosMapas[num], ])
 		todosPontos=Ponto.objects.filter(idmapa=todosMapas[num].idmapa)
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
@@ -116,8 +117,11 @@ def mapasPerfil(request):
 		data = {
 			'mapa': mapa,
 			'pontos': pontos,
-			'icones': icones
+			'icones': icones,
 		}
 		return JsonResponse(data)
 	else:
-		return HttpResponse('Sem mais mapas', status=401)
+		data = {
+			'erro': 1,
+		}
+		return JsonResponse(data)
