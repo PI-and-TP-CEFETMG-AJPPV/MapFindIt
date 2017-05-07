@@ -195,6 +195,10 @@ body{
     }
 }
 
+.mapa{
+   height: 100%;
+}
+
 .glyphicon{
   color: dimgray;
 }

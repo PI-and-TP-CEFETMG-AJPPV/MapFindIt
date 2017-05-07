@@ -7,4 +7,5 @@ urlpatterns = [
     url(r'^ajax/checkarEmail/$', views.checkarEmail),
     url(r'^ajax/checkarLogin/$', views.checkarLogin),
     url(r'^ajax/checkarSenha/$', views.checkarSenha),
+    url(r'^ajax/carregarMapasPerfil/$', views.mapasPerfil),
 ]

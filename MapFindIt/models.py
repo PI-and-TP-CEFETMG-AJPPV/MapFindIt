@@ -62,10 +62,9 @@ class Grupo(models.Model):
     class Meta:
         db_table = 'grupo'
 
-
 class Iconespontos(models.Model):
     codicone = models.AutoField(db_column='codIcone', primary_key=True)  # Field name made lowercase.
-    imgicone = models.TextField(db_column='imgIcone')  # Field name made lowercase.
+    imgicone =  models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemIcones/', null=True, blank=True)  # Field name made lowercase.
     nomeicone = models.CharField(db_column='nomeIcone', max_length=20)  # Field name made lowercase.
 
     def __str__(self):

@@ -2,14 +2,16 @@ from __future__ import unicode_literals
 
 from django.shortcuts import render, redirect, get_object_or_404
 import hashlib
-from .models import Usuario
-from .models import Amizade
+from .models import *
 import datetime
 from django.http import JsonResponse, HttpResponseForbidden
 from django.forms.models import model_to_dict
 import io, os
 import base64
 from django.core.files.base import ContentFile
+from django.core import serializers
+import logging
+
 
 def home(request):
 	if request.method=="POST":
@@ -51,6 +53,7 @@ def checkarSenha(request):
 	return JsonResponse(data)
 
 def perfil(request, idusuario):
+	logging.debug("Oi")
 	if request.method=="POST" and request.POST.__contains__('primNome'):
 		usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
 		usuarioFull.datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'), "%d/%m/%Y").strftime("%Y-%m-%d")
@@ -96,3 +99,25 @@ def perfil(request, idusuario):
 				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+
+def mapasPerfil(request):
+	num = request.GET.get('num', None)
+	id = request.GET.get('id', None)
+	todosMapas=Mapa.objects.filter(idusuario=id).order_by('datamapa')
+	if todosMapas.count()>=int(num):
+		mapa = serializers.serialize("json", todosMapas[num])
+		todosPontos=Ponto.objects.filter(idmapa=todosMapas[num].idmapa)
+		pontos = serializers.serialize("json", todosPontos)
+		qset = Iconespontos.objects.none()
+		for pt in todosPontos:
+			tempset=Iconespontos.filter(codicone=pt.codicone)
+			qset = qset | tempset
+		icones = serializers.serialize("json", qset)
+		data = {
+			'mapa': mapa,
+			'pontos': pontos,
+			'icones': icones
+		}
+		return JsonResponse(data)
+	else:
+		return HttpResponse('Sem mais mapas', status=401)
