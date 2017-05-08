@@ -27,7 +27,10 @@ def home(request):
 			else:
 				return render(request, 'MapFindIt/home.html', {})
 	else:
-		return render(request, 'MapFindIt/home.html', {})
+		if request.method=="GET" and request.GET.get('pesquisa'):
+			return HttpResponse(request.GET.get('pesquisa'));
+		else:
+			return render(request, 'MapFindIt/home.html', {})
 
 def checkarEmail(request):
 	email = request.GET.get('email', None)
