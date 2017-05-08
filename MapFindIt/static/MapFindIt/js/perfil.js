@@ -120,6 +120,8 @@ function mudarImagem(){
 
 }
 var gruposCarregados=0;
+var renderizarMapa;
+
 function carregarMapas(){
 	let div=$("#divMapas");
 	gruposCarregados++;
@@ -142,14 +144,12 @@ function carregarMapas(){
 					console.log(data.pontos)
 					div.append(`
 						<div class='row'>
-					  	<div class='col-md-8 col-md-offset-2 white'>
-					     <div class='center'>
-					      <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
-					     </div>
+					  	<div class='col-md-8 col-md-offset-2 white center centerDiv'>
+					     <a onclick="renderizarMapa(${10*(gruposCarregados-1)+i});" href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 					     <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
-					     <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
-					        <div class='modal-dialog'>
-					          <div class='modal-content'>
+							 <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+					        <div class='modal-dialog modal-map-dialog' >
+					          <div class='modal-content modal-map-content'>
 					            <div class='modal-header'>
 					              <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
 					                ×
@@ -159,14 +159,34 @@ function carregarMapas(){
 					              </h4>
 					            </div>
 					            <div class='modal-body'>
-					              <div class="mapa" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExpandido${10*(gruposCarregados-1)+i}'></div>
+												<div class="container-fluid">
+													<div class="row">
+														<div class="col-md-2" id="comentarios${10*(gruposCarregados-1)+i}">
+
+														</div>
+														<div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
+															<div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
+
+														</div>
+													</div>
+												</div>
 					            </div>
 					          </div>
 					        </div>
 					     </div>
 					  </div>
 					</div>`);
-					setMapa(mapa, JSON.parse(data.pontos), data.icones, 10*(gruposCarregados-1)+i);
+					setMapa(mapa, JSON.parse(data.pontos), data.icones, "map"+(10*(gruposCarregados-1)+i));
+					let modalid='#modal'+(10*(gruposCarregados-1)+i);
+					renderizarMapa=function(id){
+						setTimeout(function(){
+							setMapa(mapa, JSON.parse(data.pontos), data.icones, "mapExp"+id);
+							$('#comentarios'+id).attr('style', 'border: 2px solid blue');
+							$('#comentarios'+id).height($('#divMapa'+id).height());
+						}, 1000);
+
+					}
+
 	      },
 				error: function(jqXHR, exception){
 
@@ -175,10 +195,10 @@ function carregarMapas(){
 	}
 }
 
-function setMapa(mapa, pontos, icones, id){
+function setMapa(mapa, pontos, icones, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};
-		let map = new google.maps.Map(document.getElementById("map"+id), {
-			zoom: 4,
+		let map = new google.maps.Map(document.getElementById(mapId), {
+			zoom: 12,
 			center: inicio
 		});
 		pontos.forEach(function(item, index){
@@ -208,30 +228,3 @@ $(window).on('scroll', function(){
 
     }
 });
-/*
-<div class="row">
-  <div class="col-md-8 col-md-offset-2 white">
-     <div class="center">
-      <a href="#modal-container-mapa" class="tituloMapa" data-toggle="modal" id="modal_mapa"><h4>Titulo</h4></a>
-     </div>
-     <div name="map" id="map"></div>
-      <div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-          <div class="modal-content">
-            <div class="modal-header">
-              <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-                ×
-              </button>
-              <h4 class="modal-title" id="myModalLabel">
-                Titulo
-              </h4>
-            </div>
-            <div class="modal-body">
-              <div name="mapExp" id="mapExpandido"></div>
-            </div>
-          </div>
-        </div>
-      </div>
-  </div>
-</div>
-*/

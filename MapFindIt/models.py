@@ -29,7 +29,7 @@ class Comentario(models.Model):
     idpostagem = models.ForeignKey('Postagem', models.DO_NOTHING, db_column='idPostagem')  # Field name made lowercase.
 
     def __str__(self):
-        return self.tituloComentario
+        return self.titulocomentario
 
     class Meta:
         db_table = 'comentario'
