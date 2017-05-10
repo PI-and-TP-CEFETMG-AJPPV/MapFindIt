@@ -219,9 +219,9 @@ function setMapa(mapa, pontos, icones, mapId){
 		});
 }
 
-$(document).ready(function(){
-	carregarMapas();
-});
+function initMap(){
+		carregarMapas();
+}
 
 $(window).on('scroll', function(){
     if( $(window).scrollTop() > $(document).height() - $(window).height() ) {
