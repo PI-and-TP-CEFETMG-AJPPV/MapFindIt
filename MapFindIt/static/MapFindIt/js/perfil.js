@@ -139,15 +139,12 @@ function carregarMapas(){
 					}
 					let mapa=JSON.parse(data.mapa)[0];
 					mapa=mapa.fields;
-					console.log(mapa);
-					//console.log(data.icones);
-					console.log(data.pontos)
 					div.append(`
 						<div class='row'>
-					  	<div class='col-md-8 col-md-offset-2 white center centerDiv'>
+					  	<div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px;'>
 					     <a onclick="renderizarMapa(${10*(gruposCarregados-1)+i});" href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
-					     <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
-							 <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" role='dialog' aria-labelledby='myModalLabel' aria-hidden='true'>
+							 <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
+							 <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
 					        <div class='modal-dialog modal-map-dialog' >
 					          <div class='modal-content modal-map-content'>
 					            <div class='modal-header'>
@@ -176,11 +173,11 @@ function carregarMapas(){
 					     </div>
 					  </div>
 					</div>`);
-					setMapa(mapa, JSON.parse(data.pontos), data.icones, "map"+(10*(gruposCarregados-1)+i));
+					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "map"+(10*(gruposCarregados-1)+i));
 					let modalid='#modal'+(10*(gruposCarregados-1)+i);
 					renderizarMapa=function(id){
 						setTimeout(function(){
-							setMapa(mapa, JSON.parse(data.pontos), data.icones, "mapExp"+id);
+							setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "mapExp"+id);
 							$('#comentarios'+id).attr('style', 'border: 2px solid blue');
 							$('#comentarios'+id).height($('#divMapa'+id).height());
 						}, 1000);
@@ -203,19 +200,18 @@ function setMapa(mapa, pontos, icones, mapId){
 		});
 		pontos.forEach(function(item, index){
 			let codIcone=item.fields.codicone;
-			/*let iconePonto;
-			for(icon in icones){
-				if(icon.codicone==codicone){
-					iconePonto=icon;
+			let iconePonto;
+			for(let i=0; i<icones.length; i++){
+				if(icones[i].pk==codIcone){
+					iconePonto=icones[i];
 				}
-			}*/
-			console.log(item);
+			}
 			let pos = {lat: item.fields.coordy, lng: item.fields.coordx};
 			let marker = new google.maps.Marker({
 				 position: pos,
 				 map: map,
-				 //icon: iconePonto.imgicone.url
 			});
+			marker.setIcon(imgUrl+'MapFindIt/ImagemPonto/'+iconePonto.pk+'.png');
 		});
 }
 

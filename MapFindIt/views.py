@@ -112,14 +112,15 @@ def mapasPerfil(request):
 		todosPontos=Ponto.objects.filter(idmapa=todosMapas[num].idmapa)
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
-	#	for pt in todosPontos:
-	#		tempset=Iconespontos.objects.filter(codicone=pt.codicone)
-	#		qset = qset | tempset
-	#	icones = serializers.serialize("json", qset)
+		for pt in todosPontos:
+			codPonto=pt.codicone
+			tempset=Iconespontos.objects.filter(codicone=codPonto.codicone)
+			qset = qset | tempset
+		icones = serializers.serialize("json", qset)
 		data = {
 			'mapa': mapa,
 			'pontos': pontos,
-			#'icones': icones,
+			'icones': icones,
 		}
 		return JsonResponse(data)
 	else:

@@ -10,9 +10,6 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>MapFindIt</title>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
-    </script>
     <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
     <link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
     <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
@@ -66,7 +63,7 @@
             <button type="button" class="btn btn-default">Solicitações de Amizade</button>
             <button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
           </div>
-          <div class="modal fade" id="modal-editar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal fade" id="modal-editar" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -127,7 +124,7 @@
               </div>
             </div>
           </div>
-          <div class="modal fade" style="top:5%;" id="modal-alterarSenha" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal fade" style="top:5%;" id="modal-alterarSenha" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -170,7 +167,7 @@
               </div>
             </div>
           </div>
-          <div class="modal fade" style="top:-5%;" id="modal-enviarImagem" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal fade" style="top:-5%;" id="modal-enviarImagem" aria-hidden="true">
             <div class="modal-dialog">
               <div class="modal-content">
                 <div class="modal-header">
@@ -213,6 +210,9 @@
         <br><br><br>
       </div>
     </div>
+    <script>
+      var imgUrl='{{baseUrl}}';
+    </script>
     <script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
@@ -220,5 +220,8 @@
     <script src="{% static "MapFindIt/js/menu.js" %}"></script>
     <script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/perfil.js"%}"></script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+    </script>
   </body>
 </html>
