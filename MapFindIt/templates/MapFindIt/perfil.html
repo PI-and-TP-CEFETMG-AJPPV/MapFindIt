@@ -48,39 +48,23 @@
         </div>
         <br>
         {% if not amigos and usuario.idusuario != idPag.idusuario %}
-        <div class="row">
-          <div class="col-md-2 col-md-offset-4">
-            <button type="button" class="btn btn-default">Pesquisar</button>
-          </div>
-          <div class="col-md-2 col-md-offset-1">
-            <button type="button" class="btn btn-default">Solicitar Amizade</button>
-          </div>
+        <div class="row" style="display: flex; justify-content: space-between">
+          <button type="button" class="btn btn-default">Pesquisar</button>
+          <button type="button" class="btn btn-default">Solicitar Amizade</button>
         </div>
         <br>
         {% endif %}
         {% if amigos and usuario.idusuario != idPag.idusuario %}
-          <div class="row">
-            <div class="col-md-2 col-md-offset-5">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-default">Pesquisar</button>
-            </div>
+          <div class="row" style="display: flex; justify-content: center";>
+            <button type="button" class="btn btn-default">Pesquisar</button>
           </div>
           <br>
         {% endif %}
         {% if usuario.idusuario == idPag.idusuario %}
-          <div class="row">
-            <div class="col-md-2 col-md-offset-2">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-default">Pesquisar</button>
-            </div>
-            <div class="col-md-2 col-md-offset-1">
-              &nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-default">Solicitações de Amizade</button>
-            </div>
-            <div class="col-md-2 col-md-offset-1">
-              &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-              <button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
-            </div>
+          <div class="row" style="display: flex; justify-content: space-between">
+            <button type="button" class="btn btn-default">Pesquisar</button>
+            <button type="button" class="btn btn-default">Solicitações de Amizade</button>
+            <button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
           </div>
           <div class="modal fade" id="modal-editar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-dialog">
