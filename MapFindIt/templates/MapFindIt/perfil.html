@@ -10,14 +10,15 @@
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
     <title>MapFindIt</title>
-
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+    </script>
     <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
     <link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
     <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
   </head>
   <body>
     {% include "./menu.html" with user=usuario %}
-    <div class="container-fluid">
         <div class="row">
           <div class="col-md-8 col-md-offset-2 white" >
             <div class="center">
@@ -226,16 +227,14 @@
 
         </div>
         <br><br><br>
+      </div>
     </div>
     <script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
     <script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
-    <script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU">
-    </script>
-    <script src="{% static "MapFindIt/js/perfil.js"%}"></script>
     <script src="{% static "MapFindIt/js/menu.js" %}"></script>
+    <script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/perfil.js"%}"></script>
   </body>
 </html>
