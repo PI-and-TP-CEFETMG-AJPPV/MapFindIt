@@ -106,10 +106,12 @@ def mapasPerfil(request):
 	num = request.GET.get('num', None)
 	num = int(num)
 	id = request.GET.get('id', None)
-	todosMapas=Mapa.objects.filter(idusuario=id).order_by('datamapa')
-	if todosMapas.count()>int(num):
-		mapa = serializers.serialize('json', [ todosMapas[num], ])
-		todosPontos=Ponto.objects.filter(idmapa=todosMapas[num].idmapa)
+	todasPostagens=Postagem.objects.filter(idusuario=id).order_by('datapostagem')
+	if todasPostagens.count()>int(num):
+		postagem = serializers.serialize('json', [ todasPostagens[num], ]);
+		mapaObj = Mapa.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa).first();
+		mapa=serializers.serialize("json", [mapaObj,]);
+		todosPontos=Ponto.objects.filter(idmapa=mapaObj.idmapa)
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
 		for pt in todosPontos:
@@ -117,10 +119,19 @@ def mapasPerfil(request):
 			tempset=Iconespontos.objects.filter(codicone=codPonto.codicone)
 			qset = qset | tempset
 		icones = serializers.serialize("json", qset)
+		comentarios = Comentario.objects.filter(idpostagem=todasPostagens[num].idpostagem)
+		comentario = serializers.serialize("json", comentarios)
+		autoresArr=[]
+		for coment in comentarios:
+			autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
+		autores = serializers.serialize("json", autoresArr)
 		data = {
+			'postagem': postagem,
 			'mapa': mapa,
 			'pontos': pontos,
 			'icones': icones,
+			'comentarios': comentario,
+			'autores': autores,
 		}
 		return JsonResponse(data)
 	else:

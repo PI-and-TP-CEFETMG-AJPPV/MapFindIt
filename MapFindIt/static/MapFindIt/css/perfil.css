@@ -165,6 +165,11 @@ body{
     line-height: 60px;
 }
 
+.infoPostagem{
+  text-align: left !important;
+  color: #505050 !important;
+}
+
 .sidebar-nav > .sidebar-brand a {
     color: #000;
 }
@@ -228,9 +233,13 @@ body{
   height: 99%;
 }
 
+.modal-map-body{
+  padding: 0px 0px 0px 0px;
+}
+
 .mapaExp{
    height: 83vh;
-   width: 75vw;
+   width: 78vw;
 }
 
 .mapa{
@@ -243,4 +252,31 @@ body{
 }
 #navBarSearchForm input[type=text]{
   width:430px !important;
+}
+
+.card-container {
+    background-color: #FFFFFF;
+	  -webkit-perspective: 800px;
+    -moz-perspective: 800px;
+    -o-perspective: 800px;
+    perspective: 800px;
+    margin-bottom: 30px;
+}
+
+.card{
+    border-radius: 4px;
+    color: #444444;
+    padding: 5px 5px 5px 5px;
+}
+
+.card-container, .front{
+	width: 100%;
+	border-radius: 4px;
+	-webkit-box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+  -moz-box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+  box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+}
+
+.main{
+  padding: 5px 5px 5px 5px;
 }
