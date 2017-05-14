@@ -7,8 +7,12 @@ $('#menu-toggle').on('click', function(e){
   if(selec){
     selec=false;
     $('#menu-icon').css('color', 'dimgray');
+    //Para o edge
+    $('#sidebar-wrapper').css('overflow-y','hide');
   }else{
       selec=true;
       $('#menu-icon').css('color', 'white');
+      //Para o edge
+      $('#sidebar-wrapper').css('overflow-y','scroll');
   }
 });

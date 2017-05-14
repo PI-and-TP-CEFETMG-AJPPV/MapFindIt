@@ -152,9 +152,9 @@ function carregarMapas(){
 					let autores=JSON.parse(data.autores);
 					let comentarios=JSON.parse(data.comentarios);
 					div.append(`
-						<div class='row'>
+						<div class='row' style="order:${i}; padding-bottom:20px;">
 					  	<div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
-					     <a onclick="renderizarMapa(${10*(gruposCarregados-1)+i});" href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
+					     <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 							 <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
 							 <div class='centerDiv'>
 							 	 <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
@@ -181,14 +181,23 @@ function carregarMapas(){
 															<div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
 
 														</div>
-													</div>
 												</div>
-					            </div>
-					          </div>
-					        </div>
-					     </div>
-					  </div>
-					</div>`);
+										  </div>
+					         </div>
+					      </div>
+					    </div>
+					   </div>
+					 </div>
+					 <br><br><br>`);
+					 if(comentarios.length<1){
+						 $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
+ 								<div class="row">
+ 									<div class="col-md-12">
+ 										<p style="text-align: left;">Ainda não existem comentários</p>
+ 										</div>
+ 									</div>
+ 							`);
+					 }
 					comentarios.forEach(function(comentario, index){
 						$('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
 								<div class="row">
@@ -213,19 +222,21 @@ function carregarMapas(){
 							<button id="comentar${10*(gruposCarregados-1)+i}" class="btn btn-default">Comentar</button>
 							<p style="padding:0px; margin:0px">&nbsp</p>
 					`);
-
+					$("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
+						 setTimeout(function(){
+							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "mapExp"+(10*(gruposCarregados-1)+i));
+						 }, 1000);
+					});
 					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "map"+(10*(gruposCarregados-1)+i));
-					let modalid='#modal'+(10*(gruposCarregados-1)+i);
-					renderizarMapa=function(id){
-						setTimeout(function(){
-							setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "mapExp"+id);
-						}, 1000);
-
-					}
-
-	      }
+				}
 	  });
 	}
+}
+
+function renderizarMapa(id, mapa, pontos, icones){
+	setTimeout(function(){
+		setMapa(JSON.parse(mapa), JSON.parse(pontos), JSON.parse(icones), "mapExp"+id);
+	}, 1000);
 }
 
 function setMapa(mapa, pontos, icones, mapId){

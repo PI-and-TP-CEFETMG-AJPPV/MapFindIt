@@ -106,7 +106,7 @@ def mapasPerfil(request):
 	num = request.GET.get('num', None)
 	num = int(num)
 	id = request.GET.get('id', None)
-	todasPostagens=Postagem.objects.filter(idusuario=id).order_by('datapostagem')
+	todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
 	if todasPostagens.count()>int(num):
 		postagem = serializers.serialize('json', [ todasPostagens[num], ]);
 		mapaObj = Mapa.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa).first();
