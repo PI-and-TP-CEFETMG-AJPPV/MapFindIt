@@ -120,9 +120,9 @@ def mapasPerfil(request):
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
 		for pt in todosPontos:
-			if pt.codicone is not None:
-				tempset=Iconespontos.objects.filter(codicone=pt.codicone.codicone)
-				qset = qset | tempset
+			codPonto=pt.codicone
+			tempset=Iconespontos.objects.filter(codicone=codPonto.codicone)
+			qset = qset | tempset
 		icones = serializers.serialize("json", qset)
 		comentarios = Comentario.objects.filter(idpostagem=todasPostagens[num].idpostagem)
 		comentario = serializers.serialize("json", comentarios)
@@ -130,8 +130,6 @@ def mapasPerfil(request):
 		for coment in comentarios:
 			autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
 		autores = serializers.serialize("json", autoresArr)
-		todasRotas = Rota.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa)
-		rotas=serializers.serialize("json", todasRotas)
 		data = {
 			'postagem': postagem,
 			'mapa': mapa,
@@ -139,7 +137,6 @@ def mapasPerfil(request):
 			'icones': icones,
 			'comentarios': comentario,
 			'autores': autores,
-			'rotas': rotas,
 		}
 		return JsonResponse(data)
 	else:

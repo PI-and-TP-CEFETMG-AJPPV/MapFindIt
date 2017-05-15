@@ -147,14 +147,9 @@ class Ponto(models.Model):
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone', blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
-    idtponto = models.CharField(db_column='idtPonto', max_length=1, blank=True, null=False)
 
     def __str__(self):
-        if(self.nomponto):
-            return self.nomponto
-        else:
-            return str(self.coordx)+str(self.coordy);
-
+        return self.nomponto
 
     class Meta:
         db_table = 'ponto'
@@ -197,12 +192,12 @@ class Postagemgrupo(models.Model):
 class Rota(models.Model):
     idrota = models.AutoField(db_column='idRota', primary_key=True)  # Field name made lowercase.
     idtevitar = models.IntegerField(db_column='idtEvitar', blank=True, null=True)  # Field name made lowercase.
-    idmapaevitado = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapaEvitado', blank=True, null=True, related_name='evitado')  # Field name made lowercase.
+    idmapaevitado = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapaEvitado', blank=True, null=True)  # Field name made lowercase.
     nomerota = models.CharField(db_column='nomeRota', max_length=30)  # Field name made lowercase.
     descrota = models.TextField(db_column='descRota')  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
-    idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa', blank=True, null=True)
+
     def __str__(self):
         return self.nomerota
 
@@ -211,8 +206,8 @@ class Rota(models.Model):
 
 
 class RotaPonto(models.Model):
-    idrota = models.ForeignKey(Rota, models.DO_NOTHING, db_column='idRota')  # Field name made lowercase.
-    idponto = models.ForeignKey(Ponto, models.DO_NOTHING, db_column='idPonto', primary_key=True)  # Field name made lowercase.
+    idrota = models.ForeignKey(Rota, models.DO_NOTHING, db_column='idRota', primary_key=True)  # Field name made lowercase.
+    idponto = models.ForeignKey(Ponto, models.DO_NOTHING, db_column='idPonto')  # Field name made lowercase.
     seqponto = models.IntegerField(db_column='seqPonto', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:
@@ -255,7 +250,6 @@ class Area(models.Model):
     nomarea = models.CharField(db_column='nomArea', max_length=20)  # Field name made lowercase.
     descarea = models.TextField(db_column='descArea')  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
-    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
 
     def __str__(self):
         return self.nomarea
