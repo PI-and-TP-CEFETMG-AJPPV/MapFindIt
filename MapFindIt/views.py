@@ -28,7 +28,12 @@ def home(request):
 				return render(request, 'MapFindIt/home.html', {})
 	else:
 		if request.method=="GET" and request.GET.get('pesquisa'):
-			return HttpResponse(request.GET.get('pesquisa'));
+			controle = 0
+			#Pesquisa do usuário
+			strPesquisa = request.GET.get('pesquisa')
+			#Verifica se a pesquisa corresponde a algum título
+			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa)
+			return HttpResponse(strPesquisa);
 		else:
 			return render(request, 'MapFindIt/home.html', {})
 
