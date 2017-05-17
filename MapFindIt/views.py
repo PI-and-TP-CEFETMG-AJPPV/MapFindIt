@@ -28,7 +28,12 @@ def home(request):
 				return render(request, 'MapFindIt/home.html', {})
 	else:
 		if request.method=="GET" and request.GET.get('pesquisa'):
-			return HttpResponse(request.GET.get('pesquisa'));
+			controle = 0
+			#Pesquisa do usuário
+			strPesquisa = request.GET.get('pesquisa')
+			#Verifica se a pesquisa corresponde a algum título
+			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa)
+			return HttpResponse(strPesquisa);
 		else:
 			return render(request, 'MapFindIt/home.html', {})
 
@@ -115,9 +120,9 @@ def mapasPerfil(request):
 		pontos = serializers.serialize("json", todosPontos)
 		qset = Iconespontos.objects.none()
 		for pt in todosPontos:
-			codPonto=pt.codicone
-			tempset=Iconespontos.objects.filter(codicone=codPonto.codicone)
-			qset = qset | tempset
+			if pt.codicone is not None:
+				tempset=Iconespontos.objects.filter(codicone=pt.codicone.codicone)
+				qset = qset | tempset
 		icones = serializers.serialize("json", qset)
 		comentarios = Comentario.objects.filter(idpostagem=todasPostagens[num].idpostagem)
 		comentario = serializers.serialize("json", comentarios)
@@ -125,6 +130,8 @@ def mapasPerfil(request):
 		for coment in comentarios:
 			autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
 		autores = serializers.serialize("json", autoresArr)
+		todasRotas = Rota.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa)
+		rotas=serializers.serialize("json", todasRotas)
 		data = {
 			'postagem': postagem,
 			'mapa': mapa,
@@ -132,6 +139,7 @@ def mapasPerfil(request):
 			'icones': icones,
 			'comentarios': comentario,
 			'autores': autores,
+			'rotas': rotas,
 		}
 		return JsonResponse(data)
 	else:

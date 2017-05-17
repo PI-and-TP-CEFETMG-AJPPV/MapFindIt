@@ -151,6 +151,7 @@ function carregarMapas(){
 					postagem=postagem.fields;
 					let autores=JSON.parse(data.autores);
 					let comentarios=JSON.parse(data.comentarios);
+					let rotas=JSON.parse(data.rotas);
 					div.append(`
 						<div class='row' style="order:${i}; padding-bottom:20px;">
 					  	<div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
@@ -224,41 +225,64 @@ function carregarMapas(){
 					`);
 					$("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 						 setTimeout(function(){
-							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "mapExp"+(10*(gruposCarregados-1)+i));
+							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, "mapExp"+(10*(gruposCarregados-1)+i));
 						 }, 1000);
 					});
-					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), "map"+(10*(gruposCarregados-1)+i));
+					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, "map"+(10*(gruposCarregados-1)+i));
 				}
 	  });
 	}
 }
 
-function renderizarMapa(id, mapa, pontos, icones){
-	setTimeout(function(){
-		setMapa(JSON.parse(mapa), JSON.parse(pontos), JSON.parse(icones), "mapExp"+id);
-	}, 1000);
-}
-
-function setMapa(mapa, pontos, icones, mapId){
+function setMapa(mapa, pontos, icones, rotas, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};
 		let map = new google.maps.Map(document.getElementById(mapId), {
 			zoom: 12,
 			center: inicio
 		});
 		pontos.forEach(function(item, index){
-			let codIcone=item.fields.codicone;
-			let iconePonto;
-			for(let i=0; i<icones.length; i++){
-				if(icones[i].pk==codIcone){
-					iconePonto=icones[i];
+			if(item.fields.idtponto=='P'){
+				let codIcone=item.fields.codicone;
+				let iconePonto;
+				for(let i=0; i<icones.length; i++){
+					if(icones[i].pk==codIcone){
+						iconePonto=icones[i];
+					}
 				}
+				let pos = {lat: item.fields.coordy, lng: item.fields.coordx};
+				let marker = new google.maps.Marker({
+					 position: pos,
+					 map: map,
+				});
+				marker.setIcon(imgUrl+'MapFindIt/ImagemPonto/'+iconePonto.pk+'.png');
 			}
-			let pos = {lat: item.fields.coordy, lng: item.fields.coordx};
-			let marker = new google.maps.Marker({
-				 position: pos,
-				 map: map,
+
+		});
+		rotas.forEach(function(item, index){
+			let pontosRota=Array();
+			pontos.forEach(function(item, index){
+				if(item.fields.idtponto=='R'){
+					pontosRota.push(item);
+				}
 			});
-			marker.setIcon(imgUrl+'MapFindIt/ImagemPonto/'+iconePonto.pk+'.png');
+			let directionsService = new google.maps.DirectionsService();
+			var directionsDisplay = new google.maps.DirectionsRenderer();
+			let waypts=Array();
+			for(let x=1; x<pontosRota.length-1; x++){
+				waypts.push({location:{lat: pontosRota[x].fields.coordy, lng: pontosRota[x].fields.coordx}, stopover:false});
+			}
+			directionsDisplay.setMap(map);
+			var request = {
+			   origin: {lat: pontosRota[0].fields.coordy, lng: pontosRota[0].fields.coordx},
+			   destination: {lat: pontosRota[pontosRota.length-1].fields.coordy, lng: pontosRota[pontosRota.length-1].fields.coordx},
+				 waypoints: waypts,
+				 travelMode: 'DRIVING'
+			};
+			directionsService.route(request, function(response, status) {
+			  if (status == 'OK') {
+			    directionsDisplay.setDirections(response);
+			  }
+			});
 		});
 }
 
