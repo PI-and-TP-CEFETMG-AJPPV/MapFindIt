@@ -12,7 +12,7 @@ from django.core.files.base import ContentFile
 from django.core import serializers
 import json
 
-
+#Teste
 def home(request):
 	if request.method=="POST":
 		if request.POST.__contains__("primNome"):
