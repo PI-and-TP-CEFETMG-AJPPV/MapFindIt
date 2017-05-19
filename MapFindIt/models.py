@@ -43,6 +43,9 @@ class Cor(models.Model):
     g = models.IntegerField(db_column='G')  # Field name made lowercase.
     b = models.IntegerField(db_column='B')  # Field name made lowercase.
 
+    def natural_key(self):
+        return (self.r, self.g, self.b)
+
     def __str__(self):
         return self.nomecor
 
@@ -144,7 +147,6 @@ class Ponto(models.Model):
     nomponto = models.CharField(db_column='nomPonto', max_length=30, blank=True, null=True)  # Field name made lowercase.
     descponto = models.TextField(db_column='descPonto', blank=True, null=True)  # Field name made lowercase.
     fotoponto = models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemPonto/', null=True, blank=True)  # Field name made lowercase.
-    codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone', blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     idtponto = models.CharField(db_column='idtPonto', max_length=1, blank=True, null=False)
@@ -256,6 +258,7 @@ class Area(models.Model):
     descarea = models.TextField(db_column='descArea')  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
+
 
     def __str__(self):
         return self.nomarea

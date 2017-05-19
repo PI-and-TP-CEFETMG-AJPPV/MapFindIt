@@ -254,7 +254,32 @@ function setMapa(mapa, pontos, icones, rotas, mapId){
 					 position: pos,
 					 map: map,
 				});
-				marker.setIcon(imgUrl+'MapFindIt/ImagemPonto/'+iconePonto.pk+'.png');
+				marker.setIcon(imgUrl+'MapFindIt/ImagemIcones/'+iconePonto.pk+'.png');
+				let contentString;
+				if(item.fields.fotoponto!=""){
+					contentString = 
+					`<div id="content">
+		            	<h1 id="firstHeading" class="firstHeading">${item.fields.nomponto}</h1>
+		            	<div id="bodyContent">
+		            		<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${item.pk}.png">
+		            		<p>${item.fields.descponto}</p>
+		            	</div>
+		            </div>`;
+				}else{
+					contentString = 
+					`<div id="content">
+		            	<h1 id="firstHeading" class="firstHeading">${item.fields.nomponto}</h1>
+		            	<div id="bodyContent">
+		            		<p>${item.fields.descponto}</p>
+		            	</div>
+		            </div>`;
+				}
+		        let infowindow = new google.maps.InfoWindow({
+		          content: contentString
+		        });
+				marker.addListener('click', function() {
+		          infowindow.open(map, marker);
+		        });
 			}
 
 		});
@@ -266,7 +291,11 @@ function setMapa(mapa, pontos, icones, rotas, mapId){
 				}
 			});
 			let directionsService = new google.maps.DirectionsService();
-			var directionsDisplay = new google.maps.DirectionsRenderer();
+			let directionsDisplay = new google.maps.DirectionsRenderer({
+			  polylineOptions: {
+			    strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`
+			  }
+			});
 			let waypts=Array();
 			for(let x=1; x<pontosRota.length-1; x++){
 				waypts.push({location:{lat: pontosRota[x].fields.coordy, lng: pontosRota[x].fields.coordx}, stopover:false});

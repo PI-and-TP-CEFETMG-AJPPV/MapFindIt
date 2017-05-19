@@ -12,7 +12,7 @@ from django.core.files.base import ContentFile
 from django.core import serializers
 import json
 
-#Teste
+
 def home(request):
 	if request.method=="POST":
 		if request.POST.__contains__("primNome"):
@@ -131,7 +131,8 @@ def mapasPerfil(request):
 			autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
 		autores = serializers.serialize("json", autoresArr)
 		todasRotas = Rota.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa)
-		rotas=serializers.serialize("json", todasRotas)
+		rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+
 		data = {
 			'postagem': postagem,
 			'mapa': mapa,
