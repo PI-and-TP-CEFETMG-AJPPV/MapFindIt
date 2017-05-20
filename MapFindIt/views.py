@@ -132,7 +132,10 @@ def mapasPerfil(request):
 		autores = serializers.serialize("json", autoresArr)
 		todasRotas = Rota.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa)
 		rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
-
+		pontosRotasArr=[]
+		for rota in todasRotas:
+			pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+		pontoRotas=json.dumps(pontosRotasArr)
 		data = {
 			'postagem': postagem,
 			'mapa': mapa,
@@ -141,6 +144,7 @@ def mapasPerfil(request):
 			'comentarios': comentario,
 			'autores': autores,
 			'rotas': rotas,
+			'pontoRotas': pontoRotas,
 		}
 		return JsonResponse(data)
 	else:

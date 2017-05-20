@@ -151,6 +151,9 @@ class Ponto(models.Model):
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     idtponto = models.CharField(db_column='idtPonto', max_length=1, blank=True, null=False)
 
+    def natural_key(self):
+        return (self.coordy, self.coordx)
+
     def __str__(self):
         if(self.nomponto):
             return self.nomponto
@@ -214,7 +217,7 @@ class Rota(models.Model):
 
 class RotaPonto(models.Model):
     idrota = models.ForeignKey(Rota, models.DO_NOTHING, db_column='idRota')  # Field name made lowercase.
-    idponto = models.ForeignKey(Ponto, models.DO_NOTHING, db_column='idPonto', primary_key=True)  # Field name made lowercase.
+    idponto = models.ForeignKey(Ponto, models.DO_NOTHING, db_column='idPonto')  # Field name made lowercase.
     seqponto = models.IntegerField(db_column='seqPonto', blank=True, null=True)  # Field name made lowercase.
 
     class Meta:

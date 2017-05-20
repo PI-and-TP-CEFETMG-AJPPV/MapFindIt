@@ -152,6 +152,11 @@ function carregarMapas(){
 					let autores=JSON.parse(data.autores);
 					let comentarios=JSON.parse(data.comentarios);
 					let rotas=JSON.parse(data.rotas);
+					let pontoRotas=JSON.parse(data.pontoRotas);
+					for(let i=0; i<pontoRotas.length; i++){
+						pontoRotas[i]=JSON.parse(pontoRotas[i]);
+					}
+					console.log(pontoRotas);
 					div.append(`
 						<div class='row' style="order:${i}; padding-bottom:20px;">
 					  	<div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
@@ -225,16 +230,16 @@ function carregarMapas(){
 					`);
 					$("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 						 setTimeout(function(){
-							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, "mapExp"+(10*(gruposCarregados-1)+i));
+							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, "mapExp"+(10*(gruposCarregados-1)+i));
 						 }, 1000);
 					});
-					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, "map"+(10*(gruposCarregados-1)+i));
+					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, "map"+(10*(gruposCarregados-1)+i));
 				}
 	  });
 	}
 }
 
-function setMapa(mapa, pontos, icones, rotas, mapId){
+function setMapa(mapa, pontos, icones, rotas, pontoRotas, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};
 		let map = new google.maps.Map(document.getElementById(mapId), {
 			zoom: 12,
@@ -257,7 +262,7 @@ function setMapa(mapa, pontos, icones, rotas, mapId){
 				marker.setIcon(imgUrl+'MapFindIt/ImagemIcones/'+iconePonto.pk+'.png');
 				let contentString;
 				if(item.fields.fotoponto!=""){
-					contentString = 
+					contentString =
 					`<div id="content">
 		            	<h1 id="firstHeading" class="firstHeading">${item.fields.nomponto}</h1>
 		            	<div id="bodyContent">
@@ -266,7 +271,7 @@ function setMapa(mapa, pontos, icones, rotas, mapId){
 		            	</div>
 		            </div>`;
 				}else{
-					contentString = 
+					contentString =
 					`<div id="content">
 		            	<h1 id="firstHeading" class="firstHeading">${item.fields.nomponto}</h1>
 		            	<div id="bodyContent">
@@ -284,29 +289,37 @@ function setMapa(mapa, pontos, icones, rotas, mapId){
 
 		});
 		rotas.forEach(function(item, index){
-			let pontosRota=Array();
-			pontos.forEach(function(item, index){
-				if(item.fields.idtponto=='R'){
-					pontosRota.push(item);
-				}
-			});
+			let pontosRota=pontoRotas[index];
+			console.log(pontosRota);
 			let directionsService = new google.maps.DirectionsService();
 			let directionsDisplay = new google.maps.DirectionsRenderer({
 			  polylineOptions: {
-			    strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`
-			  }
+			    strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
+					strokeWeight: 5
+				},
+				suppressMarkers: true
 			});
 			let waypts=Array();
 			for(let x=1; x<pontosRota.length-1; x++){
-				waypts.push({location:{lat: pontosRota[x].fields.coordy, lng: pontosRota[x].fields.coordx}, stopover:false});
+				waypts.push({location:{lat: pontosRota[x].fields.idponto[0], lng: pontosRota[x].fields.idponto[1]}, stopover:false});
 			}
 			directionsDisplay.setMap(map);
-			var request = {
-			   origin: {lat: pontosRota[0].fields.coordy, lng: pontosRota[0].fields.coordx},
-			   destination: {lat: pontosRota[pontosRota.length-1].fields.coordy, lng: pontosRota[pontosRota.length-1].fields.coordx},
-				 waypoints: waypts,
-				 travelMode: 'DRIVING'
-			};
+			let request;
+			if(waypts.length>0){
+				request = {
+					origin: {lat: pontosRota[0].fields.idponto[0], lng: pontosRota[0].fields.idponto[1]},
+					destination: {lat: pontosRota[pontosRota.length-1].fields.idponto[0], lng: pontosRota[pontosRota.length-1].fields.idponto[1]},
+					waypoints: waypts,
+					travelMode: 'DRIVING'
+				};
+			}else{
+				request = {
+					origin: {lat: pontosRota[0].fields.idponto[0], lng: pontosRota[0].fields.idponto[1]},
+					destination: {lat: pontosRota[pontosRota.length-1].fields.idponto[0], lng: pontosRota[pontosRota.length-1].fields.idponto[1]},
+					travelMode: 'DRIVING'
+				};
+			}
+
 			directionsService.route(request, function(response, status) {
 			  if (status == 'OK') {
 			    directionsDisplay.setDirections(response);
