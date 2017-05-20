@@ -299,6 +299,29 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, mapId){
 				},
 				suppressMarkers: true
 			});
+			let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
+			console.log(index);
+			console.log(pinColor);
+			for(let x=0; x<pontosRota.length; x++){
+				let marker = new google.maps.Marker({
+					 position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
+					 map: map,
+					 icon: pinSymbol(pinColor)
+				});
+				let contentString=
+					`<div id="content">
+		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
+		          <div id="bodyContent">
+		             <p>${item.fields.descrota}</p>
+		          </div>
+		       </div>`;
+		    let infowindow = new google.maps.InfoWindow({
+		       content: contentString
+		    });
+				marker.addListener('click', function() {
+		      infowindow.open(map, marker);
+		    });
+			}
 			let waypts=Array();
 			for(let x=1; x<pontosRota.length-1; x++){
 				waypts.push({location:{lat: pontosRota[x].fields.idponto[0], lng: pontosRota[x].fields.idponto[1]}, stopover:false});
@@ -326,6 +349,29 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, mapId){
 			  }
 			});
 		});
+}
+
+function pinSymbol(color) {
+		if(color=='rgb(0,0,0)'){
+			return {
+	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#FFF',
+	        strokeWeight: 1,
+	        scale: 1,
+	   };
+		}else{
+			return {
+	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#000',
+	        strokeWeight: 2,
+	        scale: 1,
+	   };
+		}
+
 }
 
 function initMap(){

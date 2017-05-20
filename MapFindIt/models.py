@@ -150,6 +150,7 @@ class Ponto(models.Model):
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone', blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     idtponto = models.CharField(db_column='idtPonto', max_length=1, blank=True, null=False)
+    #codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
 
     def natural_key(self):
         return (self.coordy, self.coordx)
