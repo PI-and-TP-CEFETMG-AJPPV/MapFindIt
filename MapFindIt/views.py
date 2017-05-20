@@ -27,13 +27,26 @@ def home(request):
 			else:
 				return render(request, 'MapFindIt/home.html', {})
 	else:
+		#Método de Pesquisa
 		if request.method=="GET" and request.GET.get('pesquisa'):
-			controle = 0
 			#Pesquisa do usuário
 			strPesquisa = request.GET.get('pesquisa')
 			#Verifica se a pesquisa corresponde a algum título
 			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa)
-			return HttpResponse(strPesquisa);
+			#contabiliza a quantidade de mapas encontrados pelo titulo
+			controle = 0
+			for n in result:
+				controle += 1
+			#Se for menor do que 10 busca mapas pelo tema
+			if controle < 10:
+				tema = Tema.objects.filter(nomtema__icontains=strPesquisa)
+				for n in tema:
+					result = result | Mapa.objects.filter(codtema=n.codtema)
+			#contabiliza a quantidade de mapas encontrados pelo titulo + categoria
+			controle = 0
+			for n in result:
+				controle += 1
+			return HttpResponse(controle);
 		else:
 			return render(request, 'MapFindIt/home.html', {})
 
