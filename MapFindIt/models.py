@@ -167,13 +167,12 @@ class Ponto(models.Model):
 
 
 class Pontoarea(models.Model):
-    idmapaarea = models.ForeignKey('Area', models.DO_NOTHING, db_column='idMapaArea', primary_key=True)  # Field name made lowercase.
-    idarea = models.ForeignKey('Area', models.DO_NOTHING, db_column='idArea', related_name="id2")  # Field name made lowercase.
+    idarea = models.ForeignKey('Area', models.DO_NOTHING, db_column='idArea')  # Field name made lowercase.
     idponto = models.ForeignKey(Ponto, models.DO_NOTHING, db_column='idPonto')  # Field name made lowercase.
 
     class Meta:
         db_table = 'pontoarea'
-        unique_together = (('idmapaarea', 'idarea', 'idponto'),)
+        unique_together = ('idarea', 'idponto')
 
 
 class Postagem(models.Model):
@@ -256,8 +255,8 @@ class Usuario(models.Model):
 
 
 class Area(models.Model):
-    idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa', primary_key=True)  # Field name made lowercase.
-    idarea = models.CharField(db_column='idArea', max_length=20)  # Field name made lowercase.
+    idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
+    idarea = models.AutoField(db_column='idArea', primary_key=True)  # Field name made lowercase.
     nomarea = models.CharField(db_column='nomArea', max_length=20)  # Field name made lowercase.
     descarea = models.TextField(db_column='descArea')  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
@@ -269,4 +268,3 @@ class Area(models.Model):
 
     class Meta:
         db_table = 'Area'
-        unique_together = (('idmapa', 'idarea'),)

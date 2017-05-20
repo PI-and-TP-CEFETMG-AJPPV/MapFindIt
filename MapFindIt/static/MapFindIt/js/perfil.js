@@ -156,6 +156,11 @@ function carregarMapas(){
 					for(let i=0; i<pontoRotas.length; i++){
 						pontoRotas[i]=JSON.parse(pontoRotas[i]);
 					}
+					let areas=JSON.parse(data.areas);
+					let pontoAreas=JSON.parse(data.pontoAreas);
+					for(let i=0; i<pontoAreas.length; i++){
+						pontoAreas[i]=JSON.parse(pontoAreas[i]);
+					}
 					console.log(pontoRotas);
 					div.append(`
 						<div class='row' style="order:${i}; padding-bottom:20px;">
@@ -230,16 +235,16 @@ function carregarMapas(){
 					`);
 					$("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 						 setTimeout(function(){
-							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, "mapExp"+(10*(gruposCarregados-1)+i));
+							 setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
 						 }, 1000);
 					});
-					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, "map"+(10*(gruposCarregados-1)+i));
+					setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 				}
 	  });
 	}
 }
 
-function setMapa(mapa, pontos, icones, rotas, pontoRotas, mapId){
+function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};
 		let map = new google.maps.Map(document.getElementById(mapId), {
 			zoom: 12,
@@ -348,6 +353,37 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, mapId){
 			    directionsDisplay.setDirections(response);
 			  }
 			});
+		});
+
+		areas.forEach(function(item, index){
+			let pontosArea=pontoAreas[index];
+			let coords=Array();
+			for(let x=0; x<pontosArea.length; x++){
+				coords.push({lat: pontosArea[x].fields.idponto[0], lng: pontosArea[x].fields.idponto[1]});
+			}
+			let areaPoligono = new google.maps.Polygon({
+          paths: coords,
+          strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
+          fillOpacity: 0.5
+      });
+      areaPoligono.setMap(map);
+			let contentString=
+				`<div id="content">
+						<h2 id="firstHeading" class="firstHeading">${item.fields.nomarea}</h2>
+						<div id="bodyContent">
+							 <p>${item.fields.descarea}</p>
+						</div>
+				 </div>`;
+			let infowindow = new google.maps.InfoWindow({
+				 content: contentString
+			});
+			google.maps.event.addListener(areaPoligono, 'click', function (event) {
+				infowindow.setPosition(event.latLng);
+				infowindow.open(map);
+		  });
 		});
 }
 
