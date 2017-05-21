@@ -10,18 +10,27 @@
 
   	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
   	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
-
-		<style>
-    	#map {
-        height: 400px;
-        width: 100%;
-    	}
-    </style>
   </head>
   <body>
     <div class="container-fluid">
 			<div class="row">
-				<div class="col-md-4">
+				<div class="col-md-12" style="background:skyblue;">
+					<!--Barra de Pesquisa-->
+					<div class="pesquisa navbar-collapse" align="center">
+            <form class="navbar-form" id="navBarSearchForm" method="GET">
+              <div class="input-group">
+        				<input type="text" class="form-control" style="width:500px" placeholder="Digite sua pesquisa" id="pesquisa" name="pesquisa" value="">
+                <div class="input-group-btn">
+                	<button type="submit" class="btn button">Pesquisar</button>
+                </div>
+      				</div>
+            </form>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">
+					<!--Box Flutuante-->
 					<div id="box">	
 						<div class="row">
 	            <div class=col-md-12>
@@ -45,20 +54,19 @@
 					       		<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn button" id="Cadastrar">Cadastrar</button>
 					       	</div>
 					       	<div align="center" style="padding-top: 4px">
-					       		<button type="button" class="btn button" id="EsqSenha" style="background-color: skyblue;">Esqueci minha senha</button>
+					       		<button type="button" class="btn button" id="EsqSenha">Esqueci minha senha</button>
 					       	</div>
 								</form>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="col-md-8">
-	
+				<div class="col-md-10">	
 				</div>
 			</div>
 		</div>
 		
-		<!--Modal Cadastro-->
+		<!--Modal Cadastro Temporário-->
 		<div class="modal fade" id="modal-container-cadastro" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
@@ -138,292 +146,6 @@
 			</div>
 		</div>
 
-				<!--	</div>
-				</div>
-			</div>
-			<div class="col-md-8 conteudo">
-				<div class="container-fluid">
-					<div class="row">
-						<br>
-						<div class="pesquisa navbar-collapse">
-              <form class="navbar-form" id="navBarSearchForm"  method="GET">
-              	<div class="input-group">
-        					<input type="text" class="form-control" style="width:430px" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="">
-                  <div class="input-group-btn">
-                	   <button type="submit" class="btn btn-default">Pesquisar</button>
-                  </div>
-      				  </div>
-              </form>
-						</div>
-					</div>
-					<div id="Mapas">
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-				      		 <br>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-						<div class="row">
-							 <a id="modal-925678" href="#modal-container-mapa" role="button" class="btn" data-toggle="modal" id="modal_mapa">Exemplo</a>
-							 <div name="map" id="map"></div>
-				      		 <br>
-							<div class="modal fade" id="modal-container-mapa" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-								<div class="modal-dialog">
-									<div class="modal-content">
-										<div class="modal-header">
-
-											<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-												×
-											</button>
-											<h4 class="modal-title" id="myModalLabel">
-												exemplo mapa
-											</h4>
-										</div>
-										<div class="modal-body">
-											<img alt="Mapa de exemplo" src="{% static "MapFindIt/img/google-maps-rotas.jpg" %}" id="exemplo_mapa">
-										</div>
-										<div class="modal-footer">
-										</div>
-									</div>
-
-								</div>
-
-							</div>
-						</div>
-					</div>
-				</div>
-		</div>
-	</div>
-	-->
     <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>

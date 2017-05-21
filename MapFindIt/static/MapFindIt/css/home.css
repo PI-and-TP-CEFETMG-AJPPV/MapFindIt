@@ -1,5 +1,5 @@
 body{
-  background-color: skyblue;
+  background-color: #4388CC;
 }
 
 #logo{
@@ -40,39 +40,10 @@ body{
 
 .button {
   width: 155px;
-  background-color: skyblue;
-  border: 2px solid black;
+  background-color: #4388CC;
+  border: 1px solid black;
+  color: white;
 }
 
-
-
-
-
-#form1 {
-  margin-top: 5%;
-}
-
-#menu_pesquisa{
-  margin-top: 5%;
-}
-
-#exemplo_mapa{
-  width: 100%;
-  height: 110%;
-}
-#exemploicon{
-  width: 90%;
-  height: 80%;
-}
-#campo{
-  width: 500px;
-
-}
-
-
-
-.conteudo{
-	background-color: white;
-}
 
 

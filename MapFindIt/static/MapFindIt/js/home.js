@@ -16,15 +16,15 @@ var erroData;
 var erroEmailExiste;
 
 function validateCadastro(){
-		let email = $('#emailCad');
-		let emailConf = $('#emailConf');
-		let senha = $('#password');
-		let senhaConf = $('#password_confirmation');
-		let data = $('#dataNascimento');
-		let sexoM = $('#masc');
-		let sexoF= $('#femin');
-		let termos = $('#aceito');
-		let retorno=true;
+	let email = $('#emailCad');
+	let emailConf = $('#emailConf');
+	let senha = $('#password');
+	let senhaConf = $('#password_confirmation');
+	let data = $('#dataNascimento');
+	let sexoM = $('#masc');
+	let sexoF= $('#femin');
+	let termos = $('#aceito');
+	let retorno=true;
   	if (email.val() != emailConf.val()) {
         emailConf.parent().addClass('has-error');
         if($('#erroEmail').length === 0) {
