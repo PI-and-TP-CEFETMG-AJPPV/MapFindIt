@@ -8,8 +8,11 @@ function validateAlteracao(){
 		let sexoM = $('#masc');
 		let sexoF= $('#femin');
 		let retorno=true;
+		//Transforma data em Date String
     let newdate = data.val().split("/").reverse().join("-");
-    let dataValidacao = new Date(newdate);
+		//Cria um objeto date com a data
+		let dataValidacao = new Date(newdate);
+		//Caso a ano seja invalido ou a data inserida seja invalida falha
     if(dataValidacao.toString()=="Invalid Date" || dataValidacao.getFullYear()<1900 ){
     	data.parent().addClass('has-error');
     	if($("#erroData").length === 0){
@@ -17,6 +20,7 @@ function validateAlteracao(){
     	}
     	retorno =false;
     }else{
+			//Se está correto remove o erro
 			data.parent().removeClass('has-error');
 			if(erroData){
 				erroData.remove();
@@ -28,6 +32,7 @@ function validateAlteracao(){
 }
 
 function minCaracSenha(senha){
+	//Checa se a senha corresponde aos requisitos minimos de senha
 	return senha.match(/[a-zA-Z]/g) && senha.match(/[0-9]/g);
 }
 
@@ -36,6 +41,7 @@ function validateNovaSenha(){
   let senhaConf = $('#password_confirmation');
   let senhaAtual = $('#senhaAtual');
   let retorno=true;
+	//Checa se as senhas batem
   if (senha.val() != senhaConf.val()) {
       senhaConf.parent().addClass('has-error');
       if($('#erroSenhaConf').length === 0) {
@@ -48,6 +54,7 @@ function validateNovaSenha(){
       erroSenhaConf.remove();
     }
   }
+	//Checa o tamanho e os requisitos minimos da senha
   if(senha.val().length < 6 || !minCaracSenha(senha.val())){
     senha.parent().addClass('has-error');
     if($('#erroSenha').length === 0) {
@@ -60,6 +67,7 @@ function validateNovaSenha(){
       erroSenha.remove();
     }
   }
+	//Checa se a senha digitada está correta
   $.ajax({
       url: '/ajax/checkarSenha/',
       data: {
@@ -86,7 +94,7 @@ function validateNovaSenha(){
       }
   });
 }
-
+//Função para mudar a imagem do Crop
 function readURL(input) {
 		if (input.files && input.files[0]) {
 		    var reader = new FileReader();
@@ -107,11 +115,12 @@ $("#imgInp").change(function(){
 });
 
 function mudarImagem(){
+		//Obtem a imagem cropped em blob
     $("#novaImg").cropper('getCroppedCanvas').toBlob(function (blob) {
-
-      var reader = new window.FileReader();
-      reader.readAsDataURL(blob);
-      reader.onloadend = function() {
+					//Envia o blob para o back-end
+		      var reader = new window.FileReader();
+		      reader.readAsDataURL(blob);
+		      reader.onloadend = function() {
           base64data = reader.result;
           $("#blob").val(base64data);
           $('#formImagem').submit();
@@ -119,8 +128,10 @@ function mudarImagem(){
     });
 
 }
+//Quantidade de grupos de 10 mapas carregados
 var gruposCarregados=0;
 
+//Formata a data do input
 function formatarData(input) {
     var ptrn = /(\d{4})\-(\d{2})\-(\d{2})/;
     if(!input || !input.match(ptrn)) {
@@ -129,7 +140,9 @@ function formatarData(input) {
     return input.replace(ptrn, '$3/$2/$1');
 };
 
+//Carrega o grupo de 10 mapas
 function carregarMapas(){
+	//Seleciona a div dos mapas
 	let div=$("#divMapas");
 	gruposCarregados++;
 	for(let i=0; i<10; i++){
@@ -141,9 +154,11 @@ function carregarMapas(){
 	      },
 	      dataType: 'json',
 	      success: function (data) {
+					//Se todas as postagens tiverem sido carregas
 					if(data.erro){
 						return;
 					}
+					//Prepara a postagem carregada
 					prepararPostagem(div, data, i)
 				}
 	  });
@@ -151,6 +166,7 @@ function carregarMapas(){
 }
 
 function initMap(){
+		//Carrega o primeiro grupo de postagens
 		carregarMapas();
 }
 
