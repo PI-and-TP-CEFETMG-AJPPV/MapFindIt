@@ -25,7 +25,7 @@ class Comentario(models.Model):
     txtcomentario = models.TextField(db_column='txtComentario')  # Field name made lowercase.
     datacomentario = models.DateField(db_column='dataComentario')  # Field name made lowercase.
     horacomentario = models.TimeField(db_column='horaComentario')  # Field name made lowercase.
-    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', primary_key=True)  # Field name made lowercase.
+    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
     idpostagem = models.ForeignKey('Postagem', models.DO_NOTHING, db_column='idPostagem')  # Field name made lowercase.
 
     def __str__(self):
@@ -33,7 +33,6 @@ class Comentario(models.Model):
 
     class Meta:
         db_table = 'comentario'
-        unique_together = (('idusuario', 'idpostagem'),)
 
 
 class Cor(models.Model):
@@ -78,7 +77,7 @@ class Iconespontos(models.Model):
 
 
 class Interesseusuariotema(models.Model):
-    codtema = models.ForeignKey('Tema', models.DO_NOTHING, db_column='codTema', primary_key=True)  # Field name made lowercase.
+    codtema = models.ForeignKey('Tema', models.DO_NOTHING, db_column='codTema')  # Field name made lowercase.
     valvisualizacoes = models.IntegerField(db_column='valVisualizacoes')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
 
@@ -89,7 +88,7 @@ class Interesseusuariotema(models.Model):
 
 class Legenda(models.Model):
     txtlegenda = models.TextField(db_column='txtLegenda')  # Field name made lowercase.
-    idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa', primary_key=True)  # Field name made lowercase.
+    idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
     codicone = models.ForeignKey(Iconespontos, models.DO_NOTHING, db_column='codIcone')  # Field name made lowercase.
 
     def __str__(self):
@@ -122,7 +121,7 @@ class Mapa(models.Model):
 
 
 class Membrosgrupo(models.Model):
-    idgrupo = models.ForeignKey(Grupo, models.DO_NOTHING, db_column='idGrupo', primary_key=True)  # Field name made lowercase.
+    idgrupo = models.ForeignKey(Grupo, models.DO_NOTHING, db_column='idGrupo')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
 
     class Meta:
@@ -131,7 +130,7 @@ class Membrosgrupo(models.Model):
 
 
 class Permissaocolaboracao(models.Model):
-    idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa', primary_key=True)  # Field name made lowercase.
+    idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
 
     class Meta:

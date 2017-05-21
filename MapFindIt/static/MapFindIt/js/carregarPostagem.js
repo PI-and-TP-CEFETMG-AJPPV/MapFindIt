@@ -1,3 +1,12 @@
+/*
+	Para usar esse script é necessário usar a tag
+	<script>
+		var imgUrl='{{baseUrl}}';
+		var idUsuarioLogado='{{usuario.idusuario}}'
+	</script>
+	Para que se tenha o diretorio dos caminhos estáticos e o id do usuário que está logado
+*/
+
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};
@@ -194,7 +203,108 @@ function pinSymbol(color) {
 		}
 }
 
-function comentar(id){
+//Formata a data do input
+function formatarData(input) {
+    var ptrn = /(\d{4})\-(\d{2})\-(\d{2})/;
+    if(!input || !input.match(ptrn)) {
+        return null;
+    }
+    return input.replace(ptrn, '$3/$2/$1');
+};
+
+//Variaveis para guardar erros de validação do comentario
+var erroTitulo;
+var erroTexto;
+
+function comentar(id, idPost, idUser){
+	let titulo=$(`#tituloComentario${id}`);
+	let texto=$(`#txtComentario${id}`);
+	//Validações
+	//Titulo não está vazio
+	if(!titulo.val()){
+		titulo.parent().addClass('has-error');
+		if($('#erroTitulo').length === 0) {
+			erroTitulo=$('<span id="erroTitulo" class="help-block">Titulo Vazio</span>').appendTo(titulo.parent());
+		}
+	}else{
+		titulo.parent().removeClass('has-error');
+		if(erroTitulo){
+			erroTitulo.remove();
+		}
+		//Remove o erro da variavel
+		erroTitulo=null;
+	}
+	//Texto não está vazio
+	if(!texto.val()){
+		texto.parent().addClass('has-error');
+		if($('#erroTexto').length === 0) {
+			erroTexto=$('<span id="erroTexto" class="help-block">Texto Vazio</span>').appendTo(texto.parent());
+		}
+	}else{
+		texto.parent().removeClass('has-error');
+		if(erroTexto){
+			erroTexto.remove();
+		}
+		//Remove o erro da variavel
+		erroTexto=null;
+	}
+	//Caso tenha ocorrido algum erro sai da função
+	if(erroTitulo || erroTexto){
+		return;
+	}
+	//Processamento do comentário
+	//Remove o aviso de que não há comentários
+	$(`#naoComentarios${id}`).remove();
+	//Salva data e hora atuais
+	let objData = new Date();
+	let hora=(objData.getHours()<10?'0':'')+String(objData.getHours())+':'+(objData.getMinutes()<10?'0':'')+String(objData.getMinutes())+":"+(objData.getMinutes()<10?'0':'')+String(objData.getSeconds());
+	let dataStr=objData.toISOString().split('T')[0];
+	//Salva o comentário na postagem
+	$.ajax({
+      url: '/ajax/salvarComentario/',
+      data: {
+        'titulo': titulo.val(),
+        'texto': texto.val(),
+				'hora': hora,
+				'data': dataStr,
+				'postagem': idPost,
+				'user': idUser,
+      },
+      dataType: 'json',
+      success: function (data) {
+				//Pega o autor do comentario
+				autor=JSON.parse(data.autor)[0];
+				//Caso tenha suceso
+				if(JSON.parse(data.sucesso)){
+					//Adiciona o comentario
+					$('#comentarios'+id).append(`
+							<div class="row" style="order: ${$('#comentarios'+id).children().length}">
+								<div class="col-md-12">
+									<div class="card-container">
+										<div class="card">
+											<div class="content">
+													<div class="main">
+															<h4>${titulo.val()}</h4>
+															<p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(dataStr)} às ${hora}</small></small></p>
+															<p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autor.pk}">${autor.fields.primnomeusuario} ${autor.fields.ultnomeusuario}</a></small></p>
+															<p style="text-align: left">${texto.val()}</p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+						`);
+						//Coloca a order do botão correta, para que ele fique no topo
+						$('#botao'+id).css('order', $('#comentarios'+id).children().length);
+						//Esconde o modal de comentar e esvazia os campos
+						$(`#modal_comentar${id}`).modal("hide");
+						titulo.val('');
+						texto.val("Comentario...");
+				}
+
+      }
+  });
 
 }
 
@@ -246,9 +356,11 @@ function prepararPostagem(div, data, i){
                 <div class='modal-body modal-map-body'>
                   <div class="container-fluid">
                     <div class="row">
-                      <div class="col-md-2" id="comentarios${10*(gruposCarregados-1)+i}" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
-                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
-                      </div>
+											<div class="col-md-2" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
+	                      <div id="comentarios${10*(gruposCarregados-1)+i}" class="container-comentarios">
+	                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
+	                      </div>
+											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
                       </div>
@@ -263,7 +375,7 @@ function prepararPostagem(div, data, i){
 		 //Se não existirem comentários cria aviso de que não existem comentários
      if(comentarios.length<1){
        $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
-          <div class="row">
+          <div class="row" id="naoComentarios${10*(gruposCarregados-1)+i}">
             <div class="col-md-12">
               <p style="text-align: left;">Ainda não existem comentários</p>
               </div>
@@ -273,7 +385,7 @@ function prepararPostagem(div, data, i){
 		 //Adiciona os comentários ao div do mapa expandido
     comentarios.forEach(function(comentario, index){
       $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
-          <div class="row">
+          <div class="row" style="order:${index}">
             <div class="col-md-12">
               <div class="card-container">
                 <div class="card">
@@ -293,8 +405,11 @@ function prepararPostagem(div, data, i){
     });
 		//Botao para comentar e modal de comentario
     $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
-        <button id="comentar${10*(gruposCarregados-1)+i}" href='#modal_comentar${10*(gruposCarregados-1)+i}' data-toggle="modal" class="btn btn-default">Comentar</button>
-        <p style="padding:0px; margin:0px">&nbsp</p>
+			  <div id="botao${10*(gruposCarregados-1)+i}" style="order: ${$('#comentarios'+(10*(gruposCarregados-1)+i)).children().length}">
+					<br>
+					<button id="comentar${10*(gruposCarregados-1)+i}" href='#modal_comentar${10*(gruposCarregados-1)+i}' data-toggle="modal" class="btn btn-default">Comentar</button>
+	        <p style="padding:0px; margin:0px">&nbsp</p>
+				</div>
 				<div class='modal fade' id='modal_comentar${10*(gruposCarregados-1)+i}' name="modalComentarMap" aria-hidden='true'>
 					 <div class='modal-dialog' >
 						 <div class='modal-content'>
@@ -310,13 +425,13 @@ function prepararPostagem(div, data, i){
 								 <div class="container-fluid">
 									 <form id="formComentario${10*(gruposCarregados-1)+i}">
 										 <div class="form-group">
-											 <input type="text" name="titulo" class="form-control input-lg" placeholder="Titulo do Comentario" required>
+											 <input type="text" name="titulo" id="tituloComentario${10*(gruposCarregados-1)+i}" class="form-control input-lg" placeholder="Titulo do Comentario" required>
 										 </div>
 										 <div class="form-group">
-										 	 <textarea name="fraseUsuario" class="form-control" rows="2">Comentario...</textarea>
+										 	 <textarea name="fraseUsuario" id="txtComentario${10*(gruposCarregados-1)+i}" class="form-control" rows="2">Comentario...</textarea>
 										 </div>
 										 <div class="form-group">
-										 	  <button type="button" onclick="comentar(${10*(gruposCarregados-1)+i});">Comentar</button>
+										 	  <button type="button" onclick="comentar(${10*(gruposCarregados-1)+i}, ${JSON.parse(data.postagem)[0].pk}, ${idUsuarioLogado});">Comentar</button>
 										 </div>
 									 </form>
 								 </div>

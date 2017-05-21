@@ -208,6 +208,19 @@ def getDadosPostagem(postagem):
 	#Retorna um array com todos os dados
 	return [mapa, pontos, icones, comentario, autores, rotas, pontoRotas, areas, pontoAreas,]
 
+def salvarComentario(request):
+	titulo = request.GET.get('titulo', None)
+	texto = request.GET.get('texto', None)
+	data = request.GET.get('data', None)
+	hora = request.GET.get('hora', None)
+	iduser = int(request.GET.get('user', None))
+	idpost = int(request.GET.get('postagem', None))
+	comentario = Comentario.objects.create(titulocomentario=titulo, txtcomentario=texto, datacomentario=data, horacomentario= hora, idusuario=Usuario.objects.filter(idusuario=iduser).first(), idpostagem=Postagem.objects.filter(idpostagem=idpost).first())
+	comentario.save()
+	autor = Usuario.objects.filter(idusuario=iduser)
+	jsonAutor = postagem = serializers.serialize('json', autor);
+	return JsonResponse({'sucesso': True, 'autor': jsonAutor})
+
 def mapasPerfil(request):
 	#Pega a posicao do mapa que deve ser carregado
 	num = request.GET.get('num', None)

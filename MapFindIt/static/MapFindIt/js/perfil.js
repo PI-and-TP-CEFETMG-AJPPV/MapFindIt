@@ -1,3 +1,4 @@
+//Variaveis para guardar os erros
 var erroData;
 var erroSenhaConf;
 var erroSenha;

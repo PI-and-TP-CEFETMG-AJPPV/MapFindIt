@@ -8,6 +8,7 @@ function minCaracSenha(senha){
 	return senha.match(/[a-zA-Z]/g) && senha.match(/[0-9]/g);
 }
 
+//Variaveis para guardar os erros
 var erroEmail;
 var erroSenhaConf;
 var erroSenha;
