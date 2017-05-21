@@ -1,144 +1,144 @@
 <!DOCTYPE html>
 {% load static %}
 <html lang="pt-br">
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    
-    <title>MapFindIt</title>
+	<head>
+		<meta charset="utf-8">
+  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
 
-    <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-    <link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
+  	<title>MapFindIt</title>
 
-	<style>
-       #map {
+  	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+  	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
+
+		<style>
+    	#map {
         height: 400px;
         width: 100%;
-       }
-
+    	}
     </style>
-
   </head>
   <body>
-
     <div class="container-fluid">
-			<div class="col-md-4">
-				<div class="container-fluid">
-					<div class="row">
-						<img alt="Logo" src="{% static "MapFindIt/img/LogoBackGreen.jpg" %}" id="logo">
-					</div>
-					<br>
-					<div class="row">
-						<form id="formLogin" method="POST">
-							{% csrf_token %}
-							<div class="form-group">
-								<input type="email" name="email" class="form-control" required id="emailLogin" placeholder="E-mail" >
-							</div>
-							<div class="form-group">
-								<input type="password" class="form-control" required name="senha" id="senhaLogin" placeholder="Senha">
-							</div>
-							<div class="form-group">
-								<div class="checkbox">
-									&nbsp<label><input type="checkbox">Permanecer logado</label>
-								</div>
-							</div>
-							<button type="button" class="btn btn-default" onclick="validateLogin();" id="Logar">
-								Logar
-							</button>
-			       			<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn btn-default" id="Cadastrar">
-								Cadastrar
-							</button>
-						</form>
-
-						<div class="modal fade" id="modal-container-cadastro" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-							<div class="modal-dialog">
-								<div class="modal-content">
-									<div class="modal-header">
-										<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
-											×
-										</button>
-										<h4 class="modal-title" id="myModalLabel">
-											Cadastrar nova conta
-										</h4>
-									</div>
-									<div class="modal-body">
-										<form id="formCadastro" method="POST">
-											{% csrf_token %}
-											<div class="row">
-										    	<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-						                        		<input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" required>
-													</div>
-												</div>
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" tabindex="2" required>
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<input type="text" name="email" id="emailCad" class="form-control input-lg" placeholder="E-mail" tabindex="3" required>
-											</div>
-											<div class="form-group">
-												<input type="email" name="emailConf" id="emailConf" class="form-control input-lg" placeholder="Confirmar E-mail" tabindex="4" required>
-											</div>
-											<div class="row">
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
-													</div>
-												</div>
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
-													</div>
-												</div>
-											</div>
-											<div class="form-group">
-												<label for="datetimepicker1">Data de Nascimento</label>
-												<div class='input-group date' id='datetimepicker1'>
-									                <input type='text' name="nascimento" id="dataNascimento"
-									                placeholder="__/__/____" required class="form-control" />
-									            </div>
-											</div>
-											<div class="row">
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<div class="radio">
-			  												<label><input type="radio" name="gender" id="masc" value="masculino">Masculino</label>
-														</div>
-													</div>
-												</div>
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<div class="radio">
-			  												<label><input type="radio"
-			  												id="femin" name="gender" value="feminino">Feminino</label>
-														</div>
-													</div>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-xs-8 col-sm-9 col-md-9">
-													<div class="checkbox">
-			  											<label><input type="checkbox" name="aceito" id="aceito" value="">Eu aceito os <a href="#" data-toggle="modal" data-target="#termosCondicoes">Termos e Condições</a></label>
-													</div>
-												</div>
-											</div>
-										</form>
-									</div>
-									<div class="modal-footer">
-										<button type="button" onclick="validateCadastro();" class="btn btn-success"> Confirmar </button>
-										<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
-									</div>
-								</div>
-
-							</div>
-
+			<div class="row">
+				<div class="col-md-4">
+					<div id="box">	
+						<div class="row">
+	            <div class=col-md-12>
+	            	<img alt="Logo" src="{% static "MapFindIt/img/Logo.jpg" %}" id="logo">
+	            </div>
 						</div>
-
+						<div class="row">
+							<div class="col-md-12">
+								<p class="lema">Inovando a forma como você interage</p>
+								<form id="formLogin" method="POST">
+									{% csrf_token %}
+									<div class="form-group">
+										<input type="email" name="email" class="form-control" required id="emailLogin" placeholder="E-mail" >
+									</div>
+									<div class="form-group">
+										<input type="password" name="senha" class="form-control" required id="senhaLogin" placeholder="Senha">
+									</div>
+									<div align="center">	
+										<button type="button" class="btn button" onclick="validateLogin();" 
+										id="Logar">Logar</button>
+					       		<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn button" id="Cadastrar">Cadastrar</button>
+					       	</div>
+					       	<div align="center" style="padding-top: 4px">
+					       		<button type="button" class="btn button" id="EsqSenha" style="background-color: skyblue;">Esqueci minha senha</button>
+					       	</div>
+								</form>
+							</div>
+						</div>
 					</div>
+				</div>
+				<div class="col-md-8">
+	
+				</div>
+			</div>
+		</div>
+		
+		<!--Modal Cadastro-->
+		<div class="modal fade" id="modal-container-cadastro" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+						<h4 class="modal-title" id="myModalLabel">Cadastrar nova conta</h4>
+					</div>
+					<div class="modal-body">
+						<form id="formCadastro" method="POST">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+							      <input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" required>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" tabindex="2" required>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<input type="text" name="email" id="emailCad" class="form-control input-lg" placeholder="E-mail" tabindex="3" required>
+							</div>
+							<div class="form-group">
+								<input type="email" name="emailConf" id="emailConf" class="form-control input-lg" placeholder="Confirmar E-mail" tabindex="4" required>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<label for="datetimepicker1">Data de Nascimento</label>
+								<div class='input-group date' id='datetimepicker1'>
+									<input type='text' name="nascimento" id="dataNascimento" placeholder="__/__/____" required class="form-control" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<div class="radio">
+				  						<label><input type="radio" name="gender" id="masc" value="masculino">Masculino</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<div class="radio">
+				  						<label><input type="radio" id="femin" name="gender" value="feminino">Feminino</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-8 col-sm-9 col-md-9">
+									<div class="checkbox">
+				  					<label><input type="checkbox" name="aceito" id="aceito" value="">Eu aceito os <a href="#" data-toggle="modal" data-target="#termosCondicoes">Termos e Condições</a></label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" onclick="validateCadastro();" class="btn btn-success"> Confirmar </button>
+						<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+					</div>
+				</div>
+			</div>
+		</div>
+
+				<!--	</div>
 				</div>
 			</div>
 			<div class="col-md-8 conteudo">
@@ -423,13 +423,11 @@
 				</div>
 		</div>
 	</div>
+	-->
     <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
-    </script>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap"></script>
     <script src="{% static "MapFindIt/js/home.js" %}"></script>
-
   </body>
 </html>

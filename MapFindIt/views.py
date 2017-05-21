@@ -31,9 +31,9 @@ def home(request):
 		if request.method=="GET" and request.GET.get('pesquisa'):
 			#Pesquisa do usuário
 			strPesquisa = request.GET.get('pesquisa')
-			#Verifica se a pesquisa corresponde a algum título
+			#Busca mapas pelo título
 			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa)
-			#contabiliza a quantidade de mapas encontrados pelo titulo
+			#Contabiliza a quantidade de mapas encontrados pelo titulo
 			controle = 0
 			for n in result:
 				controle += 1
@@ -42,11 +42,15 @@ def home(request):
 				tema = Tema.objects.filter(nomtema__icontains=strPesquisa)
 				for n in tema:
 					result = result | Mapa.objects.filter(codtema=n.codtema)
-			#contabiliza a quantidade de mapas encontrados pelo titulo + categoria
+			#Contabiliza a quantidade de mapas encontrados pelo titulo + tema
 			controle = 0
 			for n in result:
 				controle += 1
-			return HttpResponse(controle);
+			#Se for menor do que 10 busca mapas pela descrição
+			if controle < 10:
+				result = result | Mapa.objects.filter(descmapa__icontains=strPesquisa)
+
+			return HttpResponse(result);
 		else:
 			return render(request, 'MapFindIt/home.html', {})
 
