@@ -194,8 +194,8 @@ function pinSymbol(color) {
 		}
 }
 
-function comentar(){
-	
+function comentar(id){
+
 }
 
 function prepararPostagem(div, data, i){
@@ -291,10 +291,39 @@ function prepararPostagem(div, data, i){
             </div>
         `);
     });
-		//Botao para comentar
+		//Botao para comentar e modal de comentario
     $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
-        <button id="comentar${10*(gruposCarregados-1)+i}" onclick="comentar();" class="btn btn-default">Comentar</button>
+        <button id="comentar${10*(gruposCarregados-1)+i}" href='#modal_comentar${10*(gruposCarregados-1)+i}' data-toggle="modal" class="btn btn-default">Comentar</button>
         <p style="padding:0px; margin:0px">&nbsp</p>
+				<div class='modal fade' id='modal_comentar${10*(gruposCarregados-1)+i}' name="modalComentarMap" aria-hidden='true'>
+					 <div class='modal-dialog modal-map-dialog' >
+						 <div class='modal-content modal-map-content'>
+							 <div class='modal-header'>
+								 <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+									 ×
+								 </button>
+								 <h4 class='modal-title'>
+									 Comentar
+								 </h4>
+							 </div>
+							 <div class='modal-body modal-map-body'>
+								 <div class="container-fluid">
+									 <form id="comentario${10*(gruposCarregados-1)+i}">
+										 <div class="form-group">
+											 <input type="text" name="titulo" class="form-control input-lg" placeholder="Titulo do Comentario" required>
+										 </div>
+										 <div class="form-group">
+										 	 <textarea name="fraseUsuario" class="form-control" rows="2">Comentario...</textarea>
+										 </div>
+										 <div class="form-group">
+										 	  <button type="button" onclick="comentar(${10*(gruposCarregados-1)+i})">Comentar</button>
+										 </div>
+									 </form>
+								 </div>
+							 </div>
+						</div>
+				 </div>
+			 </div>
     `);
 		//Ao se abrir o mapa expandido seta o mapa
     $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
