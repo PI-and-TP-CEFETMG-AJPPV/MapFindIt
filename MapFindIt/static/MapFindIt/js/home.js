@@ -1,7 +1,9 @@
+//Coloca a mascara na data de nascimento
 $('document').ready(function(){
 	jQuery("#dataNascimento").mask("99/99/9999");
 });
 
+//Função para determinar se a senha cumpre com os requisitos minimos
 function minCaracSenha(senha){
 	return senha.match(/[a-zA-Z]/g) && senha.match(/[0-9]/g);
 }
@@ -14,6 +16,7 @@ var erroTermo;
 var erroData;
 var erroEmailExiste;
 
+//Valida o form de cadastro
 function validateCadastro(){
 	let email = $('#emailCad');
 	let emailConf = $('#emailConf');
@@ -24,18 +27,22 @@ function validateCadastro(){
 	let sexoF= $('#femin');
 	let termos = $('#aceito');
 	let retorno=true;
+	//Verifica se os email são iguais
   	if (email.val() != emailConf.val()) {
+				//Adiciona erros caso não sejam
         emailConf.parent().addClass('has-error');
         if($('#erroEmail').length === 0) {
        		erroEmail=$('<span id="erroEmail" class="help-block">Os e-mails não correspondem</span>').appendTo(emailConf.parent());
         }
         retorno=false;
     }else{
+			//Removem erros caso sejam
 			emailConf.parent().removeClass('has-error');
 			if(erroEmail){
 				erroEmail.remove();
 			}
 		}
+		//Verifica se as senhas são iguais
     if (senha.val() != senhaConf.val()) {
         senhaConf.parent().addClass('has-error');
        	if($('#erroSenhaConf').length === 0) {
@@ -48,6 +55,7 @@ function validateCadastro(){
 				erroSenhaConf.remove();
 			}
 		}
+		//Verifica se a senha cumpre o minimo de tamanho e segurança
     if(senha.val().length < 6 || !minCaracSenha(senha.val())){
     	senha.parent().addClass('has-error');
     	if($('#erroSenha').length === 0) {
@@ -60,8 +68,11 @@ function validateCadastro(){
 				erroSenha.remove();
 			}
 		}
+		//Transforma a data digitada no formato YYYY-MM-DD
     let newdate = data.val().split("/").reverse().join("-");
+		//Cria um objeto date
     let dataValidacao = new Date(newdate);
+		//Caso o objeto date não possua erros e o ano seja válido
     if(dataValidacao.toString()=="Invalid Date" || dataValidacao.getFullYear()<1900 ){
     	data.parent().addClass('has-error');
     	if($("#erroData").length === 0){
@@ -74,6 +85,7 @@ function validateCadastro(){
 				erroData.remove();
 			}
 		}
+		//Verifica se um dos sexos está selecionado
     if(!sexoM.is(':checked') && !sexoF.is(':checked')){
     	if($("#erroSexo").length === 0){
     		erroSexo=$('<div class="has-error"><span id="erroSexo" class="help-block">Nada Selecionado</span></div>').appendTo(sexoM.parent().parent());
@@ -84,6 +96,7 @@ function validateCadastro(){
 				erroSexo.remove();
 			}
 		}
+		//Verifica se o usuario aceitou os termos
     if(!termos.is(':checked')){
     	if($('#erroTermo').length === 0){
     	  erroTermo=$('<div class="has-error"><span id="erroTermo" class="help-block">Você deve aceitar os termos e condições para se cadastrar</span></div>').appendTo(termos.parent());
@@ -94,6 +107,7 @@ function validateCadastro(){
 				erroTermo.remove();
 			}
 		}
+		//Ajax para verificar se o email já foi cadastrado
     $.ajax({
         url: '/ajax/checkarEmail/',
         data: {
@@ -101,6 +115,7 @@ function validateCadastro(){
         },
         dataType: 'json',
         success: function (data) {
+					//Caso o email exista
 		      if (data.existe) {
 		         email.parent().addClass('has-error');
 		         if($('#erroEmailExiste').length === 0) {
@@ -113,6 +128,7 @@ function validateCadastro(){
 							erroEmailExiste.remove();
 						}
 					}
+					//Se não ocorreu nenhum erro em nenhum campo submite o formulario
 		      if(retorno){
 		      	$('#formCadastro').submit();
 		      }
@@ -120,9 +136,11 @@ function validateCadastro(){
     });
 }
 
+//Validar o login
 function validateLogin(){
 	let email = $('#emailLogin');
 	let senha = $('#senhaLogin');
+	//Ajax para verificar se o email e senha batem
 	$.ajax({
         url: '/ajax/checkarLogin/',
         data: {
@@ -131,6 +149,7 @@ function validateLogin(){
         },
         dataType: 'json',
         success: function (data) {
+					//Caso não batam exibe erros, se baterem submete o form
 		      if (!data.existe) {
 		         email.parent().addClass('has-error');
 						 senha.parent().addClass('has-error');
@@ -143,7 +162,7 @@ function validateLogin(){
 		    }
     });
 }
-
+//INICIA MAPAS TEMPORÁRIOS
 function initMap() {
         var maps = document.getElementsByName('map');
         for(let i=0; i<10; i++){

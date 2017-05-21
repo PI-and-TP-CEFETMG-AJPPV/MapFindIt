@@ -296,19 +296,19 @@ function prepararPostagem(div, data, i){
         <button id="comentar${10*(gruposCarregados-1)+i}" href='#modal_comentar${10*(gruposCarregados-1)+i}' data-toggle="modal" class="btn btn-default">Comentar</button>
         <p style="padding:0px; margin:0px">&nbsp</p>
 				<div class='modal fade' id='modal_comentar${10*(gruposCarregados-1)+i}' name="modalComentarMap" aria-hidden='true'>
-					 <div class='modal-dialog modal-map-dialog' >
-						 <div class='modal-content modal-map-content'>
+					 <div class='modal-dialog' >
+						 <div class='modal-content'>
 							 <div class='modal-header'>
-								 <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+								 <button type='button' class='close' onclick='$("#modal_comentar${10*(gruposCarregados-1)+i}").modal("hide");' aria-hidden='true'>
 									 ×
 								 </button>
 								 <h4 class='modal-title'>
 									 Comentar
 								 </h4>
 							 </div>
-							 <div class='modal-body modal-map-body'>
+							 <div class='modal-body'>
 								 <div class="container-fluid">
-									 <form id="comentario${10*(gruposCarregados-1)+i}">
+									 <form id="formComentario${10*(gruposCarregados-1)+i}">
 										 <div class="form-group">
 											 <input type="text" name="titulo" class="form-control input-lg" placeholder="Titulo do Comentario" required>
 										 </div>
@@ -316,7 +316,7 @@ function prepararPostagem(div, data, i){
 										 	 <textarea name="fraseUsuario" class="form-control" rows="2">Comentario...</textarea>
 										 </div>
 										 <div class="form-group">
-										 	  <button type="button" onclick="comentar(${10*(gruposCarregados-1)+i})">Comentar</button>
+										 	  <button type="button" onclick="comentar(${10*(gruposCarregados-1)+i});">Comentar</button>
 										 </div>
 									 </form>
 								 </div>
