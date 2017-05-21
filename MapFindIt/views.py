@@ -124,6 +124,37 @@ def perfil(request, idusuario):
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 
+def getDadosPostagem(postagem):
+	mapaObj = Mapa.objects.filter(idmapa=postagem.idmapa.idmapa).first();
+	mapa=serializers.serialize("json", [mapaObj,]);
+	todosPontos=Ponto.objects.filter(idmapa=mapaObj.idmapa)
+	pontos = serializers.serialize("json", todosPontos)
+	qset = Iconespontos.objects.none()
+	for pt in todosPontos:
+		if pt.codicone is not None:
+			tempset=Iconespontos.objects.filter(codicone=pt.codicone.codicone)
+			qset = qset | tempset
+	icones = serializers.serialize("json", qset)
+	comentarios = Comentario.objects.filter(idpostagem=postagem.idpostagem)
+	comentario = serializers.serialize("json", comentarios)
+	autoresArr=[]
+	for coment in comentarios:
+		autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
+	autores = serializers.serialize("json", autoresArr)
+	todasRotas = Rota.objects.filter(idmapa=mapaObj.idmapa)
+	rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+	pontosRotasArr=[]
+	for rota in todasRotas:
+		pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+	pontoRotas=json.dumps(pontosRotasArr)
+	todasAreas = Area.objects.filter(idmapa=mapaObj.idmapa)
+	areas=serializers.serialize("json", todasAreas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+	pontosAreasArr=[]
+	for area in todasAreas:
+		pontosAreasArr.append(serializers.serialize("json", Pontoarea.objects.filter(idarea=area.idarea), use_natural_foreign_keys=True))
+	pontoAreas=json.dumps(pontosAreasArr)
+	return [mapa, pontos, icones, comentario, autores, rotas, pontoRotas, areas, pontoAreas,]
+
 def mapasPerfil(request):
 	num = request.GET.get('num', None)
 	num = int(num)
@@ -131,37 +162,18 @@ def mapasPerfil(request):
 	todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
 	if todasPostagens.count()>int(num):
 		postagem = serializers.serialize('json', [ todasPostagens[num], ]);
-		mapaObj = Mapa.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa).first();
-		mapa=serializers.serialize("json", [mapaObj,]);
-		todosPontos=Ponto.objects.filter(idmapa=mapaObj.idmapa)
-		pontos = serializers.serialize("json", todosPontos)
-		qset = Iconespontos.objects.none()
-		for pt in todosPontos:
-			if pt.codicone is not None:
-				tempset=Iconespontos.objects.filter(codicone=pt.codicone.codicone)
-				qset = qset | tempset
-		icones = serializers.serialize("json", qset)
-		comentarios = Comentario.objects.filter(idpostagem=todasPostagens[num].idpostagem)
-		comentario = serializers.serialize("json", comentarios)
-		autoresArr=[]
-		for coment in comentarios:
-			autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
-		autores = serializers.serialize("json", autoresArr)
-		todasRotas = Rota.objects.filter(idmapa=todasPostagens[num].idmapa.idmapa)
-		rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
-		pontosRotasArr=[]
-		for rota in todasRotas:
-			pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
-		pontoRotas=json.dumps(pontosRotasArr)
+		dados = getDadosPostagem(todasPostagens[num])
 		data = {
 			'postagem': postagem,
-			'mapa': mapa,
-			'pontos': pontos,
-			'icones': icones,
-			'comentarios': comentario,
-			'autores': autores,
-			'rotas': rotas,
-			'pontoRotas': pontoRotas,
+			'mapa': dados[0],
+			'pontos': dados[1],
+			'icones': dados[2],
+			'comentarios': dados[3],
+			'autores': dados[4],
+			'rotas': dados[5],
+			'pontoRotas': dados[6],
+			'areas': dados[7],
+			'pontoAreas': dados[8],
 		}
 		return JsonResponse(data)
 	else:
