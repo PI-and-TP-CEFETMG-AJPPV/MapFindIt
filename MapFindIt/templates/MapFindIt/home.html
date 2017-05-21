@@ -3,15 +3,11 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
-  	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-  	<meta name="viewport" content="width=device-width, initial-scale=1">
-
   	<title>MapFindIt</title>
-
   	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
   	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
   </head>
-  <body>
+  <body style="background-color: #4388CC;">
     <div class="container-fluid">
 			<div class="row">
 				<div class="col-md-12" style="background:skyblue;">
@@ -19,7 +15,7 @@
 					<div class="pesquisa navbar-collapse" align="center">
             <form class="navbar-form" id="navBarSearchForm" method="GET">
               <div class="input-group">
-        				<input type="text" class="form-control" style="width:500px" placeholder="Digite sua pesquisa" id="pesquisa" name="pesquisa" value="">
+        				<input type="text" class="form-control" style="width:30vw" placeholder="Digite sua pesquisa" id="pesquisa" name="pesquisa" value="">
                 <div class="input-group-btn">
                 	<button type="submit" class="btn button">Pesquisar</button>
                 </div>
@@ -31,7 +27,7 @@
 			<div class="row">
 				<div class="col-md-2">
 					<!--Box Flutuante-->
-					<div id="box">	
+					<div id="box" style="padding-bottom: 10px">
 						<div class="row">
 	            <div class=col-md-12>
 	            	<img alt="Logo" src="{% static "MapFindIt/img/Logo.jpg" %}" id="logo">
@@ -48,8 +44,8 @@
 									<div class="form-group">
 										<input type="password" name="senha" class="form-control" required id="senhaLogin" placeholder="Senha">
 									</div>
-									<div align="center">	
-										<button type="button" class="btn button" onclick="validateLogin();" 
+									<div align="center">
+										<button type="button" class="btn button" onclick="validateLogin();"
 										id="Logar">Logar</button>
 					       		<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn button" id="Cadastrar">Cadastrar</button>
 					       	</div>
@@ -61,18 +57,21 @@
 						</div>
 					</div>
 				</div>
-				<div class="col-md-10">	
+				<div class="col-md-10">
+					<div id="divMapas">
+
+        	</div>
 				</div>
 			</div>
 		</div>
-		
-		<!--Modal Cadastro Temporário-->
+
+		<!--Modal Cadastro-->
 		<div class="modal fade" id="modal-container-cadastro" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-						<h4 class="modal-title" id="myModalLabel">Cadastrar nova conta</h4>
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Cadastramento</h4>
 					</div>
 					<div class="modal-body">
 						<form id="formCadastro" method="POST">
@@ -138,9 +137,11 @@
 							</div>
 						</form>
 					</div>
-					<div class="modal-footer">
-						<button type="button" onclick="validateCadastro();" class="btn btn-success"> Confirmar </button>
-						<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+					<div class="modal-footer" >
+						<div align="center">
+							<button type="button" onclick="validateCadastro();" class="btn button"> Confirmar </button>
+							<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+						</div>
 					</div>
 				</div>
 			</div>

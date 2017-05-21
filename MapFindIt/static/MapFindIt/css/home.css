@@ -1,7 +1,3 @@
-body{
-  background-color: #4388CC;
-}
-
 #logo{
   height: 100%;
   width: 100%;
@@ -10,40 +6,38 @@ body{
 #box{
   position:fixed;
   top: 35%;
-  height: 400px; 
-  width: 350px;
+  width: 20vw;
   border: solid;
   background-color: white;
 }
 
-::-webkit-input-placeholder {
-   text-align: center;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   text-align: center;  
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;  
-}
-
-:-ms-input-placeholder {  
-   text-align: center; 
+.button {
+  width: 8vw;
+  background-color: #4388CC;
+  border: 1px solid black;
+  color: white;
+  font-size: auto;
 }
 
 .lema {
   text-align: center;
   font-family: "Comic Sans MS", cursive, sans-serif;
-  font-size: 19px;
+  font-size: 1vw;
 }
 
-.button {
-  width: 155px;
-  background-color: #4388CC;
-  border: 1px solid black;
-  color: white;
+/*Alinhar placeholders no centro*/
+::-webkit-input-placeholder {
+   text-align: center;
 }
 
+:-moz-placeholder { /* Firefox 18- */
+   text-align: center;
+}
 
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: center;
+}
 
+:-ms-input-placeholder {
+   text-align: center;
+}

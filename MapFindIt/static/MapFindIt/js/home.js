@@ -2,7 +2,6 @@ $('document').ready(function(){
 	jQuery("#dataNascimento").mask("99/99/9999");
 });
 
-
 function minCaracSenha(senha){
 	return senha.match(/[a-zA-Z]/g) && senha.match(/[0-9]/g);
 }
