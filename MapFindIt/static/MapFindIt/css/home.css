@@ -1,33 +1,43 @@
 #logo{
-  width: 100%;
   height: 100%;
-}
-#form1 {
-  margin-top: 5%;
-}
-#feed {
-}
-#menu_pesquisa{
-  margin-top: 5%;
-}
-
-#exemplo_mapa{
   width: 100%;
-  height: 110%;
-}
-#exemploicon{
-  width: 90%;
-  height: 80%;
-}
-#campo{
-  width: 500px;
-
 }
 
-body{
-	background-color: skyblue;
+#box{
+  position:fixed;
+  top: 35%;
+  width: 20vw;
+  border: solid;
+  background-color: white;
 }
 
-.conteudo{
-	background-color: white;
+.button {
+  width: 8vw;
+  background-color: #4388CC;
+  border: 1px solid black;
+  color: white;
+  font-size: auto;
+}
+
+.lema {
+  text-align: center;
+  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-size: 1vw;
+}
+
+/*Alinhar placeholders no centro*/
+::-webkit-input-placeholder {
+   text-align: center;
+}
+
+:-moz-placeholder { /* Firefox 18- */
+   text-align: center;
+}
+
+::-moz-placeholder {  /* Firefox 19+ */
+   text-align: center;
+}
+
+:-ms-input-placeholder {
+   text-align: center;
 }
