@@ -440,8 +440,18 @@ function prepararPostagem(div, data, i){
 				 </div>
 			 </div>
     `);
-		//Ao se abrir o mapa expandido seta o mapa
+		//Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
     $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
+			$.ajax({
+					url: '/ajax/adicionarView/',
+					data: {
+						'mapa': JSON.parse(data.mapa)[0].pk,
+						'usuario': idUsuarioLogado
+					},
+					dataType: 'json',
+					success: function (data) {
+					}
+			 });
        setTimeout(function(){
          setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
        }, 1000);

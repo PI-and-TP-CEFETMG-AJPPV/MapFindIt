@@ -86,7 +86,7 @@ def checkarSenha(request):
 def perfil(request, idusuario):
 	if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
 		#Pega o usuario logado
-		usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+		usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 		#Altera os dados do usario logado para os novos dados
 		usuarioFull.datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'), "%d/%m/%Y").strftime("%Y-%m-%d")
 		usuarioFull.primnomeusuario=request.POST.get('primNome')
@@ -97,31 +97,31 @@ def perfil(request, idusuario):
 		#Usando a variavel idusuario, indicada pela url do perfil, pega o usuario dono do perfil
 		usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		#Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-		amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+		amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
 		return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 	else:
 	  if request.method=="GET" and request.GET.__contains__('fraseUsuario'): #Se a frase do usuario foi alterada
 	  	  #Pega o usuario logado
-		  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+		  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 		  #Salva no usuario a nova frase
 		  usuarioFull.txtfrase=request.GET.get('fraseUsuario')
 		  usuarioFull.save()
 		  #Obtem o dono do perfil
 		  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-		  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+		  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
 		  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 	  else:
 		  if request.method=="POST" and request.POST.__contains__('senhaAtual'): #Se a senha do usuario foi alterada
 			  #Pega o usuario logado
-			  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+			  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 			  #Troca a senha do usuario
 			  usuarioFull.senhausuario=hashlib.md5((request.POST.get('password')+'cockles').encode()).hexdigest()
 			  usuarioFull.save()
 			  #Obtem o dono do perfil
 			  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 			  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-			  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+			  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
 			  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 		  else:
 			  if request.method=="POST" and request.POST.__contains__('blob'): #A foto do usuario foi alterada
@@ -131,26 +131,26 @@ def perfil(request, idusuario):
 				  format, imgstr = blobStr.split(';base64,')
 				  ext = format.split('/')[-1]
 				  #Deleta a foto se ela existir
-				  if os.path.exists("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session['usuarioLogado'])+"."+ext):
-					  os.remove("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session['usuarioLogado'])+"."+ext)
-				  data = ContentFile(base64.b64decode(imgstr), name=str(request.session['usuarioLogado']) + "." + ext)
+				  if os.path.exists("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session.get('usuarioLogado'))+"."+ext):
+					  os.remove("MapFindIt/static/MapFindIt/imagemUsers/"+str(request.session.get('usuarioLogado'))+"."+ext)
+				  data = ContentFile(base64.b64decode(imgstr), name=str(request.session.get('usuarioLogado')) + "." + ext)
 				  #Obtem o usuario Logado
-				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 				  #Salva o caminho da foto no bd, criando o arquivo
 				  usuarioFull.foto=data
 				  usuarioFull.save()
 				  #Obtem o dono do perfil
 				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 			  else: #Request padrão da pagina
 			      #Obtem o dono do perfil
 				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 				  #Obtem o usuario logado
-				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session['usuarioLogado'])
+				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session['usuarioLogado']).exists()
+				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
 
 def getDadosPostagem(postagem):
@@ -220,6 +220,33 @@ def salvarComentario(request):
 	autor = Usuario.objects.filter(idusuario=iduser)
 	jsonAutor = postagem = serializers.serialize('json', autor);
 	return JsonResponse({'sucesso': True, 'autor': jsonAutor})
+
+def adicionarView(request):
+	#Pega o id do mapa
+	mapaId = int(request.GET.get('mapa', None))
+	#Obtem o objeto do mapa
+	mapa=get_object_or_404(Mapa, idmapa=mapaId)
+	#Incrementa visualizacoes
+	mapa.valvisualizacoes+=1
+	#Atualiza o mapa
+	mapa.save()
+	#Se o usuario estiver logado
+	idUsuario = request.GET.get('usuario', None)
+	if idUsuario is not None:
+		idUsuario=int(idUsuario)
+		#Tenta obter o objeto Interesseusuariotema
+		try:
+			interesse=Interesseusuariotema.objects.get(codtema=mapa.codtema, idusuario=Usuario.objects.get(idusuario=idUsuario))
+		except Interesseusuariotema.DoesNotExist:
+			#Caso tenha ocorrido a excecao, cria o objeto já com uma visualizacao
+			interesse=Interesseusuariotema.objects.create(codtema=mapa.codtema, idusuario=Usuario.objects.get(idusuario=idUsuario), valvisualizacoes=1)
+			interesse.save()
+			#Sai da funcao
+			return JsonResponse({})
+		#Caso o objeto exista, incrementa o valor de visualizacoes e atualiza no banco
+		interesse.valvisualizacoes+=1
+		interesse.save()
+	return JsonResponse({})
 
 def mapasPerfil(request):
 	#Pega a posicao do mapa que deve ser carregado
