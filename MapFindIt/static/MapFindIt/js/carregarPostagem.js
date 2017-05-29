@@ -176,6 +176,30 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				infowindow.open(map);
 		  });
 		});
+		var legend = document.getElementById(mapId+'legend');
+		if(legend){
+			for (let i=0; i<icones.length; i++) {
+				let icon=icones[i];
+				let name = icon.fields.nomeicone;
+	      let icone = imgUrl+'MapFindIt/ImagemIcones/'+icon.pk+'.png';
+	      let div = document.createElement('div');
+	      div.innerHTML =
+				`<div style="display:flex; flex-direction: row; justify-content: space-between;">
+					<img src="${icone}">&nbsp;&nbsp;
+					<p>${name}</p>
+				</div>
+				`;
+	      legend.appendChild(div);
+				let br = document.createElement('br');
+				legend.appendChild(br);
+			}
+			if(icones.length==0){
+				legend.innerHTML="";
+				legend.className="";
+			}
+			map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+		}
+
 }
 
 function pinSymbol(color) {
@@ -363,7 +387,8 @@ function prepararPostagem(div, data, i){
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
-                      </div>
+												<div id="mapExp${10*(gruposCarregados-1)+i}legend" class='legend'><h4>Legenda</h4></div>
+											</div>
                   </div>
                 </div>
              </div>
