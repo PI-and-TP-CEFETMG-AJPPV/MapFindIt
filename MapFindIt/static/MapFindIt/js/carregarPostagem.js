@@ -176,27 +176,35 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				infowindow.open(map);
 		  });
 		});
+		//Obtem a div da legenda
 		var legend = document.getElementById(mapId+'legend');
+		//Se a div existir, ou seja se for um mapa expandido
 		if(legend){
+			//Para cada icone
 			for (let i=0; i<icones.length; i++) {
 				let icon=icones[i];
 				let name = icon.fields.nomeicone;
 	      let icone = imgUrl+'MapFindIt/ImagemIcones/'+icon.pk+'.png';
 	      let div = document.createElement('div');
+				//Cria uma div com a imagem do icone e o seu nome
 	      div.innerHTML =
 				`<div style="display:flex; flex-direction: row; justify-content: space-between;">
 					<img src="${icone}">&nbsp;&nbsp;
 					<p>${name}</p>
 				</div>
 				`;
+				//Adiciona essa div à div de legenda
 	      legend.appendChild(div);
+				//Adiciona uma quebra de linha
 				let br = document.createElement('br');
 				legend.appendChild(br);
 			}
+			//Caso não exista legendas esconde a div de legenda
 			if(icones.length==0){
 				legend.innerHTML="";
 				legend.className="";
 			}
+			//Adiciona a div de legendas ao mapa
 			map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
 		}
 
