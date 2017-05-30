@@ -95,6 +95,7 @@ function validateNovaSenha(){
       }
   });
 }
+
 //Função para mudar a imagem do Crop
 function readURL(input) {
 		if (input.files && input.files[0]) {

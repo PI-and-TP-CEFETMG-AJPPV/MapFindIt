@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% static "" as baseUrl %}
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
@@ -89,7 +90,7 @@
 								</div>
 							</div>
 							<div class="form-group">
-								<input type="text" name="email" id="emailCad" class="form-control input-lg" placeholder="E-mail" tabindex="3" required>
+								<input type="email" name="email" id="emailCad" class="form-control input-lg" placeholder="E-mail" tabindex="3" required>
 							</div>
 							<div class="form-group">
 								<input type="email" name="emailConf" id="emailConf" class="form-control input-lg" placeholder="Confirmar E-mail" tabindex="4" required>
@@ -106,21 +107,21 @@
 									</div>
 								</div>
 							</div>
-							<div class="form-group">
+							<div class="form-group" align="center">
 								<label for="datetimepicker1">Data de Nascimento</label>
 								<div class='input-group date' id='datetimepicker1'>
 									<input type='text' name="nascimento" id="dataNascimento" placeholder="__/__/____" required class="form-control" />
 								</div>
 							</div>
 							<div class="row">
-								<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
 									<div class="form-group">
 										<div class="radio">
 				  						<label><input type="radio" name="gender" id="masc" value="masculino">Masculino</label>
 										</div>
 									</div>
 								</div>
-								<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
 									<div class="form-group">
 										<div class="radio">
 				  						<label><input type="radio" id="femin" name="gender" value="feminino">Feminino</label>
@@ -147,10 +148,15 @@
 			</div>
 		</div>
 
+		<script>var imgUrl='{{baseUrl}}';</script>
     <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap"></script>
-    <script src="{% static "MapFindIt/js/home.js" %}"></script>
+		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+		<script src="{% static "MapFindIt/js/home.js" %}"></script>
+  	<script async defer
+		  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+		</script>
   </body>
 </html>
