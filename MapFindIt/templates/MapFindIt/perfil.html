@@ -13,12 +13,14 @@
     <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
     <link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
     <link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+    <link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
     <link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
   </head>
   <body>
-    {% include "./menu.html" with user=usuario %}
+    {% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
         <div class="row">
           <div class="col-md-8 col-md-offset-2 white" >
+            <br>
             <div class="center">
               {% if usuario.foto %}
                  <img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png"></img>

@@ -103,7 +103,17 @@ def perfil(request, idusuario):
 		usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		#Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 		amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-		return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+		#Obtem todos os amigos do usuario para o menu
+		todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+		todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+		todosAmigos=[]
+		for amigo in todosAmigos1:
+			todosAmigos.append(amigo.idusuario2)
+		for amigo in todosAmigos2:
+			todosAmigos.append(amigo.idusuario1)
+		#Obtem os grupos que o usuario pertence para o menu
+		todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 	else:
 	  if request.method=="GET" and request.GET.__contains__('fraseUsuario'): #Se a frase do usuario foi alterada
 	  	  #Pega o usuario logado
@@ -115,7 +125,17 @@ def perfil(request, idusuario):
 		  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 		  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-		  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+		  #Obtem todos os amigos do usuario para o menu
+		  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+		  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+		  todosAmigos=[]
+		  for amigo in todosAmigos1:
+			  todosAmigos.append(amigo.idusuario2)
+		  for amigo in todosAmigos2:
+			  todosAmigos.append(amigo.idusuario1)
+	  	  #Obtem os grupos que o usuario pertence para o menu
+		  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 	  else:
 		  if request.method=="POST" and request.POST.__contains__('senhaAtual'): #Se a senha do usuario foi alterada
 			  #Pega o usuario logado
@@ -127,7 +147,17 @@ def perfil(request, idusuario):
 			  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 			  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 			  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-			  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+			  #Obtem todos os amigos do usuario para o menu
+			  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+			  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+			  todosAmigos=[]
+			  for amigo in todosAmigos1:
+				  todosAmigos.append(amigo.idusuario2)
+			  for amigo in todosAmigos2:
+				  todosAmigos.append(amigo.idusuario1)
+			  #Obtem os grupos que o usuario pertence para o menu
+			  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+			  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 		  else:
 			  if request.method=="POST" and request.POST.__contains__('blob'): #A foto do usuario foi alterada
 			  	  #Obtem a string blob da foto
@@ -148,7 +178,17 @@ def perfil(request, idusuario):
 				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+				  #Obtem todos os amigos do usuario para o menu
+				  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+				  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+				  todosAmigos=[]
+				  for amigo in todosAmigos1:
+					  todosAmigos.append(amigo.idusuario2)
+				  for amigo in todosAmigos2:
+					  todosAmigos.append(amigo.idusuario1)
+		  		  #Obtem os grupos que o usuario pertence para o menu
+				  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 			  else: #Request padrão da pagina
 			      #Obtem o dono do perfil
 				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
@@ -156,7 +196,17 @@ def perfil(request, idusuario):
 				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos})
+				  #Obtem todos os amigos do usuario para o menu
+				  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+				  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+				  todosAmigos=[]
+				  for amigo in todosAmigos1:
+					  todosAmigos.append(amigo.idusuario2)
+				  for amigo in todosAmigos2:
+					  todosAmigos.append(amigo.idusuario1)
+		  		  #Obtem os grupos que o usuario pertence para o menu
+				  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 
 def getDadosPostagem(postagem):
 	#Método para obter os dados de uma postagem
@@ -169,12 +219,11 @@ def getDadosPostagem(postagem):
 	#Serializa eles em JSON
 	pontos = serializers.serialize("json", todosPontos)
 	#Cria queryset vazia
-	qset = Iconespontos.objects.none()
+	qset = []
 	#Itera pelos pontos e caso o ponto possua icone, é adicionado a "qset" o seu objeto
 	for pt in todosPontos:
 		if pt.codicone is not None:
-			tempset=pt.codicone
-			qset = qset | tempset
+			qset.append(pt.codicone)
 	#Serializa os icones em JSON
 	icones = serializers.serialize("json", qset)
 	#Obtem os comentarios da postagem
