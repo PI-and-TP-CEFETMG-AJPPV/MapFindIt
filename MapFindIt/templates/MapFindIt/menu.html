@@ -51,14 +51,20 @@
                <div class="row">
                  <div class="col-md-11 col-md-offset-1">
                    <div class="panel panel-primary">
-                     <div class="panel-heading">
-                       Meus Grupos
+                     <div class="panel-heading" style="padding:0px">
+                       <b>Meus Grupos</b>
                      </div>
-          			     <div class="panel-body">
-          				      List header
-          				   </div>
-          				   <div class="panel-body">
-                        La
+          			     <div class="panel-body" style="padding:2px 0px 0px 0px; padding-bottom:10px">
+                       {% for grupo in grupos %}
+                         <div style="height:5vh;">
+                           <a href="/grupo/grupo.idgrupo" title="{{grupo.nomegrupo}}">
+                             <span style="">{{grupo.nomegrupo}}</span>
+                             <span style="float:right; height:3vh; padding:0px;"><span style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
+                               &nbsp;&nbsp;&nbsp;
+                             </span>&nbsp;&nbsp;</span>
+                           </a>
+                         </div>
+                       {% endfor %}
           				   </div>
                    </div>
                   </div>

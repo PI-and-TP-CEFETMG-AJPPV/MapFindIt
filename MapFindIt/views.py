@@ -112,7 +112,14 @@ def perfil(request, idusuario):
 		for amigo in todosAmigos2:
 			todosAmigos.append(amigo.idusuario1)
 		#Obtem os grupos que o usuario pertence para o menu
-		todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		todosGrupos=[]
+		for grupo in grupoUsuario:
+			todosGrupos.append(grupo.idgrupo)
+		#Obtem grupos que o usuario é dono para o menu
+		grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		for grupo in grupoUsuario:
+			todosGrupos.append(grupo)
 		return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 	else:
 	  if request.method=="GET" and request.GET.__contains__('fraseUsuario'): #Se a frase do usuario foi alterada
@@ -134,7 +141,14 @@ def perfil(request, idusuario):
 		  for amigo in todosAmigos2:
 			  todosAmigos.append(amigo.idusuario1)
 	  	  #Obtem os grupos que o usuario pertence para o menu
-		  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		  grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		  todosGrupos=[]
+		  for grupo in grupoUsuario:
+			  todosGrupos.append(grupo.idgrupo)
+		  #Obtem grupos que o usuario é dono para o menu
+		  grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+		  for grupo in grupoUsuario:
+			  todosGrupos.append(grupo)
 		  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 	  else:
 		  if request.method=="POST" and request.POST.__contains__('senhaAtual'): #Se a senha do usuario foi alterada
@@ -156,7 +170,14 @@ def perfil(request, idusuario):
 			  for amigo in todosAmigos2:
 				  todosAmigos.append(amigo.idusuario1)
 			  #Obtem os grupos que o usuario pertence para o menu
-			  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+			  grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+			  todosGrupos=[]
+			  for grupo in grupoUsuario:
+				  todosGrupos.append(grupo.idgrupo)
+			  #Obtem grupos que o usuario é dono para o menu
+			  grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+			  for grupo in grupoUsuario:
+				  todosGrupos.append(grupo)
 			  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 		  else:
 			  if request.method=="POST" and request.POST.__contains__('blob'): #A foto do usuario foi alterada
@@ -186,8 +207,15 @@ def perfil(request, idusuario):
 					  todosAmigos.append(amigo.idusuario2)
 				  for amigo in todosAmigos2:
 					  todosAmigos.append(amigo.idusuario1)
-		  		  #Obtem os grupos que o usuario pertence para o menu
-				  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  #Obtem os grupos que o usuario pertence para o menu
+				  grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  todosGrupos=[]
+				  for grupo in grupoUsuario:
+					  todosGrupos.append(grupo.idgrupo)
+				  #Obtem grupos que o usuario é dono para o menu
+				  grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  for grupo in grupoUsuario:
+					  todosGrupos.append(grupo)
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 			  else: #Request padrão da pagina
 			      #Obtem o dono do perfil
@@ -205,7 +233,14 @@ def perfil(request, idusuario):
 				  for amigo in todosAmigos2:
 					  todosAmigos.append(amigo.idusuario1)
 		  		  #Obtem os grupos que o usuario pertence para o menu
-				  todosGrupos=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  todosGrupos=[]
+				  for grupo in grupoUsuario:
+					  todosGrupos.append(grupo.idgrupo)
+				  #Obtem grupos que o usuario é dono para o menu
+				  grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+				  for grupo in grupoUsuario:
+					  todosGrupos.append(grupo)
 				  return render(request, 'MapFindIt/perfil.html', {'usuario': usuarioFull, 'idPag': usuario, 'amigos':amigos, 'todosAmigos': todosAmigos, 'grupos': todosGrupos})
 
 def getDadosPostagem(postagem):
