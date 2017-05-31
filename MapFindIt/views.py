@@ -156,7 +156,7 @@ def perfil(request, idusuario):
 def getDadosPostagem(postagem):
 	#Método para obter os dados de uma postagem
 	#Obtem o mapa da postagem
-	mapaObj = Mapa.objects.filter(idmapa=postagem.idmapa.idmapa).first();
+	mapaObj = postagem.idmapa;
 	#Serializa ele em JSON
 	mapa=serializers.serialize("json", [mapaObj,]);
 	#Obtem os pontos do mapa da postagem
@@ -168,7 +168,7 @@ def getDadosPostagem(postagem):
 	#Itera pelos pontos e caso o ponto possua icone, é adicionado a "qset" o seu objeto
 	for pt in todosPontos:
 		if pt.codicone is not None:
-			tempset=Iconespontos.objects.filter(codicone=pt.codicone.codicone)
+			tempset=pt.codicone
 			qset = qset | tempset
 	#Serializa os icones em JSON
 	icones = serializers.serialize("json", qset)
@@ -180,7 +180,7 @@ def getDadosPostagem(postagem):
 	autoresArr=[]
 	for coment in comentarios:
 		#Para cada comentario do mapa, obtem o usuario que o escreveu
-		autoresArr.append(Usuario.objects.filter(idusuario=coment.idusuario.idusuario).first())
+		autoresArr.append(coment.idusuario)
 	#Serializa os autores
 	autores = serializers.serialize("json", autoresArr)
 	#Obtem todas as rotas do mapa
