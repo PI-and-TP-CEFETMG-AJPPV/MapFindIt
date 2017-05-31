@@ -1,15 +1,14 @@
 from __future__ import unicode_literals
-
 from django.shortcuts import render, redirect, get_object_or_404
-import hashlib
 from .models import *
-import datetime
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
 from django.forms.models import model_to_dict
-import io, os
-import base64
 from django.core.files.base import ContentFile
 from django.core import serializers
+import io, os
+import base64
+import hashlib
+import datetime
 import json
 
 
@@ -17,13 +16,19 @@ def home(request):
 	if request.method=="POST":
 		if request.POST.__contains__("primNome"): # O request é de cadastro
 			#Cria objeto do novo usuario
-			usuario = Usuario.objects.create(primnomeusuario=request.POST.get('primNome'), ultnomeusuario=request.POST.get('ultimoNome'), emailusuario=request.POST.get('email'), senhausuario=hashlib.md5((request.POST.get('password')+'cockles').encode()).hexdigest(), datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'), "%d/%m/%Y").strftime("%Y-%m-%d"), idtsexo=request.POST.get('gender')[:1])
-			usuario.save() #Salva no bd
+			usuario = Usuario.objects.create(primnomeusuario=request.POST.get('primNome'),
+			ultnomeusuario=request.POST.get('ultimoNome'), emailusuario=request.POST.get('email'),
+			senhausuario=hashlib.md5((request.POST.get('password')+'cockles').encode()).hexdigest(),
+			datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'),
+			"%d/%m/%Y").strftime("%Y-%m-%d"), idtsexo=request.POST.get('gender')[:1])
+			usuario.save() #Salva no BD
 			return render(request, 'MapFindIt/cadastro.html', {})
 		else:
 			if request.POST.__contains__("email"): #O request é de login
 				#Realiza o login
-				usuarios = Usuario.objects.filter(emailusuario=request.POST.get('email')).filter(senhausuario=hashlib.md5((request.POST.get('senha')+'cockles').encode()).hexdigest()).first()
+				usuarios = Usuario.objects.filter(emailusuario=request.POST.get('email')
+				).filter(senhausuario=hashlib.md5((request.POST.get('senha')+'cockles'
+				).encode()).hexdigest()).first()
 				request.session['usuarioLogado']=usuarios.idusuario
 				return redirect("/perfil/"+str(usuarios.idusuario))
 			else: #O request é padrão
@@ -34,25 +39,25 @@ def home(request):
 			#Pesquisa do usuário
 			strPesquisa = request.GET.get('pesquisa')
 			#Busca mapas pelo título
-			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa)
+			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa).order_by('valvisualizacoes')
 			#Contabiliza a quantidade de mapas encontrados pelo titulo
 			controle = 0
 			for n in result:
 				controle += 1
-			#Se for menor do que 10 busca mapas pelo tema
+			#Se for menor do que 10
 			if controle < 10:
 				tema = Tema.objects.filter(nomtema__icontains=strPesquisa)
 				for n in tema:
 					result = result | Mapa.objects.filter(codtema=n.codtema)
-			#Contabiliza a quantidade de mapas encontrados pelo titulo + tema
-			controle = 0
-			for n in result:
-				controle += 1
-			#Se for menor do que 10 busca mapas pela descrição
-			if controle < 10:
-				result = result | Mapa.objects.filter(descmapa__icontains=strPesquisa)
-
-			return HttpResponse(result);
+				result = result.order_by('valvisualizacoes')
+				#Contabiliza a quantidade de mapas encontrados pelo titulo + tema
+				controle = 0
+				for n in result:
+					controle += 1
+				#Se for menor do que 10 busca mapas pela descrição
+				if controle < 10:
+					result = result | Mapa.objects.filter(descmapa__icontains=strPesquisa)
+					result = result.order_by('valvisualizacoes')
 		else:
 			#Request é padrão
 			return render(request, 'MapFindIt/home.html', {})
@@ -259,6 +264,43 @@ def mapasPerfil(request):
 	id = request.GET.get('id', None)
 	#Carrega todas as postagens do usuario logado, ordenando pela datada postagem
 	todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
+	#Verifica se as postagens já foram todas carregadas
+	if todasPostagens.count()>int(num):
+		#Caso ainda tenham postagens não carregadas
+		#Serializa a postagem em JSON
+		postagem = serializers.serialize('json', [ todasPostagens[num], ]);
+		#Chama a função de obter os dados da postagem
+		dados = getDadosPostagem(todasPostagens[num])
+		#Retorna ao AJAX todos os dados
+		data = {
+			'postagem': postagem,
+			'mapa': dados[0],
+			'pontos': dados[1],
+			'icones': dados[2],
+			'comentarios': dados[3],
+			'autores': dados[4],
+			'rotas': dados[5],
+			'pontoRotas': dados[6],
+			'areas': dados[7],
+			'pontoAreas': dados[8],
+		}
+		return JsonResponse(data)
+	else:
+		#Caso já se tenha carregado todas as postagens
+		data = {
+			'erro': 1,
+		}
+		return JsonResponse(data)
+
+def mapasHome(request):
+	#Pega a posicao do mapa que deve ser carregado
+	num = request.GET.get('num', None)
+	num = int(num)
+	#Seleciona os dez mapas mais visualizados
+	mapas = Mapa.objects.all().order_by('valvisualizacoes')[:10]
+	#Carrega todas as postagens desses mapas
+	for n in mapas:
+		todasPostagens = todasPostagens | Postagem.objects.filter(idmapa=n)
 	#Verifica se as postagens já foram todas carregadas
 	if todasPostagens.count()>int(num):
 		#Caso ainda tenham postagens não carregadas

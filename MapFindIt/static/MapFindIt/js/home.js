@@ -163,18 +163,29 @@ function validateLogin(){
 		    }
     });
 }
-//INICIA MAPAS TEMPORÁRIOS
+
+function carregarMapas() {
+	let div=$("#divMapas");
+	for(let i=0; i<10; i++){
+		$.ajax({
+	    url: '/ajax/carregarMapasHome/',
+	    data: {
+	      'num': i
+	    },
+	    dataType: 'json',
+	    success: function (data) {
+				//Se todas as postagens tiverem sido carregas
+				if(data.erro){
+					return;
+				}
+				//Prepara a postagem carregada
+				prepararPostagem(div, data, i)
+			}
+	  });
+	}
+}
+
+//Inicia os mapas da Home
 function initMap() {
-        var maps = document.getElementsByName('map');
-        for(let i=0; i<10; i++){
-            var uluru = {lat: -25.363, lng: 131.044};
-            var map = new google.maps.Map(maps[i], {
-              zoom: 4,
-              center: uluru
-            });
-            var marker = new google.maps.Marker({
-               position: uluru,
-               map: map
-            });
-        }
+	carregarMapas();
 }
