@@ -7,6 +7,9 @@
 	Para que se tenha o diretorio dos caminhos estáticos e o id do usuário que está logado
 */
 
+//Quantidade de grupos de 10 mapas carregados
+var gruposCarregados=0;
+
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId){
 		let inicio = {lat: mapa.coordyinicial, lng: mapa.coordxinicial};

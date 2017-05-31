@@ -130,8 +130,6 @@ function mudarImagem(){
     });
 
 }
-//Quantidade de grupos de 10 mapas carregados
-var gruposCarregados=0;
 
 //Formata a data do input
 function formatarData(input) {
