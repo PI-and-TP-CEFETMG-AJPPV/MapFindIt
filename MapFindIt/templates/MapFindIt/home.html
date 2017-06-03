@@ -4,9 +4,13 @@
 <html lang="pt-br">
 	<head>
 		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	  <meta http-equiv="Pragma" content="no-cache" />
+	  <meta http-equiv="Expires" content="0" />
   	<title>MapFindIt</title>
   	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
   	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
   </head>
   <body style="background-color: #4388CC;">
     <div class="container-fluid">
@@ -14,7 +18,7 @@
 				<div class="col-md-12" style="background:skyblue;">
 					<!--Barra de Pesquisa-->
 					<div class="pesquisa navbar-collapse" align="center">
-            <form class="navbar-form" id="navBarSearchForm" method="GET">
+            <form class="navbar-form" id="navBarSearchForm">
               <div class="input-group">
         				<input type="text" class="form-control" style="width:30vw" placeholder="Digite sua pesquisa" id="pesquisa" name="pesquisa" value="">
                 <div class="input-group-btn">
@@ -59,6 +63,7 @@
 					</div>
 				</div>
 				<div class="col-md-10">
+					<br>
 					<div id="divMapas">
 
         	</div>
@@ -148,7 +153,10 @@
 			</div>
 		</div>
 
-		<script>var imgUrl='{{baseUrl}}';</script>
+		<script>
+				var imgUrl='{{baseUrl}}';
+				var idUsuarioLogado='{{usuario.idusuario}}'
+		</script>
     <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
     <script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>

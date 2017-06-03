@@ -11,7 +11,6 @@ import hashlib
 import datetime
 import json
 
-
 def home(request):
 	if request.method=="POST":
 		if request.POST.__contains__("primNome"): # O request é de cadastro
@@ -34,33 +33,33 @@ def home(request):
 			else: #O request é padrão
 				return render(request, 'MapFindIt/home.html', {})
 	else:
-		#Método de Pesquisa
-		if request.method=="GET" and request.GET.get('pesquisa'):
-			#Pesquisa do usuário
-			strPesquisa = request.GET.get('pesquisa')
-			#Busca mapas pelo título
-			result = Mapa.objects.filter(titulomapa__icontains=strPesquisa).order_by('valvisualizacoes')
-			#Contabiliza a quantidade de mapas encontrados pelo titulo
-			controle = 0
-			for n in result:
-				controle += 1
-			#Se for menor do que 10
-			if controle < 10:
-				tema = Tema.objects.filter(nomtema__icontains=strPesquisa)
-				for n in tema:
-					result = result | Mapa.objects.filter(codtema=n.codtema)
-				result = result.order_by('valvisualizacoes')
-				#Contabiliza a quantidade de mapas encontrados pelo titulo + tema
-				controle = 0
-				for n in result:
-					controle += 1
-				#Se for menor do que 10 busca mapas pela descrição
-				if controle < 10:
-					result = result | Mapa.objects.filter(descmapa__icontains=strPesquisa)
-					result = result.order_by('valvisualizacoes')
-		else:
-			#Request é padrão
-			return render(request, 'MapFindIt/home.html', {})
+		#Request é padrão
+		return render(request, 'MapFindIt/home.html', {})
+
+#Pesquisa mapas pela String passada
+def pesquisar(pesquisa):
+	#Busca mapas pelo título
+	result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valvisualizacoes')
+	#Contabiliza a quantidade de mapas encontrados pelo titulo
+	controle = 0
+	for n in result:
+		controle += 1
+	#Se for menor do que 10
+	if controle < 10:
+		tema = Tema.objects.filter(nomtema__icontains=pesquisa)
+		for n in tema:
+			result = result | Mapa.objects.filter(codtema=n.codtema)
+		result = result.order_by('valvisualizacoes')
+		#Contabiliza a quantidade de mapas encontrados pelo titulo + tema
+		controle = 0
+		for n in result:
+			controle += 1
+		#Se for menor do que 10 busca mapas pela descrição
+		if controle < 10:
+			result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+			result = result.order_by('valvisualizacoes')
+	#Retorna os mapas encontrados segundo os parâmetros da pesquisa
+	return result
 
 def checkarEmail(request):
 	#Retorna um JSON dizendo se o email escolhido existe
@@ -377,21 +376,61 @@ def mapasPerfil(request):
 		return JsonResponse(data)
 
 def mapasHome(request):
-	#Pega a posicao do mapa que deve ser carregado
 	num = request.GET.get('num', None)
 	num = int(num)
-	#Seleciona os dez mapas mais visualizados
+
 	mapas = Mapa.objects.all().order_by('valvisualizacoes')[:10]
-	#Carrega todas as postagens desses mapas
-	for n in mapas:
-		todasPostagens = todasPostagens | Postagem.objects.filter(idmapa=n)
-	#Verifica se as postagens já foram todas carregadas
-	if todasPostagens.count()>int(num):
-		#Caso ainda tenham postagens não carregadas
-		#Serializa a postagem em JSON
-		postagem = serializers.serialize('json', [ todasPostagens[num], ]);
+	mapa = mapas[num]
+
+	postagem = Postagem.objects.none()
+	postagem = Postagem.objects.filter(idmapa=mapa).filter(
+	idusuario=mapa.idusuario)
+	getpostagem = postagem.first()
+
+	if mapa is not None:
 		#Chama a função de obter os dados da postagem
-		dados = getDadosPostagem(todasPostagens[num])
+		dados = getDadosPostagem(getpostagem)
+		#Serializa a postagem em JSON
+		postagem = serializers.serialize('json', postagem);
+		#Retorna ao AJAX todos os dados
+		data = {
+			'postagem': postagem,
+			'mapa': dados[0],
+			'pontos': dados[1],
+			'icones': dados[2],
+			'comentarios': dados[3],
+			'autores': dados[4],
+			'rotas': dados[5],
+			'pontoRotas': dados[6],
+			'areas': dados[7],
+			'pontoAreas': dados[8],
+		}
+		return JsonResponse(data)
+	else:
+		#Caso já se tenha carregado todas as postagens
+		data = {
+			'erro': 1,
+		}
+		return JsonResponse(data)
+
+def mapasHomePesquisa(request):
+	num = request.GET.get('num', None)
+	num = int(num)
+	pesquisa = request.GET.get('pesquisa', None)
+
+	mapas = pesquisar(pesquisa)
+	mapa = mapas[num]
+
+	postagem = Postagem.objects.none()
+	postagem = Postagem.objects.filter(idmapa=mapa).filter(
+	idusuario=mapa.idusuario)
+	getpostagem = postagem.first()
+
+	if mapa is not None:
+		#Chama a função de obter os dados da postagem
+		dados = getDadosPostagem(getpostagem)
+		#Serializa a postagem em JSON
+		postagem = serializers.serialize('json', postagem);
 		#Retorna ao AJAX todos os dados
 		data = {
 			'postagem': postagem,

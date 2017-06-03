@@ -1,3 +1,16 @@
+//Variaveis para guardar os erros
+var erroEmail;
+var erroSenhaConf;
+var erroSenha;
+var erroSexo;
+var erroTermo;
+var erroData;
+var erroEmailExiste;
+
+//Form e Campo com a pesquisa do Usuário
+var form = document.getElementById('navBarSearchForm');
+var campo = document.getElementById('pesquisa');
+
 //Coloca a mascara na data de nascimento
 $('document').ready(function(){
 	jQuery("#dataNascimento").mask("99/99/9999");
@@ -7,15 +20,6 @@ $('document').ready(function(){
 function minCaracSenha(senha){
 	return senha.match(/[a-zA-Z]/g) && senha.match(/[0-9]/g);
 }
-
-//Variaveis para guardar os erros
-var erroEmail;
-var erroSenhaConf;
-var erroSenha;
-var erroSexo;
-var erroTermo;
-var erroData;
-var erroEmailExiste;
 
 //Valida o form de cadastro
 function validateCadastro(){
@@ -28,15 +32,16 @@ function validateCadastro(){
 	let sexoF= $('#femin');
 	let termos = $('#aceito');
 	let retorno=true;
-	//Verifica se os email são iguais
+		//Verifica se os email são iguais
   	if (email.val() != emailConf.val()) {
-				//Adiciona erros caso não sejam
-        emailConf.parent().addClass('has-error');
-        if($('#erroEmail').length === 0) {
-       		erroEmail=$('<span id="erroEmail" class="help-block">Os e-mails não correspondem</span>').appendTo(emailConf.parent());
-        }
-        retorno=false;
-    }else{
+			//Adiciona erros caso não sejam
+      emailConf.parent().addClass('has-error');
+      if($('#erroEmail').length === 0) {
+       	erroEmail=$('<span id="erroEmail" class="help-block">Os e-mails não correspondem</span>').appendTo(emailConf.parent());
+      }
+      retorno=false;
+    }
+		else{
 			//Removem erros caso sejam
 			emailConf.parent().removeClass('has-error');
 			if(erroEmail){
@@ -45,12 +50,13 @@ function validateCadastro(){
 		}
 		//Verifica se as senhas são iguais
     if (senha.val() != senhaConf.val()) {
-        senhaConf.parent().addClass('has-error');
-       	if($('#erroSenhaConf').length === 0) {
-       		erroSenhaConf=$('<span id="erroSenhaConf" class="help-block">As senhas não correspondem</span>').appendTo(senhaConf.parent());
-       	}
-        retorno=false;
-    }else{
+      senhaConf.parent().addClass('has-error');
+      if($('#erroSenhaConf').length === 0) {
+       	erroSenhaConf=$('<span id="erroSenhaConf" class="help-block">As senhas não correspondem</span>').appendTo(senhaConf.parent());
+      }
+      retorno=false;
+    }
+		else{
 			senhaConf.parent().removeClass('has-error');
 			if(erroSenhaConf){
 				erroSenhaConf.remove();
@@ -63,7 +69,8 @@ function validateCadastro(){
     		erroSenha=$('<span id="erroSenha" class="help-block">A senha deve ter ao menos 6 caracteres e deve conter números e letras</span>').appendTo(senha.parent());
     	}
     	retorno=false;
-    }else{
+    }
+		else{
 			senha.parent().removeClass('has-error');
 			if(erroSenha){
 				erroSenha.remove();
@@ -80,7 +87,8 @@ function validateCadastro(){
     		erroData=$('<span id="erroData" class="help-block">Data Inválida</span>').appendTo(data.parent());
     	}
     	retorno =false;
-    }else{
+    }
+		else{
 			data.parent().removeClass('has-error');
 			if(erroData){
 				erroData.remove();
@@ -92,7 +100,8 @@ function validateCadastro(){
     		erroSexo=$('<div class="has-error"><span id="erroSexo" class="help-block">Nada Selecionado</span></div>').appendTo(sexoM.parent().parent());
     	}
     	retorno=false;
-    }else{
+    }
+		else{
 			if(erroSexo){
 				erroSexo.remove();
 			}
@@ -103,37 +112,39 @@ function validateCadastro(){
     	  erroTermo=$('<div class="has-error"><span id="erroTermo" class="help-block">Você deve aceitar os termos e condições para se cadastrar</span></div>').appendTo(termos.parent());
     	}
     	retorno=false;
-    }else{
+    }
+		else{
 			if(erroTermo){
 				erroTermo.remove();
 			}
 		}
 		//Ajax para verificar se o email já foi cadastrado
     $.ajax({
-        url: '/ajax/checkarEmail/',
-        data: {
-          'email': email.val()
-        },
-        dataType: 'json',
-        success: function (data) {
-					//Caso o email exista
-		      if (data.existe) {
-		         email.parent().addClass('has-error');
-		         if($('#erroEmailExiste').length === 0) {
-		           erroEmailExiste=$('<span id="erroEmailExiste" class="help-block">E-mail já cadastrado</span>').appendTo(email.parent());
-		         }
-		         retorno=false;
-		      }else{
-						email.parent().removeClass('has-error');
-						if(erroEmailExiste){
-							erroEmailExiste.remove();
-						}
+      url: '/ajax/checkarEmail/',
+      data: {
+        'email': email.val()
+      },
+      dataType: 'json',
+      success: function (data) {
+				//Caso o email exista
+	      if (data.existe) {
+	        email.parent().addClass('has-error');
+		        if($('#erroEmailExiste').length === 0) {
+		          erroEmailExiste=$('<span id="erroEmailExiste" class="help-block">E-mail já cadastrado</span>').appendTo(email.parent());
+		        }
+		        retorno=false;
+		    }
+				else{
+					email.parent().removeClass('has-error');
+					if(erroEmailExiste){
+						erroEmailExiste.remove();
 					}
-					//Se não ocorreu nenhum erro em nenhum campo submite o formulario
-		      if(retorno){
-		      	$('#formCadastro').submit();
-		      }
-	    	}
+				}
+				//Se não ocorreu nenhum erro em nenhum campo submite o formulario
+		    if(retorno){
+		    	$('#formCadastro').submit();
+		    }
+	    }
     });
 }
 
@@ -143,28 +154,30 @@ function validateLogin(){
 	let senha = $('#senhaLogin');
 	//Ajax para verificar se o email e senha batem
 	$.ajax({
-        url: '/ajax/checkarLogin/',
-        data: {
-          'email': email.val(),
-          'senha': senha.val()
-        },
-        dataType: 'json',
-        success: function (data) {
-					//Caso não batam exibe erros, se baterem submete o form
-		      if (!data.existe) {
-		         email.parent().addClass('has-error');
-						 senha.parent().addClass('has-error');
-		         if($('#erroLogin').length === 0) {
-		           senha.parent().append('<span id="erroLogin" class="help-block">E-mail ou senha incorretos</span>');
-		         }
-		      }else{
-						$('#formLogin').submit();
-					}
+    url: '/ajax/checkarLogin/',
+    data: {
+    	'email': email.val(),
+      'senha': senha.val()
+    },
+    dataType: 'json',
+      success: function (data) {
+				//Caso não batam exibe erros, se baterem submete o form
+		  	if (!data.existe) {
+		      email.parent().addClass('has-error');
+					senha.parent().addClass('has-error');
+		      if($('#erroLogin').length === 0) {
+		      	senha.parent().append('<span id="erroLogin" class="help-block">E-mail ou senha incorretos</span>');
+		      }
 		    }
+				else{
+					$('#formLogin').submit();
+				}
+		  }
     });
 }
 
-function carregarMapas() {
+//Inicia os mapas - padrão da Google
+function initMap() {
 	let div=$("#divMapas");
 	for(let i=0; i<10; i++){
 		$.ajax({
@@ -185,7 +198,34 @@ function carregarMapas() {
 	}
 }
 
-//Inicia os mapas da Home
-function initMap() {
-	carregarMapas();
+//Carrega Mapas com Pesquisa
+function pesquisa() {
+	$("#divMapas").html("");
+	let div=$("#divMapas");
+	for(let i=0; i<10; i++){
+		$.ajax({
+			url: '/ajax/carregarMapasHomePesquisa/',
+			data: {
+				'num': i,
+				'pesquisa': campo.value
+			},
+			dataType: 'json',
+			success: function (data) {
+				//Se todas as postagens tiverem sido carregas
+				if(data.erro){
+					return;
+				}
+				//Prepara a postagem carregada
+				prepararPostagem(div, data, i)
+			}
+		});
+	}
 }
+
+//Verifica se o usuário fez alguma pesquisa
+form.addEventListener('submit', function(e) {
+	// impede o envio do form
+	e.preventDefault();
+	//Chama o carregamento dos Mapas com a pesquisa
+	pesquisa();
+});
