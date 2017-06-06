@@ -57,7 +57,7 @@
           			     <div class="panel-body" style="padding:2px 0px 0px 0px; padding-bottom:10px">
                        {% for grupo in grupos %}
                          <div style="height:5vh;">
-                           <a href="/grupo/grupo.idgrupo" title="{{grupo.nomegrupo}}">
+                           <a href="/grupo/{{grupo.idgrupo}}" title="{{grupo.nomegrupo}}">
                              <span style="">{{grupo.nomegrupo}}</span>
                              <span style="float:right; height:3vh; padding:0px;"><span style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
                                &nbsp;&nbsp;&nbsp;
@@ -77,9 +77,13 @@
                      <div class="panel-heading" style="padding:0px">
                        <b>Meus Amigos</b>
                      </div>
-          			     <div class="panel-body" style="display:flex;flex-direction: row;flex-wrap: wrap; padding:2px 0px 0px 0px">
+                     <div class="panel-body" style="padding:2px 0px 0px 0px">
+                       <div class="centerDiv">
+                          <input id="filtrarAmigos" type="text" placeholder="Filtrar amigos" style="width:96%; height:90%;">
+                       </div>
+          			       <div style="display:flex;flex-direction: row;flex-wrap: wrap; padding:2px 0px 0px 0px">
           				      {% for amigo in amigos %}
-                          <div>
+                          <div class="amigo">
                             {% if amigo.foto %}
                                <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
                             {% else %}
@@ -87,7 +91,7 @@
                             {% endif %}
                           </div>
                         {% endfor %}
-          				   </div>
+          				     </div>
                    </div>
                   </div>
                 </div>
