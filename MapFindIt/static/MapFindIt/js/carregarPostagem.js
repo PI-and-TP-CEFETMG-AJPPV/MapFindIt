@@ -372,7 +372,8 @@ function prepararPostagem(div, data, i){
     div.append(`
       <div class='row' style="order:${i}; padding-bottom:20px;">
         <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
-         <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa' data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
+         <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
+				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
          <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
          <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
@@ -476,6 +477,123 @@ function prepararPostagem(div, data, i){
 				 </div>
 			 </div>
     `);
+		//Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
+    $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
+			$.ajax({
+					url: '/ajax/adicionarView/',
+					data: {
+						'mapa': JSON.parse(data.mapa)[0].pk,
+						'usuario': idUsuarioLogado
+					},
+					dataType: 'json',
+					success: function (data) {
+					}
+			 });
+       setTimeout(function(){
+         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
+       }, 1000);
+    });
+		//Seta o mapa do feed
+    setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
+}
+
+function prepararPostagemVis(div, data, i){
+		//Carrega o objeto do mapa
+    let mapa=JSON.parse(data.mapa)[0];
+    mapa=mapa.fields;
+		//Carrega o objeto da postagem
+    let postagem=JSON.parse(data.postagem)[0];
+    postagem=postagem.fields;
+		//Carrega os objetos de autores dos comentarios
+    let autores=JSON.parse(data.autores);
+		//Carrega os objetos dos comentários
+    let comentarios=JSON.parse(data.comentarios);
+		//Carrega os objetos das rotas
+    let rotas=JSON.parse(data.rotas);
+		//Carrega os objetos dos pontos das rotas
+    let pontoRotas=JSON.parse(data.pontoRotas);
+    for(let i=0; i<pontoRotas.length; i++){
+      pontoRotas[i]=JSON.parse(pontoRotas[i]);
+    }
+		//Carrega os objetos das areas
+    let areas=JSON.parse(data.areas);
+		//Carrega os objetos dos pontos das areas
+		let pontoAreas=JSON.parse(data.pontoAreas);
+    for(let i=0; i<pontoAreas.length; i++){
+      pontoAreas[i]=JSON.parse(pontoAreas[i]);
+    }
+		//HTML do mapa
+    div.append(`
+      <div class='row' style="order:${i}; padding-bottom:20px;">
+        <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
+         <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
+				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
+         <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
+         <div class='centerDiv'>
+           <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
+         </div>
+         <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
+            <div class='modal-dialog modal-map-dialog' >
+              <div class='modal-content modal-map-content'>
+                <div class='modal-header'>
+                  <button type='button' class='close' data-dismiss='modal' aria-hidden='true'>
+                    ×
+                  </button>
+                  <h4 class='modal-title'>
+                    ${mapa.titulomapa}
+                  </h4>
+                </div>
+                <div class='modal-body modal-map-body'>
+                  <div class="container-fluid">
+                    <div class="row">
+											<div class="col-md-2" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
+	                      <div id="comentarios${10*(gruposCarregados-1)+i}" class="container-comentarios">
+	                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
+	                      </div>
+											</div>
+                      <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
+                        <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
+												<div id="mapExp${10*(gruposCarregados-1)+i}legend" class='legend'><h4>Legenda</h4></div>
+											</div>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </div>
+       </div>
+     </div>
+     <br><br><br>`);
+		 //Se não existirem comentários cria aviso de que não existem comentários
+     if(comentarios.length<1){
+       $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
+          <div class="row" id="naoComentarios${10*(gruposCarregados-1)+i}">
+            <div class="col-md-12">
+              <p style="text-align: left;">Ainda não existem comentários</p>
+              </div>
+            </div>
+        `);
+     }
+		 //Adiciona os comentários ao div do mapa expandido
+    comentarios.forEach(function(comentario, index){
+      $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
+          <div class="row" style="order:${index}">
+            <div class="col-md-12">
+              <div class="card-container">
+                <div class="card">
+                  <div class="content">
+                      <div class="main">
+                          <h4>${comentario.fields.titulocomentario}</h4>
+                          <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
+                          <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
+                          <p style="text-align: left">${comentario.fields.txtcomentario}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+        `);
+    });
 		//Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
     $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 			$.ajax({
