@@ -192,7 +192,7 @@ function initMap() {
 					return;
 				}
 				//Prepara a postagem carregada
-				prepararPostagem(div, data, i)
+				prepararPostagemVis(div, data, i)
 			}
 	  });
 	}
@@ -216,7 +216,7 @@ function pesquisa() {
 					return;
 				}
 				//Prepara a postagem carregada
-				prepararPostagem(div, data, i)
+				prepararPostagemVis(div, data, i)
 			}
 		});
 	}

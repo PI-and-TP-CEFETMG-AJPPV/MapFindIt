@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--{% load static %}-->
+<!--{% static "" as baseUrl %}-->
+<html lang="pt-br">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+        <meta http-equiv="Pragma" content="no-cache" />
+        <meta http-equiv="Expires" content="0" />
+        <title>MapFindIt</title>
+        <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "MapFindIt/css/CMPontoIni.css" %}" rel="stylesheet">
+    </head>
+
+    <body style="background-color: #4388CC;">
+        <br>
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <div class="col-md-4">
+                        <input id="pac-input" class="form-control" type="text" placeholder="Procurar Local">
+                    </div>
+                    <form class="form-inline" id="formPontoIni" method="POST">
+                        {% csrf_token %}
+                        <div class="input-group">
+                            <div class="input-group-addon">Lat</div>
+                            <input class="form-control" type="number" step="any" required id="LatIni" name="LatIni">
+                        </div>
+                        <div class="input-group">
+                            <div class="input-group-addon">Lng</div>
+                            <input class="form-control" type="number" step="any" required id="LngIni" name="LngIni">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Continuar</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <div class="row">
+                <div class="col-md-1"></div>
+                <div class="col-md-10">
+                    <div class="row">
+                        <div class="col-md-12" id="map"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
+        <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "MapFindIt/js/CMPontoIni.js" %}"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&libraries=places&callback=initAutocomplete"></script>
+    </body>
+</html>

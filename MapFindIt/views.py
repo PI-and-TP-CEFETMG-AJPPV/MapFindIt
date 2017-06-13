@@ -451,3 +451,10 @@ def mapasHomePesquisa(request):
 			'erro': 1,
 		}
 		return JsonResponse(data)
+
+def novoMapa(request):
+	if request.method=="POST":
+		if request.POST.__contains__("LatIni"):
+			return render(request, 'MapFindIt/CMVisib.html', {'Lat': request.POST.get('LatIni'), 'Lng': request.POST.get('LngIni')})
+	else:
+		return render(request, 'MapFindIt/CMPontoIni.html')
