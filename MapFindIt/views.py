@@ -102,6 +102,7 @@ def perfil(request, idusuario):
 		usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		#Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 		amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
+		amigos=Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
 		#Obtem todos os amigos do usuario para o menu
 		todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
 		todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -131,6 +132,7 @@ def perfil(request, idusuario):
 		  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 		  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 		  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
+		  amigos=Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
 		  #Obtem todos os amigos do usuario para o menu
 		  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
 		  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -160,6 +162,7 @@ def perfil(request, idusuario):
 			  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 			  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 			  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
+			  amigos=Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
 			  #Obtem todos os amigos do usuario para o menu
 			  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
 			  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -198,6 +201,7 @@ def perfil(request, idusuario):
 				  usuario = get_object_or_404(Usuario, idusuario=idusuario)
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
+				  amigos=Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
 				  #Obtem todos os amigos do usuario para o menu
 				  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
 				  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -223,6 +227,7 @@ def perfil(request, idusuario):
 				  usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
 				  #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
 				  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
+				  amigos=Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
 				  #Obtem todos os amigos do usuario para o menu
 				  todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
 				  todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -458,3 +463,13 @@ def novoMapa(request):
 			return render(request, 'MapFindIt/CMVisib.html', {'Lat': request.POST.get('LatIni'), 'Lng': request.POST.get('LngIni')})
 	else:
 		return render(request, 'MapFindIt/CMPontoIni.html')
+
+def criarAmizade(request):
+	idCriador=int(request.GET.get('usuario', None))
+	idAlvo=int(request.GET.get('alvo', None))
+	amizade = Amizade.objects.create(idusuario1=Usuario.objects.get(idusuario=idCriador), idusuario2=Usuario.objects.get(idusuario=idAlvo), datamizade=datetime.datetime.now(), aceita=True)
+	amizade.save()
+	data = {
+		'erro': 0,
+	}
+	return JsonResponse(data)

@@ -1,3 +1,19 @@
+//Função para tratar a solicitação de amizade
+function solicitacaoAmizade(){
+		$('#solicitarAmizade').click(function(){
+			$.ajax({
+		      url: '/ajax/criarAmizade/',
+		      data: {
+		        'usuario': idUsuarioLogado,
+		        'alvo': idUsuarioPagina
+		      },
+		      dataType: 'json',
+		      success: function (data) {
+		      }
+		  });
+		});
+}
+
 //Variaveis para guardar os erros
 var erroData;
 var erroSenhaConf;
@@ -168,6 +184,8 @@ function carregarMapas(){
 function initMap(){
 		//Carrega o primeiro grupo de postagens
 		carregarMapas();
+		//Cria o evento de clica em solicitar amizade (deve estar aqui devido ao Jquery.ui necessitar dos objetos da google carregados)
+		solicitacaoAmizade();
 }
 
 $(window).on('scroll', function(){
