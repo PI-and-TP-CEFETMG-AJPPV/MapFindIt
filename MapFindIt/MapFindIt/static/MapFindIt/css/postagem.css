@@ -1,0 +1,131 @@
+.container-comentarios{
+  display: flex;
+  flex-direction: column-reverse;
+}
+.legend {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    padding: 10px;
+    margin: 10px;
+    border: 3px solid #000;
+}
+.legend h4 {
+    margin-top: 0;
+}
+
+.legend img {
+    vertical-align: middle;
+}
+
+.tituloMapa{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.tituloMapa:hover{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.tituloMapa:active{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.tituloMapa:link{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.tituloMapa:visited{
+  text-decoration:none;
+  color: rgb(51, 51, 51);
+}
+
+.center p{
+  padding-top: 8px;
+  padding-bottom: 0px;
+}
+
+.verticalcenter {
+    display: flex;
+    align-items: center;
+}
+
+.white{
+  background: white;
+  border: 2px solid black;
+}
+
+.centerDiv{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+}
+
+.center{
+  text-align:center;
+}
+
+.modal-map-dialog {
+  width: 98%;
+  height: 98%;
+  padding: 0;
+  top: -3%;
+}
+
+.infoPostagem{
+  text-align: left !important;
+  color: #505050 !important;
+}
+
+.modal-map-content {
+  height: 99%;
+}
+
+.modal-map-body{
+  padding: 0px 0px 0px 0px;
+}
+
+.mapaExp{
+   height: 83vh;
+   width: 78vw;
+}
+
+.mapa{
+   height: 66.67vh;
+   width: 66.67vw;
+}
+
+.card-container {
+    background-color: #FFFFFF;
+	  -webkit-perspective: 800px;
+    -moz-perspective: 800px;
+    -o-perspective: 800px;
+    perspective: 800px;
+    margin-bottom: 30px;
+}
+
+.card{
+    border-radius: 4px;
+    color: #444444;
+    padding: 5px 5px 5px 5px;
+}
+
+.card-container, .front{
+	width: 100%;
+	border-radius: 4px;
+	-webkit-box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+  -moz-box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+  box-shadow: 0px 0px 19px 0px rgba(0,0,0,0.16);
+}
+
+.main{
+  padding: 5px 5px 5px 5px;
+}
+
+#divMapas{
+  display: flex;
+  flex-direction: column;
+}

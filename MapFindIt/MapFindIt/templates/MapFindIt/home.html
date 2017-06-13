@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	  <meta http-equiv="Pragma" content="no-cache" />
+	  <meta http-equiv="Expires" content="0" />
+  	<title>MapFindIt</title>
+  	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+  	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+  </head>
+  <body style="background-color: #4388CC;">
+    <div class="container-fluid">
+			<div class="row">
+				<div class="col-md-12" style="background:skyblue;">
+					<!--Barra de Pesquisa-->
+					<div class="pesquisa navbar-collapse" align="center">
+            <form class="navbar-form" id="navBarSearchForm">
+              <div class="input-group">
+        				<input type="text" class="form-control" style="width:30vw" placeholder="Digite sua pesquisa" id="pesquisa" name="pesquisa" value="">
+                <div class="input-group-btn">
+                	<button type="submit" class="btn button">Pesquisar</button>
+                </div>
+      				</div>
+            </form>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-2">
+					<!--Box Flutuante-->
+					<div id="box" style="padding-bottom: 10px">
+						<div class="row">
+	            <div class=col-md-12>
+	            	<img alt="Logo" src="{% static "MapFindIt/img/Logo.jpg" %}" id="logo">
+	            </div>
+						</div>
+						<div class="row">
+							<div class="col-md-12">
+								<p class="lema">Inovando a forma como você interage</p>
+								<form id="formLogin" method="POST">
+									{% csrf_token %}
+									<div class="form-group">
+										<input type="email" name="email" class="form-control" required id="emailLogin" placeholder="E-mail" >
+									</div>
+									<div class="form-group">
+										<input type="password" name="senha" class="form-control" required id="senhaLogin" placeholder="Senha">
+									</div>
+									<div align="center">
+										<button type="button" class="btn button" onclick="validateLogin();"
+										id="Logar">Logar</button>
+					       		<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn button" id="Cadastrar">Cadastrar</button>
+					       	</div>
+					       	<div align="center" style="padding-top: 4px">
+					       		<a href>Esqueci minha senha...</a>
+					       	</div>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-md-10">
+					<br>
+					<div id="divMapas">
+
+        	</div>
+				</div>
+			</div>
+		</div>
+
+		<!--Modal Cadastro-->
+		<div class="modal fade" id="modal-container-cadastro" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Cadastramento</h4>
+					</div>
+					<div class="modal-body">
+						<form id="formCadastro" method="POST">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+							      <input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" required>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" tabindex="2" required>
+									</div>
+								</div>
+							</div>
+							<div class="form-group">
+								<input type="email" name="email" id="emailCad" class="form-control input-lg" placeholder="E-mail" tabindex="3" required>
+							</div>
+							<div class="form-group">
+								<input type="email" name="emailConf" id="emailConf" class="form-control input-lg" placeholder="Confirmar E-mail" tabindex="4" required>
+							</div>
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
+									</div>
+								</div>
+							</div>
+							<div class="form-group" align="center">
+								<label for="datetimepicker1">Data de Nascimento</label>
+								<div class='input-group date' id='datetimepicker1'>
+									<input type='text' name="nascimento" id="dataNascimento" placeholder="__/__/____" required class="form-control" />
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+									<div class="form-group">
+										<div class="radio">
+				  						<label><input type="radio" name="gender" id="masc" value="masculino">Masculino</label>
+										</div>
+									</div>
+								</div>
+								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+									<div class="form-group">
+										<div class="radio">
+				  						<label><input type="radio" id="femin" name="gender" value="feminino">Feminino</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-xs-8 col-sm-9 col-md-9">
+									<div class="checkbox">
+				  					<label><input type="checkbox" name="aceito" id="aceito" value="">Eu aceito os <a href="#" data-toggle="modal" data-target="#termosCondicoes">Termos e Condições</a></label>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer" >
+						<div align="center">
+							<button type="button" onclick="validateCadastro();" class="btn button"> Confirmar </button>
+							<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+				var imgUrl='{{baseUrl}}';
+				var idUsuarioLogado='{{usuario.idusuario}}'
+		</script>
+    <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
+    <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>
+		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+		<script src="{% static "MapFindIt/js/home.js" %}"></script>
+  	<script async defer
+		  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+		</script>
+  </body>
+</html>
