@@ -14,6 +14,7 @@ class Amizade(models.Model):
     datamizade = models.DateField(db_column='datAmizade')  # Field name made lowercase.
     idusuario1 = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario1')  # Field name made lowercase.
     idusuario2 = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario2', related_name="id2")  # Field name made lowercase.
+    aceita = models.BooleanField(db_column="aceita", default=False)
 
     class Meta:
         db_table = 'amizade'
