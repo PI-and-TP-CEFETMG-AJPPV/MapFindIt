@@ -193,3 +193,49 @@ $(window).on('scroll', function(){
 
     }
 });
+
+function aceitarAmizade(id){
+  $.ajax({
+    url: '/ajax/aceitarAmizade/',
+    data: {
+      'usuario': idUsuarioLogado,
+      'alvo':  id
+    },
+    dataType: 'json',
+    sucess: function(data){
+
+    }
+
+  });
+  $('#solicitacao'+id).remove();
+  let valor=parseInt($("#labelSolicitacoes").html());
+  if(valor==1){
+    $("#labelSolicitacoes").remove();
+    $("#containerSolicitacoes").html("<h3>Não Existe Nenhuma Solicitação de Amizade Pendente</h3>");
+  }else{
+    $("#labelSolicitacoes").html(str(valor-1))
+  }
+}
+
+function recusarAmizade(id){
+  $.ajax({
+    url: '/ajax/recusarAmizade/',
+    data: {
+      'usuario': idUsuarioLogado,
+      'alvo':  id
+    },
+    dataType: 'json',
+    sucess: function(data){
+      
+    }
+
+  });
+  $('#solicitacao'+id).remove();
+  let valor=parseInt($("#labelSolicitacoes").html());
+  if(valor==1){
+    $("#labelSolicitacoes").remove();
+    $("#containerSolicitacoes").html("<h3>Não Existe Nenhuma Solicitação de Amizade Pendente</h3>");
+  }else{
+    $("#labelSolicitacoes").html(str(valor-1))
+  }
+}

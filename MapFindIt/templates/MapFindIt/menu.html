@@ -82,14 +82,30 @@
                           <input id="filtrarAmigos" type="text" placeholder="Filtrar amigos" style="width:96%; height:90%;">
                        </div>
           			       <div style="display:flex;flex-direction: row;flex-wrap: wrap; padding:2px 0px 0px 0px">
-          				      {% for amigo in amigos %}
-                          <div class="amigo">
-                            {% if amigo.foto %}
-                               <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+          				      {% for amizade in amigos %}
+                          {% if not amizade.aceita %}
+                            {% ifequal amizade.idusuario1 usuario %}
+                               {% with amigo=amizade.idusuario2 %}
+                                  <div class="amigo">
+                                    {% if amigo.foto %}
+                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+                                    {% else %}
+                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
+                                    {% endif %}
+                                  </div>
+                                {% endwith %}
                             {% else %}
-                               <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
-                            {% endif %}
-                          </div>
+                               {% with amigo=amizade.idusuario1 %}
+                                  <div class="amigo">
+                                    {% if amigo.foto %}
+                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+                                    {% else %}
+                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
+                                    {% endif %}
+                                  </div>
+                               {% endwith %}
+                            {% endifequal %}
+                          {% endif %}
                         {% endfor %}
           				     </div>
                    </div>
