@@ -86,6 +86,62 @@ def checkarSenha(request):
         'incorreta': (Usuario.objects.filter(idusuario=id).first().senhausuario)!=(hashlib.md5((senha+'cockles').encode()).hexdigest())
     }
     return JsonResponse(data)
+def salvarGrupo(request):
+    # cria o novo objecto do tipo grupo
+    grupo= Grupo.objects.create(nomegrupo=request.POST.get('nmdGrupo'), descgrupo=request.POST.get('descGrupo'), idusuario=request.session.get('usuarioLogado'))
+    #Salva o grupo no banco de dados
+    grupo.save()
+    #redireciona para a pagina do grupo criado
+    return redirect('grupo/grupo.idgrupo', permanent=True)
+#função para renderizar o template da pagina de grupo
+def grupo(request, idgrupo):
+        member = False
+        admim = False
+        ower = False
+        #Pega o usuario logado
+        usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
+        #Pega todas as informações do grupo
+        try:
+            grupoFull=Grupo.objects.get(pk=idgrupo)
+        except grupoFull.DoesNotExist:
+            raise Http404("Grupo inexistente")
+        q1=Membrosgrupo.objects.filter(idusuario=usuarioFull.idusuario,idgrupo=grupoFull.idgrupo)
+        #verifica se o usuario e dono do grupo
+        if usuarioFull.idusuario == grupoFull.idusuario:
+            member=True
+            admin=True
+            ower=True
+        #verifica se o usuario e membro do grupo
+        if q1.count() == 1:
+            member=True
+            #verifica se e adimistrador
+            for q in q1:
+                if q.admim:
+                    q.admim=True
+        #Obtem todos os amigos do usuario para o menu
+        todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
+        todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
+        todosAmigos=[]
+        countPendentes=0
+        for amigo in todosAmigos1:
+          todosAmigos.append(amigo)
+        for amigo in todosAmigos2:
+          if amigo.aceita:
+              #Conta as solicitações pendentes para esse usuário
+              #Está no 2 porque o usuário que recebe as solicitações é o 2
+              countPendentes+=1
+          todosAmigos.append(amigo)
+        #Obtem os grupos que o usuario pertence para o menu
+        grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+        todosGrupos=[]
+        for grupo in grupoUsuario:
+            todosGrupos.append(grupo.idgrupo)
+        #Obtem grupos que o usuario é dono para o menu
+        grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
+        for grupo in grupoUsuario:
+            todosGrupos.append(grupo)
+        #obtem a cor do grupo
+        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'ower':ower, 'todosAmigos': todosAmigos, 'grupos': todosGrupos, 'solicitacoesPendentes': countPendentes})
 
 def perfil(request, idusuario):
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
@@ -149,7 +205,7 @@ def perfil(request, idusuario):
             if amigo.aceita:
                 #Conta as solicitações pendentes para esse usuário
                 #Está no 2 porque o usuário que recebe as solicitações é o 2
-                countPendentes+=1           
+                countPendentes+=1
           todosAmigos.append(amigo)
           #Obtem os grupos que o usuario pertence para o menu
           grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
@@ -377,6 +433,42 @@ def mapasPerfil(request):
     id = request.GET.get('id', None)
     #Carrega todas as postagens do usuario logado, ordenando pela datada postagem
     todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
+    #Verifica se as postagens já foram todas carregadas
+    if todasPostagens.count()>int(num):
+        #Caso ainda tenham postagens não carregadas
+        #Serializa a postagem em JSON
+        postagem = serializers.serialize('json', [ todasPostagens[num], ]);
+        #Chama a função de obter os dados da postagem
+        dados = getDadosPostagem(todasPostagens[num])
+        #Retorna ao AJAX todos os dados
+        data = {
+            'postagem': postagem,
+            'mapa': dados[0],
+            'pontos': dados[1],
+            'icones': dados[2],
+            'comentarios': dados[3],
+            'autores': dados[4],
+            'rotas': dados[5],
+            'pontoRotas': dados[6],
+            'areas': dados[7],
+            'pontoAreas': dados[8],
+        }
+        return JsonResponse(data)
+    else:
+        #Caso já se tenha carregado todas as postagens
+        data = {
+            'erro': 1,
+        }
+        return JsonResponse(data)
+
+def mapasGrupo(request, idgrupo):
+    #Pega a posicao do mapa que deve ser carregado
+    num = request.GET.get('num', None)
+    num = int(num)
+    #Pega o ID do usuario
+    id = request.GET.get('id', None)
+    #Carrega todas as postagens do grupo, ordenando pela datada postagem
+    todasPostagens=Postagemgrupo.objects.filter(fk=idgrupo).order_by('-datapostagem')
     #Verifica se as postagens já foram todas carregadas
     if todasPostagens.count()>int(num):
         #Caso ainda tenham postagens não carregadas

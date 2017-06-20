@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>MapFindIt</title>
+		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/grupo.css"%}" rel="stylesheet">
+	</head>
+	<body>
+    {% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2 white" >
+            <br>
+            <div class="center">
+              <h1>{{grupo.nomegrupo}}</h1>
+            </div>
+          </div>
+        </div>
+        <br>
+        <div class="row">
+					<div class="col-md-8 col-md-offset-2 white" >
+						<br>
+						<div class="center">
+							<h4>{{grupo.descgrupo}}</h1>
+						</div>
+					</div>
+				</div>
+        <br>
+
+        <div class="row">
+          <div class="col-md-8 col-md-offset-2" >
+            <div class="col-md-2">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default" >Pesquisar</button>
+              </div>
+            </div>
+            <div class="col-md-2">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default" >Membros</button>
+              </div>
+            </div>
+            {% if member %}
+              <div class="col-md-2">
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" >postar</button>
+                </div>
+              </div>
+              {% if admim %}
+                {% if grupo.privado %}
+                  <div class="col-md-2">
+                    <div class="input-group-btn">
+                      <button type="button" class="btn btn-default" >convidar</button>
+                    </div>
+                  </div>
+                  {% endif %}
+                  <button type="submit" class="btn btn-primary" value="config" href="modal-container-">
+                    <span class="glyphicon glyphicon-cog"></span>
+                  </button><div class="col-md-2">
+              {% endif %}
+              {% else %}
+              <div class="col-md-2">
+                <div class="input-group-btn">
+                  <button type="button" class="btn btn-default" >entrar</button>
+                </div>
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div id="divMapas">
+
+				</div>
+				<!--Modal opções admim-->
+				<div class="modal fade" id="modal-container-admim" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+								<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Cadastramento</h4>
+							</div>
+							<div class="modal-body">
+								<form id="formAtualizar" method="POST">
+									{% csrf_token %}
+									<div class="row">
+										<div class="col-xs-12 col-sm-6 col-md-6">
+											<div class="form-group">
+												Nome do Grupo: <input type="text" name="nmdGrupo" id="ndmGrupo" class="form-control input-lg" placeholder="{{grupo.nomegrupo}}" tabindex="1">
+											</div>
+										</div>
+									</div>
+										<div class="row">
+											<div class="col-xs-10 col-sm-6 col-md-6">
+												<div class="form-group">
+													Descrição Grupo: <input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" placeholder="{{grupo.descgrupo}}" tabindex="2">
+												</div>
+											</div>
+										</div>
+										<div class="row">
+		  								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+		  									<div class="form-group">
+		  										<div class="radio">
+		  				  						<label><input type="radio" name="gender" id="public" value="public">Publico</label>
+		  										</div>
+		  									</div>
+		  								</div>
+		  								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+		  									<div class="form-group">
+		  										<div class="radio">
+		  				  						<label><input type="radio" id="private" name="gender" value="private">Privado</label>
+		  										</div>
+		  									</div>
+		  								</div>
+		  							</div>
+									</form>
+									<div class="row">
+										<div class="col-md-2 col-md-offset-1" >
+											<div class="col-md-2">
+												<div class="input-group-btn">
+													<button type="button" class="btn btn-default" >mudar cor</button>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-2 col-md-offset-1" >
+											<div class="col-md-2">
+												<div class="input-group-btn">
+													<button type="button" class="btn btn-default" >adicionar adimistrador</button>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-2 col-md-offset-1" >
+											<div class="col-md-2">
+												<div class="input-group-btn">
+													<button type="button" class="btn btn-default" >remover mapa</button>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-2 col-md-offset-1" >
+											<div class="col-md-2">
+												<div class="input-group-btn">
+													<button type="button" class="btn btn-default" >Banidos</button>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							<div class="modal-footer" >
+								<div align="center">
+									<button type="button" onclick="confirmar();" class="btn button"> Confirmar </button>
+									<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+		<script>
+			var imgUrl='{{baseUrl}}';
+			var idUsuarioLogado='{{usuario.idusuario}}';
+			var idUsuarioPagina = '{{idPag.idusuario}}'
+		</script>
+		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
+		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+		<script src="{% static "MapFindIt/js/grupo.js"%}"></script>
+		<script async defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+		</script>
+
+	</body>
+</html>

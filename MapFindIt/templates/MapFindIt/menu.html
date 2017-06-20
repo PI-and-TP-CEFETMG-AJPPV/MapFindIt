@@ -21,9 +21,24 @@
               </div>
   				  </div>
           </form>
+          <form class="navbar-form navbar-right" id="navBarCriarGrupo">
+            <div class="input-group">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default"  href="#modal-container-grupo" data-toggle='modal'>Criar Grupo</button>
+              </div>
+            </div>
+          </form>
+          <form class="navbar-form navbar-right" id="navBarCriarMapa">
+            <div class="input-group">
+              <div class="input-group-btn">
+                <button type="button" class="btn btn-default">Criar Mapa</button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
     </nav>
+
     <div id="wrapper" class="toggled">
       <div class="container-fluid">
         <div id="sidebar-wrapper">
@@ -114,5 +129,54 @@
              </li>
           </ul>
         </div>
+
       </div>
+      <!--Modal Cadastro grupo-->
+  		<div class="modal fade" id="modal-container-grupo" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  			<div class="modal-dialog">
+  				<div class="modal-content">
+  					<div class="modal-header">
+  						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+  						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Cadastro Grupo</h4>
+  					</div>
+  					<div class="modal-body">
+  						<form id="formCadastrogrupo" method="POST">
+  							{% csrf_token %}
+  							<div class="form-group">
+  								<input type="text" name="nmdGrupo" id="nmdGrupo" class="form-control input-lg" placeholder="Nome do Grupo" tabindex="1" required>
+  							</div>
+  							<div class="form-group">
+  								<input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" placeholder="Descrição Grupo" tabindex="2" required>
+  							</div>
+                <div class="form-group">
+                  Selecione uma cor para o Grupo:
+                  <input type="color" name="corGrupo" id="corGrupo" class="form-control input-lg" placeholder="Senha" tabindex="3">
+                </div>
+  							<div class="row">
+  								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+  									<div class="form-group">
+  										<div class="radio">
+  				  						<label><input type="radio" name="gender" id="public" value="public">Publico</label>
+  										</div>
+  									</div>
+  								</div>
+  								<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+  									<div class="form-group">
+  										<div class="radio">
+  				  						<label><input type="radio" id="private" name="gender" value="private">Privado</label>
+  										</div>
+  									</div>
+  								</div>
+  							</div>
+  						</form>
+  					</div>
+  					<div class="modal-footer" >
+  						<div align="center">
+  							<button type="button" onclick="validateCadastro();" class="btn button"> Confirmar </button>
+  							<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+  						</div>
+  					</div>
+  				</div>
+  			</div>
+  		</div>
     <br><br><br><br>

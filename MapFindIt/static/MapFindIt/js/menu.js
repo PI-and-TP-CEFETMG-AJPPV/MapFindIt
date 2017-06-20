@@ -1,4 +1,33 @@
-$("#menu-toggle").click(function(e) {
+//Valida o form de cadastro de grupo
+function validateCadastro(){
+	let nomeGrupo = $('#nmdGrupo');
+	let descGrupo = $('#descGrupo');
+	let cor = $('#corGrupo');
+	let privado = $('#private');
+	let publico= $('#public');
+	let retorno=true;
+		//Verifica se uma das opcões esta selecionada
+    if(!privado.is(':checked') && !publico.is(':checked')){
+    	if($("#erroPrivacidade").length === 0){
+    		erroPrivacidade=$('<div class="has-error"><span id="erroPrivacidade" class="help-block">Nada Selecionado</span></div>').appendTo(publico.parent().parent());
+    	}
+    	retorno=false;
+    }
+		else{
+			if(erroPrivacidade){
+				erroPrivacidade.remove();
+			}
+		}
+    $.ajax({
+         url: '/ajax/salvarGrupo/',
+		    //Se não ocorreu nenhum erro em nenhum campo submite o formulario
+		      if(retorno){
+		   	      $('#formCadastrogrupo').submit();
+		      }
+        });
+    	}
+
+    $("#menu-toggle").click(function(e) {
     //Exibe o menu ao ser clickado
     e.preventDefault();
     $("#wrapper").toggleClass("toggled");
