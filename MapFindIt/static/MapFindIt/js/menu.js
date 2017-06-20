@@ -1,33 +1,4 @@
-//Valida o form de cadastro de grupo
-function validateCadastro(){
-	let nomeGrupo = $('#nmdGrupo');
-	let descGrupo = $('#descGrupo');
-	let cor = $('#corGrupo');
-	let privado = $('#private');
-	let publico= $('#public');
-	let retorno=true;
-		//Verifica se uma das opcões esta selecionada
-    if(!privado.is(':checked') && !publico.is(':checked')){
-    	if($("#erroPrivacidade").length === 0){
-    		erroPrivacidade=$('<div class="has-error"><span id="erroPrivacidade" class="help-block">Nada Selecionado</span></div>').appendTo(publico.parent().parent());
-    	}
-    	retorno=false;
-    }
-		else{
-			if(erroPrivacidade){
-				erroPrivacidade.remove();
-			}
-		}
-    $.ajax({
-         url: '/ajax/salvarGrupo/',
-		    //Se não ocorreu nenhum erro em nenhum campo submite o formulario
-		      if(retorno){
-		   	      $('#formCadastrogrupo').submit();
-		      }
-        });
-    	}
-
-    $("#menu-toggle").click(function(e) {
+$("#menu-toggle").click(function(e) {
     //Exibe o menu ao ser clickado
     e.preventDefault();
     $("#wrapper").toggleClass("toggled");
@@ -67,32 +38,3 @@ $('#filtrarAmigos').keyup(function(event) {
       }
     });
 });
-//Carrega o grupo de 10 mapas
-function salvarGrupo(){
-	let
-	$.ajax({
-      url: '/ajax/salvarGrupo/',
-      data: {
-        'senha': senhaAtual.val(),
-        'id': $('#userId').val()
-      },
-      dataType: 'json',
-      success: function (data) {
-        if (data.incorreta) {
-           senhaAtual.parent().addClass('has-error');
-           if($('#erroSenhaAtual').length === 0) {
-             erroSenhaAtual=$('<span id="erroSenhaAtual" class="help-block">Senha incorreta</span>').appendTo(senhaAtual.parent());
-           }
-           retorno=false;
-        }else{
-          senhaAtual.parent().removeClass('has-error');
-          if(erroSenhaAtual){
-            erroSenhaAtual.remove();
-          }
-        }
-        if(retorno){
-          $('#formSenha').submit();
-        }
-      }
-  });
-}

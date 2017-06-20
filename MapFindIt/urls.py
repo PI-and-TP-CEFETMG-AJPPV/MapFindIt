@@ -3,13 +3,12 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.home),
+    url(r'^home/$', views.feed, name="feed"),
     url(r'^perfil/(?P<idusuario>[0-9]+)/$', views.perfil, name="perfil"),
-    url(r'^grupo/(?P<idgrupo>[0-9]+)/$', views.grupo, name="grupo"),
     url(r'^ajax/checkarEmail/$', views.checkarEmail),
     url(r'^ajax/checkarLogin/$', views.checkarLogin),
     url(r'^ajax/checkarSenha/$', views.checkarSenha),
     url(r'^ajax/carregarMapasPerfil/$', views.mapasPerfil),
-    url(r'^ajax/carregarMapasGrupo/$', views.mapasGrupo),
     url(r'^ajax/carregarMapasHome/$', views.mapasHome),
     url(r'^ajax/carregarMapasHomePesquisa/$', views.mapasHomePesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
