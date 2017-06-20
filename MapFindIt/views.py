@@ -97,7 +97,6 @@ def salvarGrupo(request):
 def grupo(request, idgrupo):
         member = False
         admim = False
-        ower = False
         #Pega o usuario logado
         usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
         #Pega todas as informações do grupo
@@ -105,19 +104,17 @@ def grupo(request, idgrupo):
             grupoFull=Grupo.objects.get(pk=idgrupo)
         except grupoFull.DoesNotExist:
             raise Http404("Grupo inexistente")
-        q1=Membrosgrupo.objects.filter(idusuario=usuarioFull.idusuario,idgrupo=grupoFull.idgrupo)
+        q1=Membrosgrupo.objects.filter(idusuario=usuarioFull.idusuario).filter(idgrupo=grupoFull.idgrupo).first()
         #verifica se o usuario e dono do grupo
-        if usuarioFull.idusuario == grupoFull.idusuario:
+        if usuarioFull.idusuario == grupoFull.idusuario.idusuario:
             member=True
-            admin=True
-            ower=True
+            admim=True
         #verifica se o usuario e membro do grupo
-        if q1.count() == 1:
+        if q1 is not None:
             member=True
             #verifica se e adimistrador
-            for q in q1:
-                if q.admim:
-                    q.admim=True
+            if q1.admim:
+                q.admim=True
         #Obtem todos os amigos do usuario para o menu
         todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
         todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -141,7 +138,7 @@ def grupo(request, idgrupo):
         for grupo in grupoUsuario:
             todosGrupos.append(grupo)
         #obtem a cor do grupo
-        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'ower':ower, 'todosAmigos': todosAmigos, 'grupos': todosGrupos, 'solicitacoesPendentes': countPendentes})
+        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos, 'solicitacoesPendentes': countPendentes})
 
 def perfil(request, idusuario):
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro

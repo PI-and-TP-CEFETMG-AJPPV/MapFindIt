@@ -63,9 +63,14 @@
                     </div>
                   </div>
                   {% endif %}
-                  <button type="submit" class="btn btn-primary" value="config" href="modal-container-">
-                    <span class="glyphicon glyphicon-cog"></span>
-                  </button><div class="col-md-2">
+									<div class="col-md-2">
+                    <div class="input-group-btn">
+                  		<button type="submit" class="btn btn-primary" value="config" href="#modal-container-admim" data-toggle="modal"s>
+                    		<span class="glyphicon glyphicon-cog"></span>
+                  		</button><div class="col-md-2">
+										</div>
+	                 </div>
+								 </div>
               {% endif %}
               {% else %}
               <div class="col-md-2">
@@ -91,14 +96,14 @@
 								<form id="formAtualizar" method="POST">
 									{% csrf_token %}
 									<div class="row">
-										<div class="col-xs-12 col-sm-6 col-md-6">
+										<div class="col-md-12">
 											<div class="form-group">
 												Nome do Grupo: <input type="text" name="nmdGrupo" id="ndmGrupo" class="form-control input-lg" placeholder="{{grupo.nomegrupo}}" tabindex="1">
 											</div>
 										</div>
 									</div>
 										<div class="row">
-											<div class="col-xs-10 col-sm-6 col-md-6">
+											<div class="col-md-12">
 												<div class="form-group">
 													Descrição Grupo: <input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" placeholder="{{grupo.descgrupo}}" tabindex="2">
 												</div>
@@ -122,28 +127,28 @@
 		  							</div>
 									</form>
 									<div class="row">
-										<div class="col-md-2 col-md-offset-1" >
+										<div class="col-md-2" >
 											<div class="col-md-2">
 												<div class="input-group-btn">
 													<button type="button" class="btn btn-default" >mudar cor</button>
 												</div>
 											</div>
 										</div>
-										<div class="col-md-2 col-md-offset-1" >
+										<div class="col-md-2" >
 											<div class="col-md-2">
 												<div class="input-group-btn">
 													<button type="button" class="btn btn-default" >adicionar adimistrador</button>
 												</div>
 											</div>
 										</div>
-										<div class="col-md-2 col-md-offset-1" >
+										<div class="col-md-2" >
 											<div class="col-md-2">
 												<div class="input-group-btn">
 													<button type="button" class="btn btn-default" >remover mapa</button>
 												</div>
 											</div>
 										</div>
-										<div class="col-md-2 col-md-offset-1" >
+										<div class="col-md-2" >
 											<div class="col-md-2">
 												<div class="input-group-btn">
 													<button type="button" class="btn btn-default" >Banidos</button>

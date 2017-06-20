@@ -1,24 +1,28 @@
 //Carrega o grupo de 10 mapas
 function carregarMapas(){
-	//Seleciona a div dos mapas
-	let div=$("#divMapas");
-	gruposCarregados++;
-	for(let i=0; i<10; i++){
-		$.ajax({
-	      url: '/ajax/carregarMapasGrupo/',
-	      data: {
-	        'num': 10*(gruposCarregados-1)+i,
-	        'id': $('#userId').val()
-	      },
-	      dataType: 'json',
-	      success: function (data) {
-					//Se todas as postagens tiverem sido carregas
-					if(data.erro){
-						return;
-					}
-					//Prepara a postagem carregada
-					prepararPostagem(div, data, i)
-				}
-			}
-	  });
-	}
+	$.ajax({
+      url: '/ajax/mapasGrupo/',
+      data: {
+        'senha': senhaAtual.val(),
+        'id': $('#userId').val()
+      },
+      dataType: 'json',
+      success: function (data) {
+        if (data.incorreta) {
+           senhaAtual.parent().addClass('has-error');
+           if($('#erroSenhaAtual').length === 0) {
+             erroSenhaAtual=$('<span id="erroSenhaAtual" class="help-block">Senha incorreta</span>').appendTo(senhaAtual.parent());
+           }
+           retorno=false;
+        }else{
+          senhaAtual.parent().removeClass('has-error');
+          if(erroSenhaAtual){
+            erroSenhaAtual.remove();
+          }
+        }
+        if(retorno){
+          $('#formSenha').submit();
+        }
+      }
+  });
+}
