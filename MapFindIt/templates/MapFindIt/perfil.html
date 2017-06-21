@@ -11,7 +11,7 @@
 		<meta http-equiv="Expires" content="0" />
 		<title>MapFindIt</title>
 		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-		<link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
@@ -68,7 +68,7 @@
 						{% else %}
 								<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade <span class="label label-primary" id="labelSolicitacoes">{{solicitacoesPendentes}}</span></button>
 		   			{% endifequal %}
-
+						
 						<button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
 					</div>
 					<div class="modal fade" id="modal-solicitacoes" aria-hidden="true">

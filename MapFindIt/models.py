@@ -56,10 +56,9 @@ class Cor(models.Model):
 class Grupo(models.Model):
     idgrupo = models.IntegerField(db_column='idGrupo', primary_key=True)  # Field name made lowercase.
     nomegrupo = models.CharField(db_column='nomeGrupo', max_length=20, blank=True, null=True)  # Field name made lowercase.
-    descgrupo = models.TextField(db_column='descGrupo',blank=True, null=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
-    privado = models.BooleanField(db_column='Privacidade',default=False )
+
     def __str__(self):
         return self.nomegrupo
 
@@ -125,8 +124,7 @@ class Mapa(models.Model):
 class Membrosgrupo(models.Model):
     idgrupo = models.ForeignKey(Grupo, models.DO_NOTHING, db_column='idGrupo')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
-    ban = models.BooleanField(db_column='banGrup', default='False')# Fild name Mode lowercase
-    admim = models.BooleanField(db_column='admimGrup', default='False')# Fild name Mode lowercase
+
     class Meta:
         db_table = 'membrosgrupo'
         unique_together = (('idgrupo', 'idusuario'),)
