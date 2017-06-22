@@ -166,7 +166,7 @@ function carregarMapas(){
 	      url: '/ajax/carregarMapasPerfil/',
 	      data: {
 	        'num': 10*(gruposCarregados-1)+i,
-	        'id': $('#userId').val()
+	        'id': idUsuarioPagina
 	      },
 	      dataType: 'json',
 	      success: function (data) {
@@ -190,7 +190,8 @@ function initMap(){
 
 $(window).on('scroll', function(){
     if( $(window).scrollTop() > $(document).height() - $(window).height() ) {
-
+			//Carrega mais dez mapas
+			carregarMapas();
     }
 });
 
@@ -226,7 +227,7 @@ function recusarAmizade(id){
     },
     dataType: 'json',
     sucess: function(data){
-      
+
     }
 
   });

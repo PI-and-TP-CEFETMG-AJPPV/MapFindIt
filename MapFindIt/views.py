@@ -496,6 +496,10 @@ def novoMapa(request):
                                      coordyinicial = request.POST.get('Lat'), valaprovados = 0,
                                      valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
             mapa.save()
+            if mapa.idtvisibilidade=='A' or mapa.idtvisibilidade=='U':
+                #Cria postagem do usuário autor do mapa, caso seja publico
+                postagem=Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa=mapa, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+                postagem.save()
             return redirect("/editarMapa/"+str(mapa.pk)+"/")
         else:
             #Se voltou do formulário de escolher o ponto inicial
