@@ -226,7 +226,6 @@ class RotaPonto(models.Model):
 
 
 class Tema(models.Model):
-    codtema = models.IntegerField(db_column='codTema', primary_key=True)  # Field name made lowercase.
     nomtema = models.CharField(db_column='nomTema', max_length=20)  # Field name made lowercase.
 
     def __str__(self):

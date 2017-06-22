@@ -9,45 +9,86 @@
         <meta http-equiv="Expires" content="0" />
         <title>MapFindIt</title>
         <link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+        <link href="{% static "MapFindIt/css/select2.min.css" %}" rel="stylesheet">
         <link href="{% static "MapFindIt/css/CMVisib.css" %}" rel="stylesheet">
+
     </head>
 
     <body style="background-color: #4388CC;">
-        <br>
         <div class="container-fluid">
             <div class="row">
                 <div class="col-md-6 col-md-offset-3 top-40 card-white">
-                    <form id="formVisib" method="POST">
+                    <form id="formMapa" method="POST">
                         {% csrf_token %}
                         <div class="col-md-12">
+                            <br>
                             <div class="form-group">
-                                <br>
+                               <input type="text" name="nomeMapa" class="form-control" required id="nomeMapa" placeholder="Titulo do Mapa" required >
+                            </div>
+                            <div class="form-group">
+                               <textarea name="descMapa" class="form-control" rows="2" id="descMapa" placeholder="Descrição do Mapa"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="temas">Tema do Mapa</label><br>
+                                <select style="width:25vw;" name="temas" id="temas">
+
+                                </select>
+                                <button type="button" href="#modal-tema" data-toggle="modal" class="btn btn-default">Criar Tema</button>
+                            </div>
+                            <div class="form-group">
                                 <div class="input-group">
                                     <div class="input-group-addon">Lat</div>
-                                    <input class="form-control" type="number" step="any" required id="Lat" name="Lat" value="{{Lat}}">
+                                    <input required class="form-control" type="number" step="any" required id="Lat" name="Lat" value="{{Lat}}">
                                 </div>
                                 <br>
                                 <div class="input-group">
                                     <div class="input-group-addon">Lng</div>
-                                    <input class="form-control" type="number" step="any" required id="Lng" name="Lng" value="{{Lng}}">
+                                    <input required class="form-control" type="number" step="any" required id="Lng" name="Lng" value="{{Lng}}">
                                 </div>
                             </div>
                             <div class="form-group">
-                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r1" value="P" onclick="opcContext('Privado');" checked>Privado</label>
-                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r2" value="U" onclick="opcContext('Publico');">Público</label>
-                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r3" value="A" onclick="opcContext('Amigos');">Apenas amigos</label>
+                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r1" value="P" checked>Privado</label>
+                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r2" value="U">Público</label>
+                                <label class="radio-inline"><input type="radio" name="opcVisib" id="r3" value="A">Apenas amigos</label>
                             </div>
-                            <div id="contextual"></div>
-                            <div class="form-group">
-                                <button type="submit" class="btn btn-primary">Continuar</button>
+                            <div class="form-group" style="display: flex; align-items: center; justify-content: center;">
+                                <button type="submit" class="btn btn-primary">Criar Mapa</button>
                             </div>
                         </div>
                     </form>
+                    <!--Modal de Criar Tema !-->
+                    <div class="modal fade" id="modal-tema" role="dialog" aria-hidden="true">
+                			<div class="modal-dialog">
+                				<div class="modal-content">
+                					<div class="modal-header">
+                						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+                						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Criar Tema</h4>
+                					</div>
+                					<div class="modal-body">
+                						<form id="formTema" name="formTema" method="POST" action="javascript:validateTema();">
+                							{% csrf_token %}
+                							<div class="form-group">
+                								<input type="text" name="nomeTema" id="nomeTema" class="form-control input-lg" placeholder="Nome do Tema" required>
+                							</div>
+                            </form>
+                					</div>
+                					<div class="modal-footer" >
+                						<div align="center">
+                							<input type="submit" form="formTema" class="btn button" value="Confirmar">
+
+                              <button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+                						</div>
+                					</div>
+                				</div>
+                			</div>
+                		</div>
+                    <!--Fim do Modal de Criar Tema !-->
                 </div>
             </div>
         </div>
         <script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
         <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "MapFindIt/js/select2.full.min.js" %}"></script>
         <script src="{% static "MapFindIt/js/CMVisib.js" %}"></script>
     </body>
 </html>

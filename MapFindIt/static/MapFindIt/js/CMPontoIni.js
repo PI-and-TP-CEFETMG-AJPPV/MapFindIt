@@ -59,10 +59,22 @@ function initAutocomplete() {
             } else {
               bounds.extend(place.geometry.location);
             }
-			
+
 			$("#LatIni").val(place.geometry.location.lat());
 			$("#LngIni").val(place.geometry.location.lng());
           });
           map.fitBounds(bounds);
+        });
+        map.addListener('click', function(e) {
+          for(let i=0; i<markers.length; i++){
+            markers[i].setMap(null);
+          }
+          markers.push(new google.maps.Marker({
+            map: map,
+            position: e.latLng
+          }));
+          map.panTo(e.latLng);
+          $("#LatIni").val(e.latLng.lat());
+    			$("#LngIni").val(e.latLng.lng());
         });
       }

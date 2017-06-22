@@ -10,6 +10,7 @@ import base64
 import hashlib
 import datetime
 import json
+from django.utils import timezone
 
 def home(request):
     if request.method=="POST":
@@ -152,7 +153,7 @@ def perfil(request, idusuario):
             if amigo.aceita:
                 #Conta as solicitações pendentes para esse usuário
                 #Está no 2 porque o usuário que recebe as solicitações é o 2
-                countPendentes+=1           
+                countPendentes+=1
           todosAmigos.append(amigo)
           #Obtem os grupos que o usuario pertence para o menu
           grupoUsuario=Membrosgrupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
@@ -487,9 +488,20 @@ def mapasHomePesquisa(request):
 
 def novoMapa(request):
     if request.method=="POST":
-        if request.POST.__contains__("LatIni"):
+        #Se voltou do formulário de finalizar o mapa
+        if request.POST.__contains__("temas"):
+            mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
+                                     idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
+                                     valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = request.POST.get('Lng'),
+                                     coordyinicial = request.POST.get('Lat'), valaprovados = 0,
+                                     valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+            mapa.save()
+            return redirect("/editarMapa/"+str(mapa.pk)+"/")
+        else:
+            #Se voltou do formulário de escolher o ponto inicial
             return render(request, 'MapFindIt/CMVisib.html', {'Lat': request.POST.get('LatIni'), 'Lng': request.POST.get('LngIni')})
     else:
+        #Primeira página
         return render(request, 'MapFindIt/CMPontoIni.html')
 
 def criarAmizade(request):
@@ -531,3 +543,33 @@ def recusarAmizade(request):
         'erro': 0,
     }
     return JsonResponse(data)
+
+def getTemas(request):
+    #Pega todos os temas e retorna ao javascript
+    temas = Tema.objects.all()
+    temas = serializers.serialize('json', temas)
+    data = {
+        'temas': temas,
+    }
+    return JsonResponse(data)
+
+def adicionarTema(request):
+    #Pega o nome do tema criado
+    nomeTema = request.GET.get('nomeTema')
+    #Verifica se o tema já existe
+    if not Tema.objects.filter(nomtema=nomeTema):
+        #Se não existir cria um tema com o nome
+        tema=Tema.objects.create(nomtema=nomeTema)
+        tema.save()
+        data = {
+            'erro': 0,
+        }
+    else:
+        #Se existir retorna erro
+        data = {
+            'erro': 1,
+        }
+    return JsonResponse(data)
+
+def editarMapa(request, idmapa):
+    return HttpResponse('oi')

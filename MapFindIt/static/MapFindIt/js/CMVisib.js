@@ -1,16 +1,45 @@
-function opcContext(contexto) {
-    var normal = '<div id="contextual"></div>';
-    var extra = '<div id="contextual"><div class="form-group"><label class="checkbox-inline"><input type="checkbox" name="opcEdicao" id="edicao">Outros podem editar</label></div></div>';
-    
-    switch (contexto) {
-        case 'Privado':
-            $('#contextual').replaceWith(normal);
-            break;
-        case 'Publico':
-            $('#contextual').replaceWith(extra);
-            break;
-        case 'Amigos':
-            $('#contextual').replaceWith(extra);
-            break;
+function carregarTemas(){
+  $.ajax({
+    url: '/ajax/getTemas/',
+    data: {
+
+    },
+    dataType: 'json',
+    success: function (data) {
+       let temas=JSON.parse(data.temas);
+       let select = $('#temas');
+       for(let i=0; i<temas.length; i++){
+         select.append(`<option value=${temas[i].pk}>${temas[i].fields.nomtema}</option>`);
+       }
     }
+  });
+}
+
+$(document).ready(function(){
+    $('#temas').select2({
+      "language": {
+       "noResults": function(){
+           return "Nenhum Tema Encontrado";
+       }
+     }
+    });
+    carregarTemas();
+});
+
+function validateTema(){
+  $.ajax({
+    url: '/ajax/adicionarTema/',
+    data: {
+      'nomeTema': $('#nomeTema').val()
+    },
+    dataType: 'json',
+    success: function (data) {
+
+      if(data.erro=='0'){
+        $('#temas').empty();
+        carregarTemas();
+      }
+    }
+  });
+  $("#modal-tema .close").click()
 }
