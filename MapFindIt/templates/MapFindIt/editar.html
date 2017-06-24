@@ -11,6 +11,7 @@
 		<meta http-equiv="Expires" content="0" />
 		<title>MapFindIt</title>
 		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/editar.css"%}" rel="stylesheet">
 	</head>
@@ -22,21 +23,21 @@
             <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
                 <div class="menu-list">
                     <ul id="menu-content" class="menu-content collapse out">
-                        <li  data-toggle="collapse" data-target="#products" class="collapsed active">
+                        <li id="selecInserir" data-toggle="collapse" data-target="#products" class="collapsed active">
                           <a href="#"><i class="fa fa-gift fa-lg"></i> &nbsp;&nbsp;Inserir</a>
                         </li>
                         <ul class="sub-menu collapse" id="products">
-                            <li class="active"><a href="#">&nbsp;&nbsp;Ponto</a></li>
-                            <li><a href="#">&nbsp;&nbsp;Área</a></li>
-                            <li><a href="#">&nbsp;&nbsp;Rota</a></li>
+                            <li id="selecPonto" onclick="selecionar(0);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ponto</a></li>
+                            <li id="selecArea" onclick="selecionar(1);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Área</a></li>
+                            <li id="selecRota" onclick="selecionar(2);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rota</a></li>
                         </ul>
                         <li data-toggle="collapse" data-target="#service" class="collapsed">
                           <a href="#"><i class="fa fa-globe fa-lg"></i>&nbsp;&nbsp;Legendas<span class="arrow"></span></a>
                         </li>
                         <ul class="sub-menu collapse" id="service">
-                          <li>&nbsp;&nbsp;Criar Icone</li>
-                          <li>&nbsp;&nbsp;Editar Icone</li>
-                          <li>&nbsp;&nbsp;Remover Icone</li>
+                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Criar Icone</a></li>
+                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar Icone</a></li>
+                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remover Icone</a></li>
                         </ul>
                     </ul>
                  </div>
@@ -48,6 +49,10 @@
           </div>
         </div>
       </div>
+			<!-- Form para se ter o token !-->
+			<form style="display:none">
+				{% csrf_token %}
+			</form>
     <!-- Fecha o wrapper do menu !-->
     </div>
     <script>
@@ -57,9 +62,9 @@
 		</script>
 		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
 		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
-    <script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
 		<script src="{% static "MapFindIt/js/editar.js"%}"></script>
 		<script async defer
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">

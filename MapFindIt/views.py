@@ -11,6 +11,7 @@ import hashlib
 import datetime
 import json
 from django.utils import timezone
+from PIL import Image
 
 def home(request):
     if request.method=="POST":
@@ -524,3 +525,58 @@ def carregarMapaEditar(request):
         'pontoAreas': dados[5],
     }
     return JsonResponse(data)
+
+def criarPonto(request):
+    #Pega o ID do mapa
+    idMapa=int(request.GET.get('idMapa', None))
+    #Titulo do Ponto
+    titulo = request.GET.get('titulo', None)
+    #Descrição do Ponto
+    desc = request.GET.get('desc', None)
+    #Coordenadas do Ponto
+    coordx = request.GET.get('coordx', None)
+    coordy = request.GET.get('coordy', None)
+    #Carrega o mapa
+    mapa = get_object_or_404(Mapa, idmapa=idMapa)
+    #Carrega o usuario
+    idUsuario = int(request.GET.get('idUsuario', None))
+    usuario = get_object_or_404(Usuario, idusuario=idUsuario)
+    #Cria o ponto
+    ponto = Ponto.objects.create(coordx = coordx,
+    coordy=coordy,
+    idmapa=mapa,
+    nomponto=titulo,
+    descponto=desc,
+    idusuario=usuario,
+    idtponto='P')
+    #Salva o ponto
+    ponto.save()
+    data = {
+        'id': ponto.idponto
+    }
+    return JsonResponse(data)
+
+def criarImagemPonto(request, idPonto):
+    #Blob da Imagem
+    blob = request.POST.get('img', None)
+    print(blob)
+    #Cria a foto a partir do blob se ele existir
+    format, imgstr = blob.split(';base64,')
+    ext = format.split('/')[-1]
+    #Deleta a foto se ela existir
+    if os.path.exists("MapFindIt/static/MapFindIt/imagemPonto/"+str(idPonto)+"."+ext):
+        os.remove("MapFindIt/static/MapFindIt/imagemPonto/"+str(idPonto)+"."+ext)
+    data = ContentFile(base64.b64decode(imgstr), name=str(idPonto) + "." + ext)
+    ponto= get_object_or_404(Ponto, idponto=idPonto)
+    #Adiciona a foto ao objeto Ponto
+    ponto.fotoponto=data
+    #Salva o ponto
+    ponto.save()
+    #Obtem a imagem do ponto
+    image = Image.open(ponto.fotoponto)
+    #Muda o tamanho da imagem para 170X170
+    size = (170, 170)
+    image=image.resize(size, Image.ANTIALIAS)
+    #Salva a nova imagem
+    image.save(ponto.fotoponto.path)
+    return JsonResponse({'sucesso': 1})
