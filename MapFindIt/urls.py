@@ -19,5 +19,6 @@ urlpatterns = [
 	url(r'^novoMapa/$', views.novoMapa),
     url(r'^ajax/getTemas/$', views.getTemas),
     url(r'^ajax/adicionarTema/$', views.adicionarTema),
-    url(r'^editarMapa/(?P<idmapa>[0-9]+)/$', views.editarMapa, name="editar")
+    url(r'^editarMapa/(?P<idmapa>[0-9]+)/$', views.editarMapa, name="editar"),
+    url(r'^ajax/carregarMapaEditar/$', views.carregarMapaEditar),
 ]

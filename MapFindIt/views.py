@@ -198,14 +198,9 @@ def perfil(request, idusuario):
                   resultado=getDadosMenu(request)
                   return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
-def getDadosPostagem(postagem):
-    #Método para obter os dados de uma postagem
-    #Obtem o mapa da postagem
-    mapaObj = postagem.idmapa;
-    #Serializa ele em JSON
-    mapa=serializers.serialize("json", [mapaObj,]);
-    #Obtem os pontos do mapa da postagem
-    todosPontos=Ponto.objects.filter(idmapa=mapaObj.idmapa)
+def getDadosMapa(mapa):
+    #Obtem os pontos do mapa
+    todosPontos=Ponto.objects.filter(idmapa=mapa.idmapa)
     #Serializa eles em JSON
     pontos = serializers.serialize("json", todosPontos)
     #Cria queryset vazia
@@ -216,6 +211,36 @@ def getDadosPostagem(postagem):
             qset.append(pt.codicone)
     #Serializa os icones em JSON
     icones = serializers.serialize("json", qset)
+    #Obtem todas as rotas do mapa
+    todasRotas = Rota.objects.filter(idmapa=mapa.idmapa)
+    #Serializa elas em JSON, utilizando a chave natural para a cor
+    rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+    #Cria array para guardar todos os pontos das rotas
+    pontosRotasArr=[]
+    for rota in todasRotas:
+        #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
+        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+    #Serializa o array em JSON
+    pontoRotas=json.dumps(pontosRotasArr)
+    #Obtem todas as areas do mapa
+    todasAreas = Area.objects.filter(idmapa=mapa.idmapa)
+    #Serializa as areas em JSON, utilizando a chave natural para a cor
+    areas=serializers.serialize("json", todasAreas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
+    #Cria array para guardar todos os pontos das areas
+    pontosAreasArr=[]
+    for area in todasAreas:
+        #Para cada area, adiciona ao array os seus pontos já serlializados em JSON
+        pontosAreasArr.append(serializers.serialize("json", Pontoarea.objects.filter(idarea=area.idarea), use_natural_foreign_keys=True))
+    #Serializa o array em JSON
+    pontoAreas=json.dumps(pontosAreasArr)
+    return [pontos, icones, rotas, pontoRotas, areas, pontoAreas,]
+
+def getDadosPostagem(postagem):
+    #Método para obter os dados de uma postagem
+    #Obtem o mapa da postagem
+    mapaObj = postagem.idmapa;
+    #Serializa ele em JSON
+    mapa=serializers.serialize("json", [mapaObj,]);
     #Obtem os comentarios da postagem
     comentarios = Comentario.objects.filter(idpostagem=postagem.idpostagem)
     #Serializa eles em JSON
@@ -227,30 +252,9 @@ def getDadosPostagem(postagem):
         autoresArr.append(coment.idusuario)
     #Serializa os autores
     autores = serializers.serialize("json", autoresArr)
-    #Obtem todas as rotas do mapa
-    todasRotas = Rota.objects.filter(idmapa=mapaObj.idmapa)
-    #Serializa elas em JSON, utilizando a chave natural para a cor
-    rotas=serializers.serialize("json", todasRotas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
-    #Cria array para guardar todos os pontos das rotas
-    pontosRotasArr=[]
-    for rota in todasRotas:
-        #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
-        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
-    #Serializa o array em JSON
-    pontoRotas=json.dumps(pontosRotasArr)
-    #Obtem todas as areas do mapa
-    todasAreas = Area.objects.filter(idmapa=mapaObj.idmapa)
-    #Serializa as areas em JSON, utilizando a chave natural para a cor
-    areas=serializers.serialize("json", todasAreas, use_natural_foreign_keys=True, use_natural_primary_keys=True)
-    #Cria array para guardar todos os pontos das areas
-    pontosAreasArr=[]
-    for area in todasAreas:
-        #Para cada area, adiciona ao array os seus pontos já serlializados em JSON
-        pontosAreasArr.append(serializers.serialize("json", Pontoarea.objects.filter(idarea=area.idarea), use_natural_foreign_keys=True))
-    #Serializa o array em JSON
-    pontoAreas=json.dumps(pontosAreasArr)
+    res=getDadosMapa(mapaObj)
     #Retorna um array com todos os dados
-    return [mapa, pontos, icones, comentario, autores, rotas, pontoRotas, areas, pontoAreas,]
+    return [mapa, res[0], res[1], comentario, autores, res[2], res[3], res[4], res[5],]
 
 def salvarComentario(request):
     #Obtem os dados
@@ -499,4 +503,24 @@ def adicionarTema(request):
 
 def editarMapa(request, idmapa):
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
-    return render(request, 'MapFindIt/editar.html', {'usuario': get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))})
+    resultado=getDadosMenu(request)
+    return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
+
+def carregarMapaEditar(request):
+    #Pega o ID do mapa
+    id = request.GET.get('id', None)
+    #Carrega o mapa
+    mapa = get_object_or_404(Mapa, idmapa=id)
+    #Chama a função de obter os dados do mapa
+    dados = getDadosMapa(mapa)
+    #Retorna ao AJAX todos os dados
+    data = {
+        'mapa': serializers.serialize("json", [mapa,]),
+        'pontos': dados[0],
+        'icones': dados[1],
+        'rotas': dados[2],
+        'pontoRotas': dados[3],
+        'areas': dados[4],
+        'pontoAreas': dados[5],
+    }
+    return JsonResponse(data)
