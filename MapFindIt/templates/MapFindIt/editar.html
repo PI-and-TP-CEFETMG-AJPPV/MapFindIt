@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>MapFindIt</title>
+		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/editar.css"%}" rel="stylesheet">
+	</head>
+	<body>
+		{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
+      <div class="row">
+        <div class="menu-list">
+             <ul id="menu-content" class="menu-content collapse out">
+                 <li>
+                   <a href="#">
+                   <i class="fa fa-dashboard fa-lg"></i> Dashboard
+                   </a>
+                 </li>
+                 <li  data-toggle="collapse" data-target="#products" class="collapsed active">
+                   <a href="#"><i class="fa fa-gift fa-lg"></i> UI Elements <span class="arrow"></span></a>
+                 </li>
+                 <ul class="sub-menu collapse" id="products">
+                     <li class="active"><a href="#">CSS3 Animation</a></li>
+                     <li><a href="#">General</a></li>
+                     <li><a href="#">Buttons</a></li>
+                     <li><a href="#">Tabs & Accordions</a></li>
+                     <li><a href="#">Typography</a></li>
+                     <li><a href="#">FontAwesome</a></li>
+                     <li><a href="#">Slider</a></li>
+                     <li><a href="#">Panels</a></li>
+                     <li><a href="#">Widgets</a></li>
+                     <li><a href="#">Bootstrap Model</a></li>
+                 </ul>
+                 <li data-toggle="collapse" data-target="#service" class="collapsed">
+                   <a href="#"><i class="fa fa-globe fa-lg"></i> Services <span class="arrow"></span></a>
+                 </li>
+                 <ul class="sub-menu collapse" id="service">
+                   <li>New Service 1</li>
+                   <li>New Service 2</li>
+                   <li>New Service 3</li>
+                 </ul>
+                 <li data-toggle="collapse" data-target="#new" class="collapsed">
+                   <a href="#"><i class="fa fa-car fa-lg"></i> New <span class="arrow"></span></a>
+                 </li>
+                 <ul class="sub-menu collapse" id="new">
+                   <li>New New 1</li>
+                   <li>New New 2</li>
+                   <li>New New 3</li>
+                 </ul>
+                 <li>
+                   <a href="#">
+                   <i class="fa fa-user fa-lg"></i> Profile
+                   </a>
+                 </li>
+             </ul>
+         </div>
+
+      </div>
+    <!-- Fecha o wrapper do menu !-->
+    </div>
+    <script>
+			var imgUrl='{{baseUrl}}';
+			var idUsuarioLogado='{{usuario.idusuario}}';
+		</script>
+		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
+		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/editar.js"%}"></script>
+		<script async defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+		</script>
+  </body>
