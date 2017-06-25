@@ -32,12 +32,12 @@
                             <li id="selecRota" onclick="selecionar(2);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rota</a></li>
                         </ul>
                         <li data-toggle="collapse" data-target="#service" class="collapsed">
-                          <a href="#"><i class="fa fa-globe fa-lg"></i>&nbsp;&nbsp;Legendas<span class="arrow"></span></a>
+                          <a href="#"><i class="fa fa-globe fa-lg"></i>&nbsp;&nbsp;Icones<span class="arrow"></span></a>
                         </li>
                         <ul class="sub-menu collapse" id="service">
-                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Criar Icone</a></li>
-                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar Icone</a></li>
-                          <li><a onclick="">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remover Icone</a></li>
+                          <li href="#modal-criar-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Criar Icone</a></li>
+                          <li href="#modal-editar-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar Icone</a></li>
+                          <li href="#modal-remover-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remover Icone</a></li>
                         </ul>
                     </ul>
                  </div>
@@ -53,6 +53,99 @@
 
 				</div>
       </div>
+
+			<!-- Modais de criar, editar e remover icones !-->
+			<div class="modal fade" id="modal-criar-icone" aria-hidden="true">
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" onclick='$("#modal-criar-icone").modal("hide");' aria-hidden="true">
+								×
+							</button>
+							<h4 class="modal-title">
+								Criar Um Novo Icone
+							</h4>
+						</div>
+						<div class="modal-body">
+							<form action="javascript:criarIcone()" id="criarIconeForm" name="criarIconeForm">
+								<div class="form-group">
+									<input required type="text" id="legendaIcone" class="form-control" placeholder="Legenda para o Icone">
+								</div>
+								<div class="input-group">
+	                  <span class="input-group-btn center">
+	                      <span class="btn btn-default btn-file">
+	                          Escolher Icone... <input accept="image/*" type="file" id="imgInpIcone">
+	                      </span>
+	                  </span>
+	              </div>
+	              <br>
+	              <img id='novaImgIcone'/>
+						  </form>
+						<div class="modal-footer">
+							<button type="submit" form="criarIconeForm" class="btn btn-success"> Criar Icone </button>
+							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" style="top:-5%;" id="modal-editar-icone" aria-hidden="true">
+				<div class="modal-dialog" style="width: 80vw;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" onclick='$("#modal-icone").modal("hide");' aria-hidden="true">
+								×
+							</button>
+							<h4 class="modal-title">
+								Escolher icone para o ponto
+							</h4>
+						</div>
+						<div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+							<div class="centerDiv">
+								 <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
+								 <br>
+								 <br>
+								 <b
+							</div>
+							<div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" onclick="if(iconeEscolhido){salvarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal fade" style="top:-5%;" id="modal-remover-icone" aria-hidden="true">
+				<div class="modal-dialog" style="width: 80vw;">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" onclick='$("#modal-icone").modal("hide");' aria-hidden="true">
+								×
+							</button>
+							<h4 class="modal-title">
+								Escolher icone para o ponto
+							</h4>
+						</div>
+						<div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+							<div class="centerDiv">
+								 <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
+								 <br>
+								 <br>
+								 <b
+							</div>
+							<div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+							</div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" onclick="if(iconeEscolhido){salvarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+						</div>
+					</div>
+				</div>
+			</div>
 			<!-- Form para se ter o token !-->
 			<form style="display:none">
 				{% csrf_token %}

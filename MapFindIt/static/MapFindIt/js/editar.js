@@ -53,13 +53,13 @@ function selecionar(idt){
    }
 }
 
-//Função para mudar a imagem do Crop
-function readURL(input) {
+//Função para mudar a imagem do Crop do Ponto
+function readURLPonto(input) {
 		if (input.files && input.files[0]) {
 		    var reader = new FileReader();
 		    reader.onload = function (e) {
-		        $('#novaImg').attr('src', e.target.result);
-            $('#novaImg').cropper({
+		        $('#novaImgPonto').attr('src', e.target.result);
+            $('#novaImgPonto').cropper({
               aspectRatio: 1/1,
               crop: function(e) {
 
@@ -70,15 +70,15 @@ function readURL(input) {
     }
 }
 //Arquivo de imagem em blob
-var blobFinal;
-function mudarImagem(){
+var blobFinalPonto;
+function mudarImagemPonto(){
 		//Obtem a imagem cropped em blob
-    $("#novaImg").cropper('getCroppedCanvas').toBlob(function (blob) {
+    $("#novaImgPonto").cropper('getCroppedCanvas').toBlob(function (blob) {
 		      var reader = new window.FileReader();
 		      reader.readAsDataURL(blob);
 		      reader.onloadend = function() {
           base64data = reader.result;
-          blobFinal=base64data;
+          blobFinalPonto=base64data;
       }
     });
 }
@@ -86,7 +86,7 @@ function mudarImagem(){
 //Cria o ponto no banco
 function criarPonto(lat, lng){
    if($('#imgInp').val() != ''){
-     mudarImagem();
+     mudarImagemPonto();
    }
    setTimeout(function () {
      $.ajax({
@@ -106,7 +106,7 @@ function criarPonto(lat, lng){
                  url: '/ajax/criarImagemPonto/'+data.id+'/',
                  type: 'POST',
                  data: {
-                   'img':blobFinal,
+                   'img':blobFinalPonto,
                    'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
                  },
                  dataType: 'json',
@@ -114,7 +114,7 @@ function criarPonto(lat, lng){
                     carregarMapa({'lat': lat, 'lng': lng});
                  }
              });
-             blobFinal='';
+             blobFinalPonto='';
            }else{
              carregarMapa({'lat': lat, 'lng': lng});
            }
@@ -124,6 +124,64 @@ function criarPonto(lat, lng){
 
 }
 
+//Para o cropper do icone
+$(document).on('change','#imgInpIcone',function(){
+  readURLIcone(this);
+});
+
+function readURLIcone(input) {
+		if (input.files && input.files[0]) {
+		    var reader = new FileReader();
+		    reader.onload = function (e) {
+		        $('#novaImgIcone').attr('src', e.target.result);
+            $('#novaImgIcone').cropper({
+              aspectRatio: 1/1,
+              crop: function(e) {
+
+              }
+            });
+		    }
+        reader.readAsDataURL(input.files[0]);
+    }
+}
+//Arquivo de imagem em blob
+var blobFinalIcone="";
+function mudarImagemIcone(){
+		//Obtem a imagem cropped em blob
+    $("#novaImgIcone").cropper('getCroppedCanvas').toBlob(function (blob) {
+		      var reader = new window.FileReader();
+		      reader.readAsDataURL(blob);
+		      reader.onloadend = function() {
+          base64data = reader.result;
+          blobFinalIcone=base64data;
+      }
+    });
+}
+
+//Para criar o icone
+function criarIcone(){
+    mudarImagemIcone();
+    //Timeout para tempo de gerar a imagem
+    setTimeout(function () {
+      if(blobFinalIcone!=""){
+        $.ajax({
+            url: '/ajax/criarIcone/',
+            type: 'POST',
+            data: {
+              'nome': $('#legendaIcone').val(),
+              'icone': blobFinalIcone,
+              'usuario': idUsuarioLogado,
+              'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            dataType: 'json',
+            success: function (data) {
+              $('#modal-criar-icone').modal('hide');
+            }
+        });
+        blobFinalIcone='';
+      }
+    }, 500);
+}
 //Para inserir ponto no mapa
 function inserirPonto(evento){
   var contentString =
@@ -139,12 +197,12 @@ function inserirPonto(evento){
               <div class="input-group">
                   <span class="input-group-btn center">
                       <span class="btn btn-default btn-file">
-                          Escolher Imagem do Ponto... <input accept="image/*" type="file" id="imgInp">
+                          Escolher Imagem do Ponto... <input accept="image/*" type="file" id="imgInpPonto">
                       </span>
                   </span>
               </div>
               <br>
-              <img id='novaImg'/>
+              <img id='novaImgPonto'/>
             </div>
             <div class="form-group">
                <button type="submit" class="btn btn-default">Criar Ponto</button>
@@ -155,8 +213,8 @@ function inserirPonto(evento){
     content: contentString
   });
   //Para o upload de imagens
-  $(document).on('change','#imgInp',function(){
-    readURL(this);
+  $(document).on('change','#imgInpPonto',function(){
+    readURLPonto(this);
   });
   var marker = new google.maps.Marker({
     position: evento.latLng,
@@ -217,7 +275,7 @@ function escolherIcone(id){
                         <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
                         <br>
                         <br>
-                        <br>
+                        <b
                      </div>
                      <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
 

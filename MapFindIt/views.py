@@ -560,7 +560,6 @@ def criarPonto(request):
 def criarImagemPonto(request, idPonto):
     #Blob da Imagem
     blob = request.POST.get('img', None)
-    print(blob)
     #Cria a foto a partir do blob se ele existir
     format, imgstr = blob.split(';base64,')
     ext = format.split('/')[-1]
@@ -596,4 +595,29 @@ def salvarIcone(request):
     icone=get_object_or_404(Iconespontos, codicone=idIcone)
     ponto.codicone=icone
     ponto.save()
+    return JsonResponse({'sucesso': 1})
+
+def criarIcone(request):
+    idUsuario=int(request.POST.get('usuario', None))
+    nome=request.POST.get('nome', None)
+    icone=Iconespontos.objects.create(nomeicone=nome, idusuario=get_object_or_404(Usuario, idusuario=idUsuario))
+    #Blob da Imagem
+    blob = request.POST.get('icone', None)
+    #Cria a foto a partir do blob se ele existir
+    format, imgstr = blob.split(';base64,')
+    ext = format.split('/')[-1]
+    #Deleta a foto se ela existir
+    if os.path.exists("MapFindIt/static/MapFindIt/imagemIcones/"+str(icone.codicone)+"."+ext):
+        os.remove("MapFindIt/static/MapFindIt/imagemIcones/"+str(icone.codicone)+"."+ext)
+    data = ContentFile(base64.b64decode(imgstr), name=str(icone.codicone) + "." + ext)
+    icone.imgicone=data
+    #Salva o icone
+    icone.save()
+    #Obtem a imagem do icone
+    image = Image.open(icone.imgicone)
+    #Muda o tamanho da imagem para 32X32
+    size = (32, 32)
+    image=image.resize(size, Image.ANTIALIAS)
+    #Salva a nova imagem
+    image.save(icone.imgicone.path)
     return JsonResponse({'sucesso': 1})
