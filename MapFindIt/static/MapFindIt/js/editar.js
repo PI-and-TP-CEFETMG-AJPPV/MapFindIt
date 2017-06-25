@@ -213,6 +213,12 @@ function escolherIcone(id){
                      </h4>
                    </div>
                    <div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+                     <div class="centerDiv">
+                        <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
+                        <br>
+                        <br>
+                        <br>
+                     </div>
                      <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
 
                      </div>
@@ -243,7 +249,25 @@ function escolherIcone(id){
                  //Salva o id do icone (id do elemento retirando-se a palavra icone)
                  iconeEscolhido=$(this).attr('id').substring(5);
              });
+             $('#filtrarIcones').keyup(function(event) {
+                 //Para cada icone carregado
+                 $(".imagemIcone").each(function(i, item){
+                   //Pega o objeto JQuery da div do icone
+                   item=$(item);
+                   //Pega o titulo do icone para identifica-lo
+                   let parag = item.children('p');
+                   //Se o nome conter a string pesquisada
+                   if(parag.text().indexOf($("#filtrarIcones").val())!==-1){
+                     //Mostra o icone
+                     item.show();
+                   }else{
+                     //Esconde o icone
+                     item.hide();
+                   }
+                 });
+             });
              $('#modal-icone').modal('show');
+
           }
       }
     });

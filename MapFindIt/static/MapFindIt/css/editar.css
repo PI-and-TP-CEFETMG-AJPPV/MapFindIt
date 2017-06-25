@@ -175,6 +175,8 @@ Mapa
     align-items: center;
     justify-content: center;
     padding-top: 15px;
+    max-width: 15vw;
+    max-height: 15vh;
 }
 
 .imagemIcone:hover {
@@ -192,6 +194,6 @@ Mapa
     background-color: green !important;
 }
 
-.imagemIcone + .imagemIcone {
+.imagemIcone:not(:hidden) + .imagemIcone:not(:hidden) {
     border-left: 0;
 }
