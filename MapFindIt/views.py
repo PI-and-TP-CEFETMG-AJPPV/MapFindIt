@@ -12,6 +12,7 @@ import datetime
 import json
 from django.utils import timezone
 from PIL import Image
+from django.db.models import Q
 
 def home(request):
     if request.method=="POST":
@@ -579,4 +580,20 @@ def criarImagemPonto(request, idPonto):
     image=image.resize(size, Image.ANTIALIAS)
     #Salva a nova imagem
     image.save(ponto.fotoponto.path)
+    return JsonResponse({'sucesso': 1})
+
+def getTodosIcones(request):
+    idUser=int(request.GET.get('id', None))
+    usuario=get_object_or_404(Usuario, idusuario=idUser)
+    queryset=Iconespontos.objects.filter(idusuario=usuario)
+    queryset=queryset | Iconespontos.objects.filter(~Q(idusuario = usuario))
+    return JsonResponse({'icones': serializers.serialize("json", queryset)})
+
+def salvarIcone(request):
+    idPonto=int(request.GET.get('id', None))
+    idIcone=int(request.GET.get('idIcone', None))
+    ponto=get_object_or_404(Ponto, idponto=idPonto)
+    icone=get_object_or_404(Iconespontos, codicone=idIcone)
+    ponto.codicone=icone
+    ponto.save()
     return JsonResponse({'sucesso': 1})

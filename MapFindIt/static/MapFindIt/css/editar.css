@@ -164,3 +164,34 @@ Mapa
   justify-content: center;
   align-items: center;
 }
+
+/* Icones */
+
+.imagemIcone {
+    border: 1px solid black;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 15px;
+}
+
+.imagemIcone:hover {
+    border: 1px solid black;
+    flex: 1 1 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 15px;
+    background-color: lightgreen;
+}
+
+.iconeEscolhido {
+    background-color: green !important;
+}
+
+.imagemIcone + .imagemIcone {
+    border-left: 0;
+}

@@ -69,7 +69,7 @@ class Iconespontos(models.Model):
     codicone = models.AutoField(db_column='codIcone', primary_key=True)  # Field name made lowercase.
     imgicone =  models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemIcones/', null=True, blank=True)  # Field name made lowercase.
     nomeicone = models.CharField(db_column='nomeIcone', max_length=20)  # Field name made lowercase.
-
+    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
     def __str__(self):
         return self.nomeicone
 

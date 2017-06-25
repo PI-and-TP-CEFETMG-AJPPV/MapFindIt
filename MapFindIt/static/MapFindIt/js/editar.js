@@ -169,6 +169,86 @@ function inserirPonto(evento){
 
 }
 
+//Icone escolhido pelo usuário
+var iconeEscolhido;
+
+function salvarIcone(id){
+  $.ajax({
+      url: '/ajax/salvarIcone/',
+      data: {
+        'id': id,
+        'idIcone': iconeEscolhido
+      },
+      dataType: 'json',
+      success: function (data) {
+        if(data.sucesso){
+          carregarMapa(map.getCenter());
+          $('#modal-icone').modal('hide');
+        }
+      }
+   });
+}
+
+//Elementos para a escolha do icone
+function escolherIcone(id){
+  $.ajax({
+      url: '/ajax/getTodosIcones/',
+      data: {
+        'id': idUsuarioLogado
+      },
+      dataType: 'json',
+      success: function (data) {
+         if(data.icones){
+             $('#modalDinamico').empty();
+             let conteudo=`
+             <div class="modal fade" style="top:-5%;" id="modal-icone" aria-hidden="true">
+               <div class="modal-dialog" style="width: 80vw;">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" onclick='$("#modal-icone").modal("hide");' aria-hidden="true">
+                       ×
+                     </button>
+                     <h4 class="modal-title">
+                       Escolher icone para o ponto
+                     </h4>
+                   </div>
+                   <div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+                     <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+                     </div>
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" onclick="if(iconeEscolhido){salvarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             `;
+             $('#modalDinamico').html(conteudo);
+             let icones=JSON.parse(data.icones);
+             let container=$("#container-icones");
+             for(let i=0; i<icones.length; i++){
+                item=icones[i].fields;
+                $('#container-icones').append(`
+                  <div id='icone${icones[i].pk}' class="imagemIcone centerDiv">
+                    <img src='${imgUrl}MapFindIt/ImagemIcones/${icones[i].pk}.png'>
+                    <p>${item.nomeicone}</p>
+                  </div>
+                  `);
+             }
+             $('.imagemIcone').on('click', function(){
+                 $('.imagemIcone').removeClass('iconeEscolhido');
+                 $(this).addClass('iconeEscolhido');
+                 //Salva o id do icone (id do elemento retirando-se a palavra icone)
+                 iconeEscolhido=$(this).attr('id').substring(5);
+             });
+             $('#modal-icone').modal('show');
+          }
+      }
+    });
+}
+
 function carregarMapaInicial(){
   map=null;
   $('#divMapa').empty();
@@ -269,6 +349,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		            	<div id="bodyContent">
 		            		<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${item.pk}.png">
 		            		<p>${item.fields.descponto}</p>
+                    <button class="btn btn-default" onClick="escolherIcone(${item.pk});">Escolher Icone</button>
 		            	</div>
 		            </div>`;
 				}else{
@@ -278,6 +359,9 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		            	<h1 id="firstHeading" class="firstHeading">${item.fields.nomponto}</h1>
 		            	<div id="bodyContent">
 		            		<p>${item.fields.descponto}</p>
+                    <div class="centerDiv">
+                      <button class="btn btn-default" onClick="escolherIcone(${item.pk});">Escolher Icone</button>
+                    </div>
 		            	</div>
 		            </div>`;
 				}
