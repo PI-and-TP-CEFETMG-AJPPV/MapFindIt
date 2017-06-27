@@ -14,9 +14,10 @@
 		<link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/grupo.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt\css\grupo.css"%}" rel="stylesheet">
+
 	</head>
-	<body>
+	<body style="background:#4388CC;">
     {% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
         <div class="row">
           <div class="col-md-8 col-md-offset-2 white" >
@@ -36,36 +37,34 @@
 					</div>
 				</div>
         <br>
-
-        <div class="row">
           <div class="col-md-8 col-md-offset-2" >
             <div class="col-md-2">
-              <div class="input-group-btn">
+              <div class="input-group-btn" align='left'>
                 <button type="button" class="btn btn-default" >Pesquisar</button>
               </div>
             </div>
             <div class="col-md-2">
-              <div class="input-group-btn">
-                <button type="button" class="btn btn-default" >Membros</button>
+              <div class="input-group-btn" align = "left">
+                <button type="button" class="btn btn-default" href="#modal-container-membros" data-toggle="modal">Membros</button>
               </div>
             </div>
             {% if member %}
-              <div class="col-md-2">
+              <div class="col-md-2" align = "center" >
                 <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" >postar</button>
+                  <button type="button" class="btn btn-default" href="#modal-container-postar" data-toggle="modal">postar</button>
                 </div>
               </div>
               {% if admim %}
                 {% if grupo.privado %}
-                  <div class="col-md-2">
+                  <div class="col-md-2" align ="right">
                     <div class="input-group-btn">
                       <button type="button" class="btn btn-default" >convidar</button>
                     </div>
                   </div>
                   {% endif %}
-									<div class="col-md-2">
+									<div class="col-md-2" align="right">
                     <div class="input-group-btn">
-                  		<button type="submit" class="btn btn-primary" value="config" href="#modal-container-admim" data-toggle="modal"s>
+                  		<button type="submit" class="btn btn-primary" value="config" href="#modal-container-admim" data-toggle="modal" sytle="background:skyblue">
                     		<span class="glyphicon glyphicon-cog"></span>
                   		</button><div class="col-md-2">
 										</div>
@@ -80,10 +79,62 @@
               </div>
             {% endif %}
           </div>
-        </div>
+
         <div id="divMapas">
 
 				</div>
+				<!--Modal para postagem -->
+				<div class="modal fade" id="modal-container-postar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+								<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Postar</h4>
+							</div>
+							<div class="modal-body">
+								<div class="input-group">
+		    					<input type="text" class="form-control" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="">
+		              <div class="input-group-btn">
+		            	   <button type="submit" class="btn btn-default">Pesquisar</button>
+		              </div>
+		  				  </div>
+								<div  id="divMapasUser">
+
+								</div>
+							</div>
+						</div>
+							<div align="center">
+								<button type="button" onclick="confirmar();" class="btn button"> Confirmar </button>
+								<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+							</div>
+						</div>
+					</div>
+					<!--Modal para membros -->
+					<div class="modal fade" id="modal-container-membros" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+						<div class="modal-dialog">
+							<div class="modal-content">
+								<div class="modal-header">
+									<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+									<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Membros</h4>
+								</div>
+								<div class="modal-body">
+									<div class="input-group">
+										<input type="text" class="form-control" placeholder="Digite o nome do membro" id="pesquisa" name="pesquisa" value="">
+										<div class="input-group-btn">
+											 <button type="submit" class="btn btn-default">Pesquisar</button>
+										</div>
+									</div>
+									<div  id="divMapasUser">
+
+									</div>
+								</div>
+							</div>
+								<div align="center">
+									<button type="button" onclick="confirmar();" class="btn button"> Confirmar </button>
+									<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+								</div>
+							</div>
+						</div>
 				<!--Modal opções admim-->
 				<div class="modal fade" id="modal-container-admim" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
@@ -127,32 +178,26 @@
 		  							</div>
 									</form>
 									<div class="row">
-										<div class="col-md-2" >
-											<div class="col-md-2">
-												<div class="input-group-btn">
-													<button type="button" class="btn btn-default" >mudar cor</button>
-												</div>
+										<div class="col-md-12">
+											<div class="col-md-2" >
+													<div class="input-group-btn">
+														<button type="button" class="btn btn-default" >mudar cor</button>
+													</div>
 											</div>
-										</div>
-										<div class="col-md-2" >
-											<div class="col-md-2">
-												<div class="input-group-btn">
-													<button type="button" class="btn btn-default" >adicionar adimistrador</button>
-												</div>
+											<div class="col-md-2" >
+													<div class="input-group-btn">
+														<button type="button" class="btn btn-default" >adicionar adimistrador</button>
+													</div>
 											</div>
-										</div>
-										<div class="col-md-2" >
-											<div class="col-md-2">
-												<div class="input-group-btn">
-													<button type="button" class="btn btn-default" >remover mapa</button>
-												</div>
+											<div class="col-md-2" >
+													<div class="input-group-btn">
+														<button type="button" class="btn btn-default" >remover mapa</button>
+													</div>
 											</div>
-										</div>
-										<div class="col-md-2" >
-											<div class="col-md-2">
-												<div class="input-group-btn">
-													<button type="button" class="btn btn-default" >Banidos</button>
-												</div>
+											<div class="col-md-2" >
+													<div class="input-group-btn">
+														<button type="button" class="btn btn-default" >Banidos</button>
+													</div>
 											</div>
 										</div>
 									</div>
