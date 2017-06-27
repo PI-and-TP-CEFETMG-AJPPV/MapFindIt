@@ -40,7 +40,8 @@ def home(request):
         return render(request, 'MapFindIt/home.html', {})
 
 def feed(request):
-    return render(request, 'MapFindIt/feed.html', {})
+    resultado=getDadosMenu(request)
+    return render(request, 'MapFindIt/feed.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
 #Pesquisa mapas pela String passada
 def pesquisar(pesquisa):
