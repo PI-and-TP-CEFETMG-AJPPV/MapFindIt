@@ -705,3 +705,38 @@ def criarIcone(request):
     #Salva a nova imagem
     image.save(icone.imgicone.path)
     return JsonResponse({'sucesso': 1})
+
+def criarArea(request):
+    nome = request.POST.get('nome')
+    desc = request.POST.get('desc')
+    idUsuario = request.POST.get('usuario')
+    idMapa = request.POST.get('mapa')
+    pontosX = json.loads(request.POST.get('pontosX'))
+    pontosY = json.loads(request.POST.get('pontosY'))
+    usuario = get_object_or_404(Usuario, idusuario=idUsuario)
+    mapa = get_object_or_404(Mapa, idmapa=idMapa)
+    cor=None
+    if 'nomeCor' in request.POST:
+        cor = Cor.objects.create(nomecor=request.POST.get('nomeCor'), r=request.POST.get('r'), g=request.POST.get('g'), b=request.POST.get('b'))
+        cor.save()
+    else:
+        cor = get_object_or_404(Cor, codcor=int(request.POST.get('idCor')))
+    area = Area.objects.create(idmapa = mapa, nomarea=nome, descarea=desc, codcor=cor, idusuario=usuario)
+    area.save()
+    for x, y in zip(pontosX, pontosY):
+        ponto = Ponto.objects.create(coordx=x, coordy=y, idusuario=usuario, idmapa=mapa, idtponto='A')
+        ponto.save()
+        pontoarea = Pontoarea.objects.create(idarea=area, idponto=ponto)
+        pontoarea.save()
+    return JsonResponse({'sucesso': 1})
+
+def verificaCor(request):
+    r = request.GET.get('r');
+    g = request.GET.get('g');
+    b = request.GET.get('b');
+    cor = Cor.objects.filter(r=r, g=g, b=b)
+    if cor.exists():
+        cor=cor.first()
+        return JsonResponse({'existe': 1, 'id': cor.codcor})
+    else:
+        return JsonResponse({'existe': 0})

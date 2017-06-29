@@ -28,4 +28,6 @@ urlpatterns = [
     url(r'^ajax/getTodosIcones/$', views.getTodosIcones),
     url(r'^ajax/salvarIcone/$', views.salvarIcone),
     url(r'^ajax/criarIcone/$', views.criarIcone),
+    url(r'^ajax/criarArea/$', views.criarArea),
+    url(r'^ajax/verificaCor/$', views.verificaCor)
 ]

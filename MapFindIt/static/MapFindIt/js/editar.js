@@ -20,6 +20,9 @@ function selecionar(idt){
                break;
        case 1: paiR=$('#selecInserir');
                elemR=$('#selecArea');
+               arrayPontosArea=[];
+               if(areaTemp)
+                  areaTemp.setMap(null);
                break;
        case 2: paiR=$('#selecInserir');
                elemR=$('#selecRota');
@@ -27,6 +30,7 @@ function selecionar(idt){
      }
      paiR.removeClass('selecionado');
      elemR.removeClass('selecionado');
+     $('#botoesContainer').empty();
      map.setOptions({ draggableCursor : 'auto' });
    }
    //Estiliza os elementos da ferramenta escolhida, caso ela não estivesse já selecionada
@@ -85,7 +89,7 @@ function mudarImagemPonto(){
 
 //Cria o ponto no banco
 function criarPonto(lat, lng){
-   if($('#imgInp').val() != ''){
+   if($('#imgInpPonto').val()){
      mudarImagemPonto();
    }
    setTimeout(function () {
@@ -101,7 +105,7 @@ function criarPonto(lat, lng){
          },
          dataType: 'json',
          success: function (data) {
-           if(blobFinal){
+           if(blobFinalPonto){
              $.ajax({
                  url: '/ajax/criarImagemPonto/'+data.id+'/',
                  type: 'POST',
@@ -331,6 +335,186 @@ function escolherIcone(id){
     });
 }
 
+//Rotas do mapa
+var mapaRotas;
+
+//Para inserir rota
+function inserirRota(e){
+
+}
+//Grava a area inserida
+function gravaArea(){
+  arrayX=[];
+  arrayY=[];
+  for(let i=0; i<arrayPontosArea.length; i++){
+    arrayX[i]=arrayPontosArea[i].lng();
+    arrayY[i]=arrayPontosArea[i].lat();
+  }
+  corRGB = hexToRgb($('#corArea').val());
+  if($('#nomeCor').length>0){
+    $.ajax({
+        url: '/ajax/criarArea/',
+        type: 'POST',
+        data: {
+          'nome': $('#nomeArea').val(),
+          'desc': $('#descArea').val(),
+          'usuario': idUsuarioLogado,
+          'mapa': idMapa,
+          'pontosX': JSON.stringify(arrayX),
+          'pontosY': JSON.stringify(arrayY),
+          'nomeCor': $('#nomeCor').val(),
+          'r': corRGB.r,
+          'g': corRGB.g,
+          'b': corRGB.b,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          $('#modal-area').modal("hide");
+          carregarMapa(map.getCenter());
+          selecionar('-1');
+        }
+    });
+  }else{
+    $.ajax({
+        url: '/ajax/criarArea/',
+        type: 'POST',
+        data: {
+          'nome': $('#nomeArea').val(),
+          'desc': $('#descArea').val(),
+          'usuario': idUsuarioLogado,
+          'mapa': idMapa,
+          'pontosX': JSON.stringify(arrayX),
+          'pontosY': JSON.stringify(arrayY),
+          'idCor': $('#idCor').val(),
+          'r': corRGB.r,
+          'g': corRGB.g,
+          'b': corRGB.b,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          $('#modal-area').modal("hide");
+          carregarMapa(map.getCenter());
+          selecionar('-1');
+        }
+    });
+  }
+}
+
+//Função para converter cores
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+//Finalizar a area inserida
+function finalizarArea(){
+  if(arrayPontosArea.length>2){
+      $('#modalDinamico').empty();
+      $('#modalDinamico').append(`
+        <div class="modal fade" style="top:-5%;" id="modal-area" aria-hidden="true">
+          <div class="modal-dialog" style="width: 80vw;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" onclick='$("#modal-area").modal("hide");' aria-hidden="true">
+                  ×
+                </button>
+                <h4 class="modal-title">
+                  Definir nome e descrição para area
+                </h4>
+              </div>
+              <div class="modal-body">
+                <div class="centerDiv">
+                  <form id="formArea" action="javascript:gravaArea()">
+                     <div class="form-group">
+                        <input required type="text" class="form-control input-lg" placeholder="Nome da Área" id="nomeArea"/>
+                     </div>
+                     <div class="form-group">
+                        <textarea rows=2 class="form-control input-lg" id="descArea" placeholder="Descrição da Area"></textarea>
+                     </div>
+                     <div class="form-group" id="divCor">
+                        <input required type="text" class="form-control input-lg" placeholder="Nome da Cor" id="nomeCor"/>
+                     </div>
+                  </form>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" form="formArea" class="btn btn-success"> Confirmar </button>
+                <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        `);
+        corRGB = hexToRgb($('#corArea').val());
+        $.ajax({
+            url: '/ajax/verificaCor/',
+            data: {
+              'r': corRGB.r,
+              'g': corRGB.g,
+              'b': corRGB.b
+            },
+            dataType: 'json',
+            success: function (data) {
+              if(data.existe){
+                $('#divCor').empty();
+                $('#divCor').append(`
+                  <input type="hidden" id="idCor" value="${data.id}">
+                  `);
+              }
+              $('#modal-area').modal('show');
+            }
+        });
+
+    }
+}
+//Pontos inseridos na área
+var arrayPontosArea=[];
+//Area temporaria
+var areaTemp;
+//Para inserir Area
+function inserirArea(e){
+   let coord=e.latLng;
+   if(arrayPontosArea.length==0){
+     $('#botoesContainer').append(`<br>
+       &nbsp;&nbsp;&nbsp;<label for="#corArea">Cor:&nbsp;&nbsp;</label><input type="color" id="corArea"/><br><br>
+       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarArea();">Concluir Área</button><br><br>
+       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Área</button>
+       `);
+   }
+   arrayPontosArea.push(coord);
+   if(areaTemp){
+     areaTemp.setMap(null);
+   }
+   areaTemp = new google.maps.Polygon({
+          paths: arrayPontosArea,
+          strokeColor: $("#corArea").val(),
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: $("#corArea").val(),
+          fillOpacity: 0.5
+   });
+   areaTemp.setMap(map);
+   $('#corArea').on('change', function(){
+     if(areaTemp){
+       areaTemp.setMap(null);
+     }
+     areaTemp = new google.maps.Polygon({
+            paths: arrayPontosArea,
+            strokeColor: $("#corArea").val(),
+            strokeOpacity: 0.8,
+            strokeWeight: 2,
+            fillColor: $("#corArea").val(),
+            fillOpacity: 0.5
+     });
+     areaTemp.setMap(map);
+   });
+}
 function carregarMapaInicial(){
   map=null;
   $('#divMapa').empty();
@@ -344,17 +528,22 @@ function carregarMapaInicial(){
         //Define o mapa
         let mapa=JSON.parse(data.mapa)[0].fields;
         let inicio={lat: mapa.coordyinicial, lng: mapa.coordxinicial}
+        let pontoAreas = JSON.parse(data.pontoAreas);
+        for(let i=0; i<pontoAreas.length; i++){
+          pontoAreas[i]=JSON.parse(pontoAreas[i]);
+        }
         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
-                JSON.parse(data.pontoRotas), JSON.parse(data.areas), JSON.parse(data.pontoAreas), 'divMapa', inicio);
+                JSON.parse(data.pontoRotas), JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
       }
   });
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
       if(ferramentaSelec!=-1){
         map.setZoom(16);
-        map.setCenter(e.latLng);
         switch(ferramentaSelec){
-          case 0: inserirPonto(e)
+          case 0: inserirPonto(e); break;
+          case 1: inserirArea(e); break;
+          case 2: inserirRota(e); break;
         }
       }
     });
@@ -381,9 +570,10 @@ function carregarMapa(inicio){
     google.maps.event.addListener(map, "click", function (e) {
       if(ferramentaSelec!=-1){
         map.setZoom(16);
-        map.setCenter(e.latLng);
         switch(ferramentaSelec){
-          case 0: inserirPonto(e)
+          case 0: inserirPonto(e); break;
+          case 1: inserirArea(e); break;
+          case 2: inserirRota(e); break;
         }
       }
     });
@@ -395,6 +585,8 @@ function initMap(){
 }
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio){
+    //Define variáveis "globais" do código
+    mapaRotas=rotas;
     //Cria o mapa em suas coordenadas iniciais
 		map = new google.maps.Map(document.getElementById(mapId), {
 			zoom: 16,

@@ -37,7 +37,7 @@ class Comentario(models.Model):
 
 
 class Cor(models.Model):
-    codcor = models.IntegerField(db_column='codCor', primary_key=True)  # Field name made lowercase.
+    codcor = models.AutoField(db_column='codCor', primary_key=True)  # Field name made lowercase.
     nomecor = models.CharField(db_column='nomeCor', max_length=20)  # Field name made lowercase.
     r = models.IntegerField(db_column='R')  # Field name made lowercase.
     g = models.IntegerField(db_column='G')  # Field name made lowercase.
