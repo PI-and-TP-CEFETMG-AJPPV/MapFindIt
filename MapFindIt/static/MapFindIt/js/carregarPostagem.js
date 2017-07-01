@@ -86,7 +86,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 					strokeWeight: 5
 				},
 				//Remove o indicador de pontos padrão da google
-				suppressMarkers: true
+				suppressMarkers: true,
+		    preserveViewport: true
 			});
 			//Cor dos pontos de uma rota
 			let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;

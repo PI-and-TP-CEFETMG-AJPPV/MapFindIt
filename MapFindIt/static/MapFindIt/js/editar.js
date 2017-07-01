@@ -2,6 +2,31 @@
 var ferramentaSelec=-1;
 //Mapa sendo editado
 var map;
+//Desenha o icone de marker
+function pinSymbol(color) {
+		//Retorna o desenho de um ponto de determinada cor
+		if(color=='#000' || color=='#000000' || color=='rgb(0,0,0)'){
+			//Se o ponto for preto o contorno é branco
+			return {
+	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#FFF',
+	        strokeWeight: 1,
+	        scale: 1,
+	   };
+		}else{
+			//Para outras cores o contorno é preto
+			return {
+	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#000',
+	        strokeWeight: 2,
+	        scale: 1,
+	   };
+		}
+}
 
 /*
   Ponto = 0;
@@ -26,6 +51,12 @@ function selecionar(idt){
                break;
        case 2: paiR=$('#selecInserir');
                elemR=$('#selecRota');
+               if(tempRota){
+                 tempRota.setMap(null);
+                 for(let i=0; i<tempMarker.length; i++){
+                   tempMarker[i].setMap(null);
+                 }
+               }
                break;
      }
      paiR.removeClass('selecionado');
@@ -335,12 +366,263 @@ function escolherIcone(id){
     });
 }
 
-//Rotas do mapa
-var mapaRotas;
-
+//Pontos da Rota
+var arrayPontoRota=[];
+//Rota sendo criada
+var tempRota=null;
+//Pontos da rota sendo criadas
+var tempMarker=[];
+//Grava a rota inserida
+function gravaRota(){
+  arrayX=[];
+  arrayY=[];
+  for(let i=0; i<arrayPontoRota.length; i++){
+    arrayX[i]=arrayPontoRota[i].lng();
+    arrayY[i]=arrayPontoRota[i].lat();
+  }
+  corRGB = hexToRgb($('#corRota').val());
+  if($('#nomeCor').length>0){
+    $.ajax({
+        url: '/ajax/criarRota/',
+        type: 'POST',
+        data: {
+          'nome': $('#nomeRota').val(),
+          'desc': $('#descRota').val(),
+          'usuario': idUsuarioLogado,
+          'mapa': idMapa,
+          'pontosX': JSON.stringify(arrayX),
+          'pontosY': JSON.stringify(arrayY),
+          'nomeCor': $('#nomeCor').val(),
+          'r': corRGB.r,
+          'g': corRGB.g,
+          'b': corRGB.b,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          $('#modal-rota').modal("hide");
+          carregarMapa(map.getCenter());
+          selecionar('-1');
+        }
+    });
+  }else{
+    $.ajax({
+        url: '/ajax/criarRota/',
+        type: 'POST',
+        data: {
+          'nome': $('#nomeRota').val(),
+          'desc': $('#descRota').val(),
+          'usuario': idUsuarioLogado,
+          'mapa': idMapa,
+          'pontosX': JSON.stringify(arrayX),
+          'pontosY': JSON.stringify(arrayY),
+          'idCor': $('#idCor').val(),
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          $('#modal-rota').modal("hide");
+          carregarMapa(map.getCenter());
+          selecionar('-1');
+        }
+    });
+  }
+}
+//Finalizar a rota inserida
+function finalizarRota(){
+  if(arrayPontoRota.length>2){
+      $('#modalDinamico').empty();
+      $('#modalDinamico').append(`
+        <div class="modal fade" id="modal-rota" aria-hidden="true">
+          <div class="modal-dialog" style="width: 80vw;">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" onclick='$("#modal-area").modal("hide");' aria-hidden="true">
+                  ×
+                </button>
+                <h4 class="modal-title">
+                  Definir nome e descrição para rota
+                </h4>
+              </div>
+              <div class="modal-body">
+                <div class="centerDiv">
+                  <form id="formRota" action="javascript:gravaRota()">
+                     <div class="form-group">
+                        <input required type="text" class="form-control input-lg" placeholder="Nome da Rota" id="nomeRota"/>
+                     </div>
+                     <div class="form-group">
+                        <textarea rows=2 class="form-control input-lg" id="descRota" placeholder="Descrição da Rota"></textarea>
+                     </div>
+                     <div class="form-group" id="divCor">
+                        <input required type="text" class="form-control input-lg" placeholder="Nome da Cor" id="nomeCor"/>
+                     </div>
+                  </form>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="submit" form="formRota" class="btn btn-success"> Confirmar </button>
+                <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        `);
+        corRGB = hexToRgb($('#corRota').val());
+        $.ajax({
+            url: '/ajax/verificaCor/',
+            data: {
+              'r': corRGB.r,
+              'g': corRGB.g,
+              'b': corRGB.b
+            },
+            dataType: 'json',
+            success: function (data) {
+              if(data.existe){
+                $('#divCor').empty();
+                $('#divCor').append(`
+                  <input type="hidden" id="idCor" value="${data.id}">
+                  `);
+              }
+              $('#modal-rota').modal('show');
+            }
+        });
+    }
+}
 //Para inserir rota
 function inserirRota(e){
-
+  let coord=e.latLng;
+  if(arrayPontoRota.length==0){
+    $('#botoesContainer').append(`<br>
+      &nbsp;&nbsp;&nbsp;<label for="#corRota">Cor:&nbsp;&nbsp;</label><input type="color" id="corRota"/><br><br>
+      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarRota();">Concluir Rota</button><br><br>
+      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Rota</button>
+      `);
+  }
+  arrayPontoRota.push(coord);
+  if(tempRota){
+    tempRota.setMap(null);
+    for(let i=0; i<tempMarker.length; i++){
+      tempMarker[i].setMap(null);
+    }
+  }
+  //Serviço de direções do google
+  let directionsService = new google.maps.DirectionsService();
+  //Serviço de exibição das rotas
+  tempRota = new google.maps.DirectionsRenderer({
+    polylineOptions: {
+      //Cor da rota
+      strokeColor: `${$('#corRota').val()}`,
+      //Grossura do traçado
+      strokeWeight: 5
+    },
+    //Remove o indicador de pontos padrão da google
+    suppressMarkers: true,
+    preserveViewport: true
+  });
+  //Cor dos pontos de uma rota
+  let pinColor = `${$('#corRota').val()}`;
+  //Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
+  for(let x=0; x<arrayPontoRota.length; x++){
+    let marker = new google.maps.Marker({
+       position: arrayPontoRota[x],
+       map: map,
+       icon: pinSymbol(pinColor)
+     });
+     tempMarker.push(marker);
+  }
+  //Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
+  let waypts=Array();
+  for(let x=1; x<arrayPontoRota.length-1; x++){
+    waypts.push({location:arrayPontoRota[x], stopover:false});
+  }
+  //Define o mapa da rota
+  tempRota.setMap(map);
+  let request;
+  if(waypts.length>0){
+    //Se existem mais de dois pontos
+    request = {
+      origin: arrayPontoRota[0],
+      destination: arrayPontoRota[arrayPontoRota.length-1],
+      waypoints: waypts,
+      travelMode: 'DRIVING'
+    };
+  }else{
+    //Se existem apenas dois pontos
+    request = {
+      origin: arrayPontoRota[0],
+      destination: arrayPontoRota[arrayPontoRota.length-1],
+      travelMode: 'DRIVING'
+    };
+  }
+  //Requisita a rota ao servidor da google
+  directionsService.route(request, function(response, status) {
+    if (status == 'OK') {
+      tempRota.setDirections(response);
+    }
+  });
+  $('#corRota').on('change', function(){
+    if(tempRota){
+      tempRota.setMap(null);
+      for(let i=0; i<tempMarker.length; i++){
+        tempMarker[i].setMap(null);
+      }
+    }
+    //Serviço de direções do google
+    let directionsService = new google.maps.DirectionsService();
+    //Serviço de exibição das rotas
+    tempRota = new google.maps.DirectionsRenderer({
+      polylineOptions: {
+        //Cor da rota
+        strokeColor: `${$('#corRota').val()}`,
+        //Grossura do traçado
+        strokeWeight: 5
+      },
+      //Remove o indicador de pontos padrão da google
+      suppressMarkers: true,
+      preserveViewport: true
+    });
+    //Cor dos pontos de uma rota
+    let pinColor = `${$('#corRota').val()}`;
+    //Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
+    for(let x=0; x<arrayPontoRota.length; x++){
+      let marker = new google.maps.Marker({
+         position: arrayPontoRota[x],
+         map: map,
+         icon: pinSymbol(pinColor)
+       });
+       tempMarker.push(marker);
+    }
+    //Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
+    let waypts=Array();
+    for(let x=1; x<arrayPontoRota.length-1; x++){
+      waypts.push({location:arrayPontoRota[x], stopover:false});
+    }
+    //Define o mapa da rota
+    tempRota.setMap(map);
+    let request;
+    if(waypts.length>0){
+      //Se existem mais de dois pontos
+      request = {
+        origin: arrayPontoRota[0],
+        destination: arrayPontoRota[arrayPontoRota.length-1],
+        waypoints: waypts,
+        travelMode: 'DRIVING'
+      };
+    }else{
+      //Se existem apenas dois pontos
+      request = {
+        origin: arrayPontosRota[0],
+        destination: arrayPontosRota[arrayPontoRota.length-1],
+        travelMode: 'DRIVING'
+      };
+    }
+    //Requisita a rota ao servidor da google
+    directionsService.route(request, function(response, status) {
+      if (status == 'OK') {
+        tempRota.setDirections(response);
+      }
+    });
+  });
 }
 //Grava a area inserida
 function gravaArea(){
@@ -387,9 +669,6 @@ function gravaArea(){
           'pontosX': JSON.stringify(arrayX),
           'pontosY': JSON.stringify(arrayY),
           'idCor': $('#idCor').val(),
-          'r': corRGB.r,
-          'g': corRGB.g,
-          'b': corRGB.b,
           'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
         },
         dataType: 'json',
@@ -417,7 +696,7 @@ function finalizarArea(){
   if(arrayPontosArea.length>2){
       $('#modalDinamico').empty();
       $('#modalDinamico').append(`
-        <div class="modal fade" style="top:-5%;" id="modal-area" aria-hidden="true">
+        <div class="modal fade" id="modal-area" aria-hidden="true">
           <div class="modal-dialog" style="width: 80vw;">
             <div class="modal-content">
               <div class="modal-header">
@@ -532,8 +811,12 @@ function carregarMapaInicial(){
         for(let i=0; i<pontoAreas.length; i++){
           pontoAreas[i]=JSON.parse(pontoAreas[i]);
         }
+        let pontoRotas = JSON.parse(data.pontoRotas);
+        for(let i=0; i<pontoRotas.length; i++){
+          pontoRotas[i]=JSON.parse(pontoRotas[i]);
+        }
         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
-                JSON.parse(data.pontoRotas), JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
+                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
       }
   });
   setTimeout(function(){
@@ -562,8 +845,16 @@ function carregarMapa(inicio){
       success: function (data) {
         //Define o mapa
         let mapa=JSON.parse(data.mapa)[0].fields;
+        let pontoAreas = JSON.parse(data.pontoAreas);
+        for(let i=0; i<pontoAreas.length; i++){
+          pontoAreas[i]=JSON.parse(pontoAreas[i]);
+        }
+        let pontoRotas = JSON.parse(data.pontoRotas);
+        for(let i=0; i<pontoRotas.length; i++){
+          pontoRotas[i]=JSON.parse(pontoRotas[i]);
+        }
         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
-                JSON.parse(data.pontoRotas), JSON.parse(data.areas), JSON.parse(data.pontoAreas), 'divMapa', inicio);
+                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
       }
   });
   setTimeout(function(){
@@ -585,8 +876,6 @@ function initMap(){
 }
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio){
-    //Define variáveis "globais" do código
-    mapaRotas=rotas;
     //Cria o mapa em suas coordenadas iniciais
 		map = new google.maps.Map(document.getElementById(mapId), {
 			zoom: 16,
@@ -664,7 +953,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 					strokeWeight: 5
 				},
 				//Remove o indicador de pontos padrão da google
-				suppressMarkers: true
+				suppressMarkers: true,
+        preserveViewport: true
 			});
 			//Cor dos pontos de uma rota
 			let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;

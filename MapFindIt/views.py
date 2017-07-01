@@ -740,3 +740,29 @@ def verificaCor(request):
         return JsonResponse({'existe': 1, 'id': cor.codcor})
     else:
         return JsonResponse({'existe': 0})
+
+def criarRota(request):
+    nome = request.POST.get('nome')
+    desc = request.POST.get('desc')
+    idUsuario = request.POST.get('usuario')
+    idMapa = request.POST.get('mapa')
+    pontosX = json.loads(request.POST.get('pontosX'))
+    pontosY = json.loads(request.POST.get('pontosY'))
+    usuario = get_object_or_404(Usuario, idusuario=idUsuario)
+    mapa = get_object_or_404(Mapa, idmapa=idMapa)
+    cor=None
+    if 'nomeCor' in request.POST:
+        cor = Cor.objects.create(nomecor=request.POST.get('nomeCor'), r=request.POST.get('r'), g=request.POST.get('g'), b=request.POST.get('b'))
+        cor.save()
+    else:
+        cor = get_object_or_404(Cor, codcor=int(request.POST.get('idCor')))
+    rota = Rota.objects.create(idtevitar=1, idmapa=mapa, nomerota=nome, descrota=desc, codcor=cor, idusuario=usuario)
+    rota.save()
+    cont=0
+    for x, y in zip(pontosX, pontosY):
+        ponto = Ponto.objects.create(coordx=x, coordy=y, idusuario=usuario, idmapa=mapa, idtponto='R')
+        ponto.save()
+        pontoarea = RotaPonto.objects.create(idrota=rota, idponto=ponto, seqponto=cont)
+        pontoarea.save()
+        cont+=1
+    return JsonResponse({'sucesso': 1})
