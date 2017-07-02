@@ -14,15 +14,24 @@
 .button {
   width: 8vw;
   background-color: #4388CC;
-  border: 1px solid black;
+  border: 2px solid black;
   color: white;
   font-size: auto;
 }
 
+.button:hover {
+  color: white;
+}
+
 .lema {
   text-align: center;
-  font-family: "Comic Sans MS", cursive, sans-serif;
+  font-family: "Verdana", cursive, sans-serif;
   font-size: 1vw;
+}
+
+.bpesquisa { 
+  height: 4vh; 
+  border: 2px solid black;
 }
 
 /*Alinhar placeholders no centro*/
