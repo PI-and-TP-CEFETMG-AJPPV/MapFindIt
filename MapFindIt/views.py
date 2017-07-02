@@ -24,7 +24,8 @@ def home(request):
             datanascimento=datetime.datetime.strptime(request.POST.get('nascimento'),
             "%d/%m/%Y").strftime("%Y-%m-%d"), idtsexo=request.POST.get('gender')[:1])
             usuario.save() #Salva no BD
-            return render(request, 'MapFindIt/cadastro.html', {})
+            request.session['usuarioLogado']=usuario.idusuario
+            return redirect("/home/")
         else:
             if request.POST.__contains__("email"): #O request é de login
                 #Realiza o login
@@ -55,7 +56,7 @@ def pesquisar(pesquisa):
     if controle < 10:
         tema = Tema.objects.filter(nomtema__icontains=pesquisa)
         for n in tema:
-            result = result | Mapa.objects.filter(codtema=n.codtema)
+            result = result | Mapa.objects.filter(codtema=n.id)
         result = result.order_by('valvisualizacoes')
         #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
         controle = 0
