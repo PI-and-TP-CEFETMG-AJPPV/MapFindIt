@@ -350,6 +350,32 @@ def adicionarView(request):
         interesse.save()
     return JsonResponse({})
 
+def adicionarAvaliacao(request):
+    #O usuario deve estar logado
+    try:
+        Usuario.objects.get(idusuario=int(request.GET.get('usuario')))
+    except Usuario.DoesNotExist:
+        #Usuario nao logado e proibido de avaliar
+        return HttpResponseForbidden()
+    #Pega o id do mapa
+    mapaId = int(request.GET.get('mapa', None))
+    #Obtem o objeto do mapa
+    mapa=get_object_or_404(Mapa, idmapa=mapaId)
+    #Incrementa visualizacoes
+    mapa.valvisualizacoes+=1
+    #Pega a avaliacao
+    aval = int(request.GET.get('aval', None))
+    if aval == 1:
+    #Adiciona aprovacao
+        mapa.valaprovados+=1
+    else:
+        if aval == -1:
+            #Adiciona reprovacao
+            mapa.valreprovados+=1
+    #Atualiza o mapa
+    mapa.save()
+    return JsonResponse({})
+
 def mapasGrupo(request, idgrupo):
     #Pega a posicao do mapa que deve ser carregado
     num = request.GET.get('num', None)

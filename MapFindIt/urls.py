@@ -15,6 +15,7 @@ urlpatterns = [
     url(r'^ajax/carregarMapasHomePesquisa/$', views.mapasHomePesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
     url(r'^ajax/adicionarView/$', views.adicionarView),
+    url(r'^ajax/adicionarAvaliacao/$', views.adicionarAvaliacao),
     url(r'^ajax/criarAmizade/$', views.criarAmizade),
     url(r'^ajax/aceitarAmizade/$', views.aceitarAmizade),
     url(r'^ajax/recusarAmizade/$', views.recusarAmizade),

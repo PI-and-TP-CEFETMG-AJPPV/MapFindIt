@@ -533,6 +533,8 @@ function prepararPostagemVis(div, data, i){
          <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
+         <br>
+         <button id="btnaprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-success">&#128402;</button> <button id="btnreprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-danger">&#128403;</button>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
             <div class='modal-dialog modal-map-dialog' >
               <div class='modal-content modal-map-content'>
@@ -595,8 +597,8 @@ function prepararPostagemVis(div, data, i){
             </div>
         `);
     });
-		//Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
-    $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
+		//Ao se abrir o mapa expandido seta, aprovando ou reprovando o mapa se adiciona 1 visualizacao
+    $("#titulo_mapa"+(10*(gruposCarregados-1)+i),"#btnaprov"+(10*(gruposCarregados-1)+i),"#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
 			$.ajax({
 					url: '/ajax/adicionarView/',
 					data: {
@@ -607,10 +609,38 @@ function prepararPostagemVis(div, data, i){
 					success: function (data) {
 					}
 			 });
+                //Botao de aprovacao chama avaliar com +1
+    $("#btnaprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+	avaliar(data, 1);
+        setTimeout(function(){
+            setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
+        }, 1000);
+    });
+                //Botao de aprovacao chama avaliar com -1
+    $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+	avaliar(data, -1);
+        setTimeout(function(){
+            setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
+        }, 1000);
+    });
        setTimeout(function(){
          setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
        }, 1000);
     });
 		//Seta o mapa do feed
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
+}
+
+function avaliar(data, aval){
+    $.ajax({
+	url: '/ajax/adicionarAvaliacao/',
+	data: {
+            'mapa': JSON.parse(data.mapa)[0].pk,
+            'usuario': idUsuarioLogado,
+            'aval': aval
+	},
+	dataType: 'json',
+	success: function (data) {
+        }
+    });
 }
