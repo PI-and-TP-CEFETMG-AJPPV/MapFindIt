@@ -597,7 +597,7 @@ function prepararPostagemVis(div, data, i){
             </div>
         `);
     });
-		//Ao se abrir o mapa expandido seta, aprovando ou reprovando o mapa se adiciona 1 visualizacao
+		//Ao se abrir o mapa expandido, aprovando ou reprovando seta o mapa e adiciona 1 visualizacao
     $("#titulo_mapa"+(10*(gruposCarregados-1)+i),"#btnaprov"+(10*(gruposCarregados-1)+i),"#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
 			$.ajax({
 					url: '/ajax/adicionarView/',
