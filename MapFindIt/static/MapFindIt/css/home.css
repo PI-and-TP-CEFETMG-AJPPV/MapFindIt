@@ -11,18 +11,6 @@
   background-color: white;
 }
 
-.button {
-  width: 8vw;
-  background-color: #4388CC;
-  border: 2px solid black;
-  color: white;
-  font-size: auto;
-}
-
-.button:hover {
-  color: white;
-}
-
 .lema {
   text-align: center;
   font-family: "Verdana", cursive, sans-serif;
@@ -34,19 +22,3 @@
   border: 2px solid black;
 }
 
-/*Alinhar placeholders no centro*/
-::-webkit-input-placeholder {
-   text-align: center;
-}
-
-:-moz-placeholder { /* Firefox 18- */
-   text-align: center;
-}
-
-::-moz-placeholder {  /* Firefox 19+ */
-   text-align: center;
-}
-
-:-ms-input-placeholder {
-   text-align: center;
-}
