@@ -526,26 +526,22 @@ def mapasHomePesquisa(request):
         return JsonResponse(data)
 
 def novoMapa(request):
-    if request.method=="POST":
+    if request.method=="POST" and request.POST.__contains__("temas"):
         #Se voltou do formulário de finalizar o mapa
-        if request.POST.__contains__("temas"):
-            mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
-                                     idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
-                                     valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = request.POST.get('Lng'),
-                                     coordyinicial = request.POST.get('Lat'), valaprovados = 0,
-                                     valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
-            mapa.save()
-            if mapa.idtvisibilidade=='A' or mapa.idtvisibilidade=='U':
-                #Cria postagem do usuário autor do mapa, caso seja publico
-                postagem=Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa=mapa, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
-                postagem.save()
-            return redirect("/editarMapa/"+str(mapa.pk)+"/")
-        else:
-            #Se voltou do formulário de escolher o ponto inicial
-            return render(request, 'MapFindIt/CMVisib.html', {'Lat': request.POST.get('LatIni'), 'Lng': request.POST.get('LngIni')})
+        mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
+                                 idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
+                                 valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = request.POST.get('Lng'),
+                                 coordyinicial = request.POST.get('Lat'), valaprovados = 0,
+                                 valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+        mapa.save()
+        if mapa.idtvisibilidade=='A' or mapa.idtvisibilidade=='U':
+            #Cria postagem do usuário autor do mapa, caso seja publico
+            postagem=Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa=mapa, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+            postagem.save()
+        request.session['primeira']='1'
+        return redirect("/editarMapa/"+str(mapa.pk))
     else:
-        #Primeira página
-        return render(request, 'MapFindIt/CMPontoIni.html')
+        return render(request, 'MapFindIt/CMVisib.html', {})
 
 def criarAmizade(request):
     idCriador=int(request.GET.get('usuario', None))
@@ -615,9 +611,14 @@ def adicionarTema(request):
     return JsonResponse(data)
 
 def editarMapa(request, idmapa):
+    #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
+    primeira=False
+    if request.session['primeira']=='1':
+        primeira=True
+        request.session['primeira']=None
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
     resultado=getDadosMenu(request)
-    return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
+    return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'prim':primeira})
 
 def carregarMapaEditar(request):
     #Pega o ID do mapa

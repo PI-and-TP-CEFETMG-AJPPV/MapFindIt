@@ -51,7 +51,7 @@
           <div id="divMapa" class="mapa">
 
           </div>
-        </div>
+				</div>
 				<!--Div para modais adicionados pelo js !-->
 				<div id="modalDinamico">
 
@@ -108,7 +108,7 @@
 								 <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
 								 <br>
 								 <br>
-								 <b
+								 <br>
 							</div>
 							<div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
 
@@ -150,10 +150,11 @@
 					</div>
 				</div>
 			</div>
-			<!-- Form para se ter o token !-->
-			<form style="display:none">
-				{% csrf_token %}
-			</form>
+		</div>
+		<!-- Form para se ter o token !-->
+		<form style="display:none">
+			{% csrf_token %}
+		</form>
     <!-- Fecha o wrapper do menu !-->
     </div>
     <script>
@@ -167,6 +168,13 @@
 		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
 		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/editar.js"%}"></script>
+		{% if prim %}
+    <script>
+			setTimeout(function(){
+									inserirPonto({'latLng': new google.maps.LatLng({{mapa.coordyinicial}}, {{mapa.coordxinicial}})});
+								 }, 1000);
+    </script>
+    {% endif %}
 		<script async defer
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
 		</script>
