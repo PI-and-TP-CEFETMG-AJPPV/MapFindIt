@@ -830,6 +830,7 @@ function carregarMapaInicial(){
         }
       }
     });
+    iniciarBarraPesquisa();
   }, 1000);
 }
 
@@ -868,6 +869,7 @@ function carregarMapa(inicio){
         }
       }
     });
+    iniciarBarraPesquisa();
   }, 1000);
 }
 
@@ -1047,4 +1049,26 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				infowindow.open(map);
 		  });
 	  });
+}
+
+function iniciarBarraPesquisa(){
+  let input = document.getElementById('pac-input');
+  let searchBox = new google.maps.places.SearchBox(input);
+  map.addListener('bounds_changed', function() {
+    searchBox.setBounds(map.getBounds());
+  });
+  searchBox.addListener('places_changed', function() {
+    let places = searchBox.getPlaces();
+    if (places.length == 0) {
+      return;
+    }
+    place = places[0];
+    if (!place.geometry) {
+      console.log("Erro");
+      return;
+    }
+    inserirPonto({'latLng': place.geometry.location});
+
+            
+  });
 }

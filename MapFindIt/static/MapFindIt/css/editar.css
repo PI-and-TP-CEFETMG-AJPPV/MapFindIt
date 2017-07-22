@@ -201,3 +201,13 @@ Mapa
 .imagemIcone:not(:hidden) + .imagemIcone:not(:hidden) {
     border-left: 0;
 }
+
+/*Pesquisa do Places */
+
+#pac-input{
+  z-index: 2000;
+}
+
+.pac-container{
+  z-index: 2000;
+}
