@@ -348,7 +348,6 @@ function prepararPostagem(div, data, i){
 		//Carrega o objeto do mapa
     let mapa=JSON.parse(data.mapa)[0];
     mapa=mapa.fields;
-    console.log(mapa);
 		//Carrega o objeto da postagem
     let postagem=JSON.parse(data.postagem)[0];
     postagem=postagem.fields;
