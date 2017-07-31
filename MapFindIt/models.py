@@ -87,7 +87,6 @@ class Interesseusuariotema(models.Model):
         db_table = 'interesseusuariotema'
         unique_together = (('codtema', 'idusuario'),)
 
-
 class Legenda(models.Model):
     txtlegenda = models.TextField(db_column='txtLegenda')  # Field name made lowercase.
     idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
@@ -120,6 +119,15 @@ class Mapa(models.Model):
 
     class Meta:
         db_table = 'mapa'
+
+class Avaliacao(models.Model):
+    valavaliacao = models.IntegerField(db_column='valAvaliacao', default=0)  # Field name made lowercase.
+    idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa')  # Field name made lowercase.
+    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
+
+    class Meta:
+        db_table = 'avaliacao'
+        unique_together = (('idmapa', 'idusuario'),)
 
 
 class Membrosgrupo(models.Model):
