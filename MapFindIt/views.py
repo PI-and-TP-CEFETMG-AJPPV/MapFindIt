@@ -353,27 +353,54 @@ def adicionarView(request):
 def adicionarAvaliacao(request):
     #O usuario deve estar logado
     try:
-        Usuario.objects.get(idusuario=int(request.GET.get('usuario')))
+        usuario = Usuario.objects.get(idusuario=int(request.GET.get('usuario')))
     except Usuario.DoesNotExist:
-        #Usuario nao logado e proibido de avaliar
+        #Usuario nao logado é proibido de avaliar
         return HttpResponseForbidden()
     #Pega o id do mapa
     mapaId = int(request.GET.get('mapa', None))
     #Obtem o objeto do mapa
     mapa=get_object_or_404(Mapa, idmapa=mapaId)
-    #Incrementa visualizacoes
-    mapa.valvisualizacoes+=1
     #Pega a avaliacao
-    aval = int(request.GET.get('aval', None))
-    if aval == 1:
-    #Adiciona aprovacao
-        mapa.valaprovados+=1
-    else:
-        if aval == -1:
-            #Adiciona reprovacao
-            mapa.valreprovados+=1
-    #Atualiza o mapa
+    iav = int(request.GET.get('aval', None))
+    #Tenta obter o objeto da avaliação
+    try:
+        aval = Avaliacao.objects.get(idmapa=mapa,idusuario=usuario)
+        if aval.valavaliacao == 0:
+            aval.valavaliacao = iav
+            if iav == 1:
+                mapa.valaprovados+=1
+            else:
+                if iav == -1:
+                    mapa.valreprovados+=1
+        else:
+            if aval.valavaliacao == 1:
+                mapa.valaprovados-=1
+                if iav == 1:
+                    aval.valavaliacao = 0
+                else:
+                    if iav == -1:
+                        aval.valavaliacao = -1
+                        mapa.valreprovados+=1
+            else:
+                if aval.valavaliacao == -1:
+                    mapa.valreprovados-=1
+                if iav == 1:
+                    aval.valavaliacao = 1
+                    mapa.valaprovados+=1
+                else:
+                    if iav == -1:
+                        aval.valavaliacao = 0
+    except Avaliacao.DoesNotExist:
+        aval = Avaliacao.objects.create(valavaliacao=iav,idmapa=mapa,idusuario=usuario)
+        if iav == 1:
+            mapa.valaprovados+=1
+        else:
+            if iav == -1:
+                mapa.valreprovados+=1
+    #Atualiza tabelas
     mapa.save()
+    aval.save()
     return JsonResponse({})
 
 def mapasGrupo(request, idgrupo):

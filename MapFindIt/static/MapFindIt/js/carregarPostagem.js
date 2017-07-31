@@ -348,6 +348,7 @@ function prepararPostagem(div, data, i){
 		//Carrega o objeto do mapa
     let mapa=JSON.parse(data.mapa)[0];
     mapa=mapa.fields;
+    console.log(mapa);
 		//Carrega o objeto da postagem
     let postagem=JSON.parse(data.postagem)[0];
     postagem=postagem.fields;
@@ -379,6 +380,12 @@ function prepararPostagem(div, data, i){
          <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
+         <br>
+         <b>${mapa.valaprovados}</b>
+         &nbsp;
+         <button id="btnaprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-success">&#128402;</button> <button id="btnreprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-danger">&#128403;</button>
+         &nbsp;
+         <b>${mapa.valreprovados}</b>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
             <div class='modal-dialog modal-map-dialog' >
               <div class='modal-content modal-map-content'>
@@ -494,6 +501,14 @@ function prepararPostagem(div, data, i){
          setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
        }, 1000);
     });
+                    //Botao de aprovacao chama avaliar com +1
+    $("#btnaprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+	avaliar(data, 1);
+    });
+                //Botao de aprovacao chama avaliar com -1
+    $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+	avaliar(data, -1);
+    });
 		//Seta o mapa do feed
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 }
@@ -533,8 +548,6 @@ function prepararPostagemVis(div, data, i){
          <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
-         <br>
-         <button id="btnaprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-success">&#128402;</button> <button id="btnreprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-danger">&#128403;</button>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
             <div class='modal-dialog modal-map-dialog' >
               <div class='modal-content modal-map-content'>
@@ -609,20 +622,6 @@ function prepararPostagemVis(div, data, i){
 					success: function (data) {
 					}
 			 });
-                //Botao de aprovacao chama avaliar com +1
-    $("#btnaprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
-	avaliar(data, 1);
-        setTimeout(function(){
-            setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
-        }, 1000);
-    });
-                //Botao de aprovacao chama avaliar com -1
-    $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
-	avaliar(data, -1);
-        setTimeout(function(){
-            setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
-        }, 1000);
-    });
        setTimeout(function(){
          setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp"+(10*(gruposCarregados-1)+i));
        }, 1000);
@@ -632,6 +631,18 @@ function prepararPostagemVis(div, data, i){
 }
 
 function avaliar(data, aval){
+    
+    $.ajax({
+        url: '/ajax/adicionarView/',
+        data: {
+            'mapa': JSON.parse(data.mapa)[0].pk,
+            'usuario': idUsuarioLogado
+        },
+        dataType: 'json',
+        success: function (data) {
+        }
+    });
+    
     $.ajax({
 	url: '/ajax/adicionarAvaliacao/',
 	data: {
