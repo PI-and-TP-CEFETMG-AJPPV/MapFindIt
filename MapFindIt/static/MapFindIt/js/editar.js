@@ -2,6 +2,11 @@
 var ferramentaSelec=-1;
 //Mapa sendo editado
 var map;
+//Markers e Poligonos do mapa
+var marcadores=[];
+var poligonos=[];
+var rotasArr=[];
+
 //Desenha o icone de marker
 function pinSymbol(color) {
 		//Retorna o desenho de um ponto de determinada cor
@@ -816,7 +821,7 @@ function carregarMapaInicial(){
           pontoRotas[i]=JSON.parse(pontoRotas[i]);
         }
         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
-                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
+                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio, true);
       }
   });
   setTimeout(function(){
@@ -855,7 +860,44 @@ function carregarMapa(inicio){
           pontoRotas[i]=JSON.parse(pontoRotas[i]);
         }
         setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
-                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio);
+                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio, true);
+      }
+  });
+  setTimeout(function(){
+    google.maps.event.addListener(map, "click", function (e) {
+      if(ferramentaSelec!=-1){
+        map.setZoom(16);
+        switch(ferramentaSelec){
+          case 0: inserirPonto(e); break;
+          case 1: inserirArea(e); break;
+          case 2: inserirRota(e); break;
+        }
+      }
+    });
+    iniciarBarraPesquisa();
+  }, 1000);
+}
+
+function atualizarMapa(){
+  $.ajax({
+      url: '/ajax/carregarMapaEditar/',
+      data: {
+        'id': idMapa
+      },
+      dataType: 'json',
+      success: function (data) {
+        //Define o mapa
+        let mapa=JSON.parse(data.mapa)[0].fields;
+        let pontoAreas = JSON.parse(data.pontoAreas);
+        for(let i=0; i<pontoAreas.length; i++){
+          pontoAreas[i]=JSON.parse(pontoAreas[i]);
+        }
+        let pontoRotas = JSON.parse(data.pontoRotas);
+        for(let i=0; i<pontoRotas.length; i++){
+          pontoRotas[i]=JSON.parse(pontoRotas[i]);
+        }
+        setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), JSON.parse(data.rotas),
+                pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio, false);
       }
   });
   setTimeout(function(){
@@ -875,14 +917,33 @@ function carregarMapa(inicio){
 
 function initMap(){
    carregarMapaInicial();
+   setInterval(function(){
+      AtualizarMapa(map.getCenter());
+      console.log('atualizou');
+   }, 3000);
 }
 //Função para exibir o mapa
-function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio){
-    //Cria o mapa em suas coordenadas iniciais
-		map = new google.maps.Map(document.getElementById(mapId), {
-			zoom: 16,
-			center: inicio
-		});
+function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio, reset){
+    if(reset){
+      //Cria o mapa em suas coordenadas iniciais
+      map = new google.maps.Map(document.getElementById(mapId), {
+        zoom: 16,
+        center: inicio
+      });
+    }else{
+      marcadores.forEach(function(item){
+        item.setMap(null);
+      });
+      rotasArr.forEach(function(item){
+        item.setMap(null);
+      });
+      poligonos.forEach(function(item){
+        item.setMap(null);
+      });
+    }
+    marcadores=[];
+    rotas=[];
+    poligonos=[];
     //Para cada ponto do mapa
 		pontos.forEach(function(item, index){
       //Verifica se o ponto é uma marcação e não parte de uma área ou rota
@@ -937,7 +998,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				//Evento de exibir a janela ao clicar no ponto
 				marker.addListener('click', function() {
 		          infowindow.open(map, marker);
-		    });
+        });
+        marcadores.push(marker);
 			}
 		});
 		//Para cada rota
@@ -966,7 +1028,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 					 position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
 					 map: map,
 					 icon: pinSymbol(pinColor)
-				});
+        });
 				let contentString=
 					`<div id="content">
 		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
@@ -979,7 +1041,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		    });
 				marker.addListener('click', function() {
 		      infowindow.open(map, marker);
-		    });
+        });
+        marcadores.push(marker);
 			}
 			//Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
 			let waypts=Array();
@@ -987,7 +1050,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				waypts.push({location:{lat: pontosRota[x].fields.idponto[0], lng: pontosRota[x].fields.idponto[1]}, stopover:false});
 			}
 			//Define o mapa da rota
-			directionsDisplay.setMap(map);
+      directionsDisplay.setMap(map);
+      rotasArr.push(directionsDisplay);
 			let request;
 			if(waypts.length>0){
 				//Se existem mais de dois pontos
@@ -1010,7 +1074,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			  if (status == 'OK') {
 			    directionsDisplay.setDirections(response);
 			  }
-			});
+      });
 		});
 		//Para cada uma das areas criadas
 		areas.forEach(function(item, index){
@@ -1047,7 +1111,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			google.maps.event.addListener(areaPoligono, 'click', function (event) {
 				infowindow.setPosition(event.latLng);
 				infowindow.open(map);
-		  });
+      });
+      poligonos.push(areaPoligono);
 	  });
 }
 
