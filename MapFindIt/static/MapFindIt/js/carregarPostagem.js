@@ -375,8 +375,13 @@ function prepararPostagem(div, data, i){
         <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
-         <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
-         <div class='centerDiv'>
+				 <div style="display: flex; justify-content: space-between; width:100%">
+					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
+					${(idUsuarioLogado==mapa.idusuario || mapa.idtvisibilidade=='U')?
+						'<p><a class="btn btn-default editarPostagem" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/">Editar</a></p>':""
+					}			
+				</div>
+				<div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
          <br>
@@ -508,7 +513,7 @@ function prepararPostagem(div, data, i){
     $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
 	avaliar(data, -1);
 		});
-		
+
 		//Seta o mapa do feed
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 }
