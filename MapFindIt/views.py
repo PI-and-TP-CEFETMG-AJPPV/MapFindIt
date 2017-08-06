@@ -824,3 +824,7 @@ def criarRota(request):
         pontoarea.save()
         cont+=1
     return JsonResponse({'sucesso': 1})
+
+def deslogar(request):
+    request.session.pop('usuarioLogado', None)
+    return redirect('/')
