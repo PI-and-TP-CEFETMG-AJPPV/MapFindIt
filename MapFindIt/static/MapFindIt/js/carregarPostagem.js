@@ -368,15 +368,26 @@ function prepararPostagem(div, data, i){
 		let pontoAreas=JSON.parse(data.pontoAreas);
     for(let i=0; i<pontoAreas.length; i++){
       pontoAreas[i]=JSON.parse(pontoAreas[i]);
-    }
+		}
+		//Usa os amigos no menu lateral para identificar se o usuário e autor do mapa são amigos
+		let amigos=false;
+		if($('#amigo'+mapa.idusuario).length){
+			amigos=true;
+		}
+		console.log(amigos);
 		//HTML do mapa
     div.append(`
       <div class='row' style="order:${i}; padding-bottom:20px;">
         <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
-         <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
-         <div class='centerDiv'>
+				 <div style="display: flex; justify-content: space-between; width:100%">
+					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
+					${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
+						'<p><a class="btn btn-default editarPostagem" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/">Editar</a></p>':""
+					}			
+				</div>
+				<div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
          <br>
@@ -402,7 +413,7 @@ function prepararPostagem(div, data, i){
 											<div class="col-md-2" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
 	                      <div id="comentarios${10*(gruposCarregados-1)+i}" class="container-comentarios">
 	                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
-	                      </div>
+												</div>
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
@@ -507,7 +518,8 @@ function prepararPostagem(div, data, i){
                 //Botao de aprovacao chama avaliar com -1
     $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
 	avaliar(data, -1);
-    });
+		});
+
 		//Seta o mapa do feed
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 }

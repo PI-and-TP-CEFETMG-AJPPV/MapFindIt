@@ -800,7 +800,6 @@ function inserirArea(e){
    });
 }
 function carregarMapaInicial(){
-  map=null;
   $('#divMapa').empty();
   $.ajax({
       url: '/ajax/carregarMapaEditar/',
@@ -840,7 +839,6 @@ function carregarMapaInicial(){
 }
 
 function carregarMapa(inicio){
-  map=null;
   $('#divMapa').empty();
   $.ajax({
       url: '/ajax/carregarMapaEditar/',
@@ -878,7 +876,7 @@ function carregarMapa(inicio){
   }, 1000);
 }
 
-function atualizarMapa(){
+function atualizarMapa(inicio){
   $.ajax({
       url: '/ajax/carregarMapaEditar/',
       data: {
@@ -918,7 +916,7 @@ function atualizarMapa(){
 function initMap(){
    carregarMapaInicial();
    setInterval(function(){
-      AtualizarMapa(map.getCenter());
+      atualizarMapa(map.getCenter());
       console.log('atualizou');
    }, 3000);
 }
@@ -942,7 +940,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
       });
     }
     marcadores=[];
-    rotas=[];
+    rotasArr=[];
     poligonos=[];
     //Para cada ponto do mapa
 		pontos.forEach(function(item, index){
@@ -1001,7 +999,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
         });
         marcadores.push(marker);
 			}
-		});
+    });
+    
 		//Para cada rota
 		rotas.forEach(function(item, index){
 			//Pontos que compõe essa rota
@@ -1051,7 +1050,6 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			}
 			//Define o mapa da rota
       directionsDisplay.setMap(map);
-      rotasArr.push(directionsDisplay);
 			let request;
 			if(waypts.length>0){
 				//Se existem mais de dois pontos
@@ -1072,7 +1070,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			//Requisita a rota ao servidor da google
 			directionsService.route(request, function(response, status) {
 			  if (status == 'OK') {
-			    directionsDisplay.setDirections(response);
+          directionsDisplay.setDirections(response);
+          rotasArr.push(directionsDisplay);
 			  }
       });
 		});

@@ -38,6 +38,9 @@ def home(request):
                 return render(request, 'MapFindIt/home.html', {})
     else:
         #Request é padrão
+        #O usuário já está logado
+        if request.session.__contains__('usuarioLogado'):
+            return feed(request)
         return render(request, 'MapFindIt/home.html', {})
 
 def feed(request):
@@ -640,7 +643,7 @@ def adicionarTema(request):
 def editarMapa(request, idmapa):
     #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
     primeira=False
-    if request.session['primeira']=='1':
+    if request.session.__contains__('primeira') and request.session['primeira']=='1':
         primeira=True
         request.session['primeira']=None
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
