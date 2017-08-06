@@ -38,6 +38,9 @@ def home(request):
                 return render(request, 'MapFindIt/home.html', {})
     else:
         #Request é padrão
+        #O usuário já está logado
+        if request.session.__contains__('usuarioLogado'):
+            return feed(request)
         return render(request, 'MapFindIt/home.html', {})
 
 def feed(request):

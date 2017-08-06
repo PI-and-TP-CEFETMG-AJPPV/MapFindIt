@@ -507,7 +507,8 @@ function prepararPostagem(div, data, i){
                 //Botao de aprovacao chama avaliar com -1
     $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
 	avaliar(data, -1);
-    });
+		});
+		
 		//Seta o mapa do feed
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 }
