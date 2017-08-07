@@ -12,7 +12,9 @@
 		<title>MapFindIt</title>
 		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/editar.css"%}" rel="stylesheet">
 	</head>
 	<body>
@@ -25,7 +27,7 @@
 						<form class="navbar-form navbar-right" id="navBarSair">
 							<div class="input-group">
 								<div class="input-group-btn">
-									<button type="button" class="btn button">Sair</button>
+									<a href="/deslogar/" class="btn button">Sair</a>
 								</div>
 							</div>
 						</form>
@@ -37,7 +39,7 @@
 					</div>
 				</div>
 		</nav>
-			<div id="wrapper" class="toggled">
+			<div id="wrapper" class="toggled corpo">
 				<div class="container-fluid">
 					<div id="sidebar-wrapper">
 						<ul class="sidebar-nav">
@@ -131,33 +133,17 @@
 			<br><br><br><br>
       <div class="row">
         <div class="col-md-2">
-          <div class="nav-side-menu">
-            <i class="fa fa-bars fa-2x toggle-btn" data-toggle="collapse" data-target="#menu-content"></i>
-                <div class="menu-list">
-                    <ul id="menu-content" class="menu-content collapse out">
-                        <li id="selecInserir" data-toggle="collapse" data-target="#products" class="collapsed active">
-                          <a href="#"><i class="fa fa-gift fa-lg"></i> &nbsp;&nbsp;Inserir</a>
-                        </li>
-                        <ul class="sub-menu collapse" id="products">
-                            <li id="selecPonto" onclick="selecionar(0);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Ponto</a></li>
-                            <li id="selecArea" onclick="selecionar(1);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Área</a></li>
-                            <li id="selecRota" onclick="selecionar(2);"><a href="#">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Rota</a></li>
-                        </ul>
-                        <li data-toggle="collapse" data-target="#service" class="collapsed">
-                          <a href="#"><i class="fa fa-globe fa-lg"></i>&nbsp;&nbsp;Icones<span class="arrow"></span></a>
-                        </li>
-                        <ul class="sub-menu collapse" id="service">
-                          <li href="#modal-criar-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Criar Icone</a></li>
-                          <li href="#modal-editar-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Editar Icone</a></li>
-                          <li href="#modal-remover-icone" data-toggle="modal"><a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Remover Icone</a></li>
-                        </ul>
-                    </ul>
-                 </div>
-              </div>
-							<!-- Container para botões de área e rotas !-->
-							<div id="botoesContainer">
-
-							</div>
+			<aside id="sticky-social">
+				<ul>
+					<li onclick="selecionar(0);"><a href="#" class="claro" id="selecPonto"><span>Ponto</span><img src="{{baseUrl}}MapFindIt/iconesEditar/PontoIcone.png"/></a></li>
+					<li onclick="selecionar(1);"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
+					<li onclick="selecionar(2);"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
+					<li>&nbsp;</li>
+					<li><a href="#modal-criar-icone" data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+					<li><a href="#modal-editar-icone" data-toggle="modal" class="claro"><span>Editar Icone</span><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
+					<li><a href="#modal-remover-icone" data-toggle="modal" class="escuro"><span>Remover Icone</span><i class="fa fa-trash" aria-hidden="true"></i></a></li>
+				</ul>
+			</aside>
         </div>
         <div class="col-md-10">
           <div id="divMapa" class="mapa">

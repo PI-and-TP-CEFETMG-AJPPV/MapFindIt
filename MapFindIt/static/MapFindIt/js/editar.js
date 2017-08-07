@@ -39,23 +39,20 @@ function pinSymbol(color) {
   Rota = 2;
 */
 function selecionar(idt){
-   //Ferramenta escolhida e sua categoria
-   let pai, elem;
+   //Ferramenta escolhida
+   let elem;
    //Remove uma ferramenta já escolhida
    if(ferramentaSelec!=-1){
-     let paiR, elemR;
+     let elemR;
      switch(ferramentaSelec){
-       case 0: paiR=$('#selecInserir');
-               elemR=$('#selecPonto');
+       case 0: elemR=$('#selecPonto');
                break;
-       case 1: paiR=$('#selecInserir');
-               elemR=$('#selecArea');
+       case 1: elemR=$('#selecArea');
                arrayPontosArea=[];
                if(areaTemp)
                   areaTemp.setMap(null);
                break;
-       case 2: paiR=$('#selecInserir');
-               elemR=$('#selecRota');
+       case 2: elemR=$('#selecRota');
                if(tempRota){
                  tempRota.setMap(null);
                  for(let i=0; i<tempMarker.length; i++){
@@ -64,7 +61,6 @@ function selecionar(idt){
                }
                break;
      }
-     paiR.removeClass('selecionado');
      elemR.removeClass('selecionado');
      $('#botoesContainer').empty();
      map.setOptions({ draggableCursor : 'auto' });
@@ -72,20 +68,16 @@ function selecionar(idt){
    //Estiliza os elementos da ferramenta escolhida, caso ela não estivesse já selecionada
    if(idt!=ferramentaSelec){
      switch(idt){
-       case 0: pai=$('#selecInserir');
-               elem=$('#selecPonto');
+       case 0: elem=$('#selecPonto');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Ponto.png"), auto' });
                break;
-       case 1: pai=$('#selecInserir');
-               elem=$('#selecArea');
+       case 1: elem=$('#selecArea');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Area.png"), auto' });
                break;
-       case 2: pai=$('#selecInserir');
-               elem=$('#selecRota');
+       case 2: elem=$('#selecRota');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Rota.png"), auto' });
                break;
      }
-     pai.addClass('selecionado');
      elem.addClass('selecionado');
      ferramentaSelec=idt;
    }else{
@@ -923,11 +915,22 @@ function initMap(){
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio, reset){
     if(reset){
+      //Cria estilo sem Pontos de Interesse
+      let removerPOI =[{
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "transit.station.bus",
+        stylers: [{ visibility: "off" }]
+      }];
       //Cria o mapa em suas coordenadas iniciais
       map = new google.maps.Map(document.getElementById(mapId), {
         zoom: 16,
         center: inicio
       });
+      map.setOptions({styles: removerPOI});
     }else{
       marcadores.forEach(function(item){
         item.setMap(null);
