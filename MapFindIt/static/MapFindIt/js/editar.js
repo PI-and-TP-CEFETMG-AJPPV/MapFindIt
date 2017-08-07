@@ -492,7 +492,7 @@ function inserirRota(e){
     $('#botoesContainer').append(`<br>
       &nbsp;&nbsp;&nbsp;<label for="#corRota">Cor:&nbsp;&nbsp;</label><input type="color" id="corRota"/><br><br>
       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarRota();">Concluir Rota</button><br><br>
-      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Rota</button>
+      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(2);">Cancelar Rota</button>
       `);
   }
   arrayPontoRota.push(coord);
@@ -760,7 +760,7 @@ function inserirArea(e){
      $('#botoesContainer').append(`<br>
        &nbsp;&nbsp;&nbsp;<label for="#corArea">Cor:&nbsp;&nbsp;</label><input type="color" id="corArea"/><br><br>
        &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarArea();">Concluir Área</button><br><br>
-       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Área</button>
+       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(1);">Cancelar Área</button>
        `);
    }
    arrayPontosArea.push(coord);
@@ -892,6 +892,7 @@ function atualizarMapa(inicio){
   });
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
+      console.log(ferramentaSelec);
       if(ferramentaSelec!=-1){
         map.setZoom(16);
         switch(ferramentaSelec){

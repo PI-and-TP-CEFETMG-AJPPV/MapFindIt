@@ -135,15 +135,18 @@
         <div class="col-md-2">
 			<aside id="sticky-social">
 				<ul>
-					<li onclick="selecionar(0);"><a href="#" class="claro" id="selecPonto"><span>Ponto</span><img src="{{baseUrl}}MapFindIt/iconesEditar/PontoIcone.png"/></a></li>
-					<li onclick="selecionar(1);"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
-					<li onclick="selecionar(2);"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
+					<li onclick="selecionar(0);" id="pontoLi"><a href="#" class="claro" id="selecPonto"><span>Ponto</span><img src="{{baseUrl}}MapFindIt/iconesEditar/PontoIcone.png"/></a></li>
+					<li onclick="selecionar(1);" id="areaLi"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
+					<li onclick="selecionar(2);" id="rotaLi"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
 					<li>&nbsp;</li>
 					<li><a href="#modal-criar-icone" data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
 					<li><a href="#modal-editar-icone" data-toggle="modal" class="claro"><span>Editar Icone</span><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
 					<li><a href="#modal-remover-icone" data-toggle="modal" class="escuro"><span>Remover Icone</span><i class="fa fa-trash" aria-hidden="true"></i></a></li>
 				</ul>
 			</aside>
+			<div id="botoesContainer" style="position: fixed; top: 400px;">
+			
+			</div>
         </div>
         <div class="col-md-10">
           <div id="divMapa" class="mapa">
