@@ -374,7 +374,6 @@ function prepararPostagem(div, data, i){
 		if($('#amigo'+mapa.idusuario).length){
 			amigos=true;
 		}
-		console.log(amigos);
 		//HTML do mapa
     div.append(`
       <div class='row' style="order:${i}; padding-bottom:20px;">
@@ -555,8 +554,10 @@ function prepararPostagemVis(div, data, i){
         <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
-         <p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
-         <div class='centerDiv'>
+				 <div style="display: flex; justify-content: space-between; width:100%">
+					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>		
+				</div>
+				 <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
@@ -622,7 +623,7 @@ function prepararPostagemVis(div, data, i){
         `);
     });
 		//Ao se abrir o mapa expandido, aprovando ou reprovando seta o mapa e adiciona 1 visualizacao
-    $("#titulo_mapa"+(10*(gruposCarregados-1)+i),"#btnaprov"+(10*(gruposCarregados-1)+i),"#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+    $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 			$.ajax({
 					url: '/ajax/adicionarView/',
 					data: {
