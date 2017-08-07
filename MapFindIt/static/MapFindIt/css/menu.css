@@ -162,22 +162,3 @@
 #navBarSearchForm input[type=text]{
   width:430px !important;
 }
-
-#logo{
-  height: 100%;
-  width: 100%;
-}
-
-#box{
-  position:fixed;
-  top: 35%;
-  width: 20vw;
-  border: solid;
-  background-color: white;
-}
-
-.lema {
-  text-align: center;
-  font-family: "Verdana", cursive, sans-serif;
-  font-size: 1vw;
-}
