@@ -767,6 +767,10 @@ def criarIcone(request):
 def deletarIcone(request):
     idIcone=int(request.GET.get('id', None))
     iconeDeletar=get_object_or_404(Iconespontos, codicone=idIcone)
+    pontos = Ponto.objects.filter(codicone=iconeDeletar)
+    for ponto in pontos:
+        ponto.codicone=None
+        ponto.save()
     iconeDeletar.delete()
     return JsonResponse({'sucesso': 1})
 

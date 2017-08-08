@@ -322,7 +322,7 @@ function selectIcone(id){
                      </div>
                    </div>
                    <div class="modal-footer">
-                     <button type="button" data-dismiss="modal" onclick="if(iconeEscolhido){deletarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" id="btnDeletar" class="btn btn-success"> Escolher Icone </button>
                      <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
                    </div>
                  </div>
@@ -346,6 +346,9 @@ function selectIcone(id){
                  $(this).addClass('iconeEscolhido');
                  //Salva o id do icone (id do elemento retirando-se a palavra icone)
                  iconeEscolhido=$(this).attr('id').substring(5);
+								 $('#btnDeletar').on('click', function(){
+									 deletarIcone(iconeEscolhido);
+								 });
              });
              $('#filtrarIcones').keyup(function(event) {
                  //Para cada icone carregado
@@ -410,7 +413,7 @@ function selIcone(id){
                      </div>
                    </div>
                    <div class="modal-footer">
-                     <button type="button" data-dismiss="modal" onclick="if(iconeEscolhido){editarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" id='btnEditar' class="btn btn-success"> Escolher Icone </button>
                      <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
                    </div>
                  </div>
@@ -434,6 +437,9 @@ function selIcone(id){
                  $(this).addClass('iconeEscolhido');
                  //Salva o id do icone (id do elemento retirando-se a palavra icone)
                  iconeEscolhido=$(this).attr('id').substring(5);
+								 $('#btnEditar').on('click', function(){
+									 editarIcone(iconeEscolhido);
+								 });
              });
              $('#filtrarIcones').keyup(function(event) {
                  //Para cada icone carregado
@@ -463,8 +469,7 @@ function deletarIcone(id){
 	$.ajax({
       url: '/ajax/deletarIcone/',
       data: {
-        'id': id,
-        'idIcone': iconeEscolhido
+        'id': id
       },
       dataType: 'json',
       success: function (data) {
@@ -1015,7 +1020,6 @@ function carregarMapaInicial(){
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
       if(ferramentaSelec!=-1){
-        map.setZoom(16);
         switch(ferramentaSelec){
           case 0: inserirPonto(e); break;
           case 1: inserirArea(e); break;
@@ -1053,7 +1057,6 @@ function carregarMapa(inicio){
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
       if(ferramentaSelec!=-1){
-        map.setZoom(16);
         switch(ferramentaSelec){
           case 0: inserirPonto(e); break;
           case 1: inserirArea(e); break;
@@ -1090,7 +1093,6 @@ function atualizarMapa(inicio){
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
       if(ferramentaSelec!=-1){
-        map.setZoom(16);
         switch(ferramentaSelec){
           case 0: inserirPonto(e); break;
           case 1: inserirArea(e); break;
