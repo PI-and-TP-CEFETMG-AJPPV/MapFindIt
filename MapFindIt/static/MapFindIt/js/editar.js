@@ -39,20 +39,23 @@ function pinSymbol(color) {
   Rota = 2;
 */
 function selecionar(idt){
-   //Ferramenta escolhida
-   let elem;
+   //Ferramenta escolhida e sua categoria
+   let pai, elem;
    //Remove uma ferramenta já escolhida
    if(ferramentaSelec!=-1){
-     let elemR;
+     let paiR, elemR;
      switch(ferramentaSelec){
-       case 0: elemR=$('#selecPonto');
+       case 0: paiR=$('#selecInserir');
+               elemR=$('#selecPonto');
                break;
-       case 1: elemR=$('#selecArea');
+       case 1: paiR=$('#selecInserir');
+               elemR=$('#selecArea');
                arrayPontosArea=[];
                if(areaTemp)
                   areaTemp.setMap(null);
                break;
-       case 2: elemR=$('#selecRota');
+       case 2: paiR=$('#selecInserir');
+               elemR=$('#selecRota');
                if(tempRota){
                  tempRota.setMap(null);
                  for(let i=0; i<tempMarker.length; i++){
@@ -61,6 +64,7 @@ function selecionar(idt){
                }
                break;
      }
+     paiR.removeClass('selecionado');
      elemR.removeClass('selecionado');
      $('#botoesContainer').empty();
      map.setOptions({ draggableCursor : 'auto' });
@@ -68,16 +72,20 @@ function selecionar(idt){
    //Estiliza os elementos da ferramenta escolhida, caso ela não estivesse já selecionada
    if(idt!=ferramentaSelec){
      switch(idt){
-       case 0: elem=$('#selecPonto');
+       case 0: pai=$('#selecInserir');
+               elem=$('#selecPonto');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Ponto.png"), auto' });
                break;
-       case 1: elem=$('#selecArea');
+       case 1: pai=$('#selecInserir');
+               elem=$('#selecArea');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Area.png"), auto' });
                break;
-       case 2: elem=$('#selecRota');
+       case 2: pai=$('#selecInserir');
+               elem=$('#selecRota');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Rota.png"), auto' });
                break;
      }
+     pai.addClass('selecionado');
      elem.addClass('selecionado');
      ferramentaSelec=idt;
    }else{
@@ -280,6 +288,195 @@ function salvarIcone(id){
 }
 
 //Elementos para a escolha do icone
+function selectIcone(id){
+  $.ajax({
+      url: '/ajax/getTodosIcones/',
+      data: {
+        'id': idUsuarioLogado
+      },
+      dataType: 'json',
+      success: function (data) {
+         if(data.icones){
+             $('#modalDinamico').empty();
+             let conteudo=`
+             <div class="modal fade" style="top:-5%;" id="modal-icone" aria-hidden="true">
+               <div class="modal-dialog" style="width: 80vw;">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" onclick='$("#modal-icone").modal("hide");' aria-hidden="true">
+                       ×
+                     </button>
+                     <h4 class="modal-title">
+                       Deletar Icone
+                     </h4>
+                   </div>
+                   <div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+                     <div class="centerDiv">
+                        <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
+                        <br>
+                        <br>
+                        <br>
+                     </div>
+                     <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+                     </div>
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" data-dismiss="modal" onclick="if(iconeEscolhido){deletarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             `;
+             $('#modalDinamico').html(conteudo);
+             let icones=JSON.parse(data.icones);
+             let container=$("#container-icones");
+             for(let i=0; i<icones.length; i++){
+                item=icones[i].fields;
+                $('#container-icones').append(`
+                  <div id='icone${icones[i].pk}' class="imagemIcone centerDiv">
+                    <img src='${imgUrl}MapFindIt/ImagemIcones/${icones[i].pk}.png'>
+                    <p>${item.nomeicone}</p>
+                  </div>
+                  `);
+             }
+             $('.imagemIcone').on('click', function(){
+                 $('.imagemIcone').removeClass('iconeEscolhido');
+                 $(this).addClass('iconeEscolhido');
+                 //Salva o id do icone (id do elemento retirando-se a palavra icone)
+                 iconeEscolhido=$(this).attr('id').substring(5);
+             });
+             $('#filtrarIcones').keyup(function(event) {
+                 //Para cada icone carregado
+                 $(".imagemIcone").each(function(i, item){
+                   //Pega o objeto JQuery da div do icone
+                   item=$(item);
+                   //Pega o titulo do icone para identifica-lo
+                   let parag = item.children('p');
+                   //Se o nome conter a string pesquisada
+                   if(parag.text().indexOf($("#filtrarIcones").val())!==-1){
+                     //Mostra o icone
+                     item.show();
+                   }else{
+                     //Esconde o icone
+                     item.hide();
+                   }
+                 });
+             });
+             $('#modal-icone').modal('show');
+
+          }
+      }
+    });
+}
+
+function editarIcone(id){
+	deletarIcone(id);
+	$('#modal-criar-icone').modal('show')
+}
+
+function selIcone(id){
+  $.ajax({
+      url: '/ajax/getTodosIcones/',
+      data: {
+        'id': idUsuarioLogado
+      },
+      dataType: 'json',
+      success: function (data) {
+         if(data.icones){
+             $('#modalDinamico').empty();
+             let conteudo=`
+             <div class="modal fade" style="top:-5%;" id="modal-icone" aria-hidden="true">
+               <div class="modal-dialog" style="width: 80vw;">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" onclick='$("#modal-icone").modal("hide");' aria-hidden="true">
+                       ×
+                     </button>
+                     <h4 class="modal-title">
+                       Editar Icone
+                     </h4>
+                   </div>
+                   <div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+                     <div class="centerDiv">
+                        <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
+                        <br>
+                        <br>
+                        <br>
+                     </div>
+                     <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+                     </div>
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" data-dismiss="modal" onclick="if(iconeEscolhido){editarIcone(${id});}" class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             `;
+             $('#modalDinamico').html(conteudo);
+             let icones=JSON.parse(data.icones);
+             let container=$("#container-icones");
+             for(let i=0; i<icones.length; i++){
+                item=icones[i].fields;
+                $('#container-icones').append(`
+                  <div id='icone${icones[i].pk}' class="imagemIcone centerDiv">
+                    <img src='${imgUrl}MapFindIt/ImagemIcones/${icones[i].pk}.png'>
+                    <p>${item.nomeicone}</p>
+                  </div>
+                  `);
+             }
+             $('.imagemIcone').on('click', function(){
+                 $('.imagemIcone').removeClass('iconeEscolhido');
+                 $(this).addClass('iconeEscolhido');
+                 //Salva o id do icone (id do elemento retirando-se a palavra icone)
+                 iconeEscolhido=$(this).attr('id').substring(5);
+             });
+             $('#filtrarIcones').keyup(function(event) {
+                 //Para cada icone carregado
+                 $(".imagemIcone").each(function(i, item){
+                   //Pega o objeto JQuery da div do icone
+                   item=$(item);
+                   //Pega o titulo do icone para identifica-lo
+                   let parag = item.children('p');
+                   //Se o nome conter a string pesquisada
+                   if(parag.text().indexOf($("#filtrarIcones").val())!==-1){
+                     //Mostra o icone
+                     item.show();
+                   }else{
+                     //Esconde o icone
+                     item.hide();
+                   }
+                 });
+             });
+             $('#modal-icone').modal('show');
+
+          }
+      }
+    });
+}
+
+function deletarIcone(id){
+	$.ajax({
+      url: '/ajax/deletarIcone/',
+      data: {
+        'id': id,
+        'idIcone': iconeEscolhido
+      },
+      dataType: 'json',
+      success: function (data) {
+        if(data.sucesso){
+          carregarMapa(map.getCenter());
+          $('#modal-icone').modal('hide');
+        }
+      }
+   });
+}
+
+//Elementos para a escolha do icone
 function escolherIcone(id){
   $.ajax({
       url: '/ajax/getTodosIcones/',
@@ -307,7 +504,7 @@ function escolherIcone(id){
                         <input id="filtrarIcones" type="text" placeholder="Filtrar icones" style="width:96%; height:90%;">
                         <br>
                         <br>
-                        <b
+                        <br>
                      </div>
                      <div id="container-icones" style="display: flex; flex-direction: row; flex-wrap: wrap;">
 
@@ -492,7 +689,7 @@ function inserirRota(e){
     $('#botoesContainer').append(`<br>
       &nbsp;&nbsp;&nbsp;<label for="#corRota">Cor:&nbsp;&nbsp;</label><input type="color" id="corRota"/><br><br>
       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarRota();">Concluir Rota</button><br><br>
-      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(2);">Cancelar Rota</button>
+      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Rota</button>
       `);
   }
   arrayPontoRota.push(coord);
@@ -760,7 +957,7 @@ function inserirArea(e){
      $('#botoesContainer').append(`<br>
        &nbsp;&nbsp;&nbsp;<label for="#corArea">Cor:&nbsp;&nbsp;</label><input type="color" id="corArea"/><br><br>
        &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarArea();">Concluir Área</button><br><br>
-       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(1);">Cancelar Área</button>
+       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Área</button>
        `);
    }
    arrayPontosArea.push(coord);
@@ -892,7 +1089,6 @@ function atualizarMapa(inicio){
   });
   setTimeout(function(){
     google.maps.event.addListener(map, "click", function (e) {
-      console.log(ferramentaSelec);
       if(ferramentaSelec!=-1){
         map.setZoom(16);
         switch(ferramentaSelec){
@@ -916,22 +1112,11 @@ function initMap(){
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio, reset){
     if(reset){
-      //Cria estilo sem Pontos de Interesse
-      let removerPOI =[{
-          featureType: "poi",
-          elementType: "labels",
-          stylers: [{ visibility: "off" }]
-      },
-      {
-        featureType: "transit.station.bus",
-        stylers: [{ visibility: "off" }]
-      }];
       //Cria o mapa em suas coordenadas iniciais
       map = new google.maps.Map(document.getElementById(mapId), {
         zoom: 16,
         center: inicio
       });
-      map.setOptions({styles: removerPOI});
     }else{
       marcadores.forEach(function(item){
         item.setMap(null);
@@ -1004,7 +1189,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
         marcadores.push(marker);
 			}
     });
-    
+
 		//Para cada rota
 		rotas.forEach(function(item, index){
 			//Pontos que compõe essa rota
@@ -1137,6 +1322,6 @@ function iniciarBarraPesquisa(){
     }
     inserirPonto({'latLng': place.geometry.location});
 
-            
+
   });
 }

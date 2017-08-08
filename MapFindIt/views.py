@@ -764,6 +764,12 @@ def criarIcone(request):
     image.save(icone.imgicone.path)
     return JsonResponse({'sucesso': 1})
 
+def deletarIcone(request):
+    idIcone=int(request.GET.get('id', None))
+    iconeDeletar=get_object_or_404(Iconespontos, codicone=idIcone)
+    iconeDeletar.delete()
+    return JsonResponse({'sucesso': 1})
+
 def criarArea(request):
     nome = request.POST.get('nome')
     desc = request.POST.get('desc')
