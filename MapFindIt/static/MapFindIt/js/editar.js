@@ -215,13 +215,36 @@ function criarIcone(){
             },
             dataType: 'json',
             success: function (data) {
-              $('#modal-criar-icone').modal('hide');
+							$('#modal-criar-icone').modal('hide');
+
+
             }
         });
         blobFinalIcone='';
       }
     }, 500);
 }
+function clearChildren(element) {
+   for (var i = 0; i < element.childNodes.length; i++) {
+      var e = element.childNodes[i];
+      if (e.tagName) switch (e.tagName.toLowerCase()) {
+         case 'input':
+            switch (e.type) {
+               case "radio":
+               case "checkbox": e.checked = false; break;
+               case "button":
+               case "submit":
+               case "image": break;
+               default: e.value = ''; break;
+            }
+            break;
+         case 'select': e.selectedIndex = 0; break;
+         case 'textarea': e.innerHTML = ''; break;
+         default: clearChildren(e);
+      }
+   }
+}
+
 //Para inserir ponto no mapa
 function inserirPonto(evento){
   var contentString =
@@ -375,8 +398,7 @@ function selectIcone(id){
 }
 
 function editarIcone(id){
-	deletarIcone(id);
-	$('#modal-criar-icone').modal('show')
+
 }
 
 function selIcone(id){
