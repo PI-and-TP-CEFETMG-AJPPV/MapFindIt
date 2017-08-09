@@ -382,9 +382,12 @@ function prepararPostagem(div, data, i){
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
-					${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
-						'<p><a class="btn btn-default editarPostagem" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/">Editar</a></p>':""
-					}			
+					<div class="editarPostagem" style="display: flex; ">	
+						<p><a id=comp${JSON.parse(data.mapa)[0].pk} class="btn btn-default" onclick="compartilhar(${JSON.parse(data.mapa)[0].pk})" title="Compartilhar"><i class="fa fa-share-alt" aria-hidden="true"></i></a></p>
+						${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
+							'<p><a class="btn btn-default" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/" title="Editar"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></p>':""
+						}	
+					</div>		
 				</div>
 				<div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
@@ -666,6 +669,25 @@ function avaliar(data, aval){
 	},
 	dataType: 'json',
 	success: function (data) {
+        }
+    });
+}
+
+function compartilhar(id){
+	 $.ajax({
+        url: '/ajax/compartilhar/',
+        data: {
+            'mapa': id,
+            'usuario': idUsuarioLogado
+        },
+        dataType: 'json',
+        success: function (data) {
+					if(JSON.parse(data.sucesso)=='1'){
+						let anchor=$('#comp'+id);
+						anchor.removeClass('btn-default');
+						anchor.addClass('btn-success');
+						anchor.html('<i class="fa fa-check" aria-hidden="true"></i>');
+					}
         }
     });
 }
