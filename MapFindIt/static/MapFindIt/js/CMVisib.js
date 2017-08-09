@@ -24,6 +24,8 @@ $(document).ready(function(){
      }
     });
     carregarTemas();
+    $('#criarMapa').attr('disabled', 'disabled');
+    $('#criarMapa').attr('title', 'Selecione um ponto inicial para o mapa');
 });
 
 function validateTema(){
@@ -98,6 +100,8 @@ function initAutocomplete() {
             }
             $("#LatIni").val(place.geometry.location.lat());
             $("#LngIni").val(place.geometry.location.lng());
+            $('#criarMapa').removeAttr('disabled');
+            $('#criarMapa').removeAttr('title');
           });
           map.fitBounds(bounds);
         });
@@ -123,7 +127,9 @@ function initAutocomplete() {
           });
           map.panTo(e.latLng);
           $("#LatIni").val(e.latLng.lat());
-    			$("#LngIni").val(e.latLng.lng());
+          $("#LngIni").val(e.latLng.lng());
+          $('#criarMapa').removeAttr('disabled');
+          $('#criarMapa').removeAttr('title');
         });
       }
 

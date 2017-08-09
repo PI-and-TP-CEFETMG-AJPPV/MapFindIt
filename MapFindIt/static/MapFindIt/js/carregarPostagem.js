@@ -411,7 +411,8 @@ function prepararPostagem(div, data, i){
                     <div class="row">
 											<div class="col-md-2" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
 	                      <div id="comentarios${10*(gruposCarregados-1)+i}" class="container-comentarios">
-	                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
+													<p style="margin: 0px; padding: 0px;">&nbsp</p>
+													<h4 style="order:100000"><b>Comentários</b></h4>
 												</div>
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
@@ -576,7 +577,8 @@ function prepararPostagemVis(div, data, i){
                     <div class="row">
 											<div class="col-md-2" style="overflow-y:scroll; margin:0px; background-color: #E5E9ED; max-height: 83vh;">
 	                      <div id="comentarios${10*(gruposCarregados-1)+i}" class="container-comentarios">
-	                        <p style="margin: 0px; padding: 0px;">&nbsp</p>
+													<p style="margin: 0px; padding: 0px;">&nbsp</p>
+													<h4 style="order:100000"><b>Comentários</b></h4>
 	                      </div>
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">

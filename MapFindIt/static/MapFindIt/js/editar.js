@@ -6,6 +6,7 @@ var map;
 var marcadores=[];
 var poligonos=[];
 var rotasArr=[];
+var infoWindows=[];
 
 //Desenha o icone de marker
 function pinSymbol(color) {
@@ -272,14 +273,14 @@ function inserirPonto(evento){
             </div>
          </form>
       </div>`;
-  var infowindow = new google.maps.InfoWindow({
+  let infowindow = new google.maps.InfoWindow({
     content: contentString
   });
   //Para o upload de imagens
   $(document).on('change','#imgInpPonto',function(){
     readURLPonto(this);
   });
-  var marker = new google.maps.Marker({
+  let marker = new google.maps.Marker({
     position: evento.latLng,
     map: map
   });
@@ -1112,18 +1113,6 @@ function atualizarMapa(inicio){
                 pontoRotas, JSON.parse(data.areas), pontoAreas, 'divMapa', inicio, false);
       }
   });
-  setTimeout(function(){
-    google.maps.event.addListener(map, "click", function (e) {
-      if(ferramentaSelec!=-1){
-        switch(ferramentaSelec){
-          case 0: inserirPonto(e); break;
-          case 1: inserirArea(e); break;
-          case 2: inserirRota(e); break;
-        }
-      }
-    });
-    iniciarBarraPesquisa();
-  }, 1000);
 }
 
 function initMap(){
@@ -1136,14 +1125,27 @@ function initMap(){
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio, reset){
     if(reset){
+      //Cria estilo sem Pontos de Interesse
+      let removerPOI =[{
+          featureType: "poi",
+          elementType: "labels",
+          stylers: [{ visibility: "off" }]
+      },
+      {
+        featureType: "transit.station.bus",
+        stylers: [{ visibility: "off" }]
+      }];
       //Cria o mapa em suas coordenadas iniciais
       map = new google.maps.Map(document.getElementById(mapId), {
         zoom: 16,
         center: inicio
       });
+      map.setOptions({styles: removerPOI});
     }else{
-      marcadores.forEach(function(item){
-        item.setMap(null);
+      marcadores.forEach(function(item, index){
+        let infoMap = infoWindows[index].getMap();
+        if(infoMap === null && typeof infoMap === "undefined")
+          item.setMap(null);
       });
       rotasArr.forEach(function(item){
         item.setMap(null);
@@ -1155,6 +1157,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
     marcadores=[];
     rotasArr=[];
     poligonos=[];
+    infoWindows=[];
     //Para cada ponto do mapa
 		pontos.forEach(function(item, index){
       //Verifica se o ponto é uma marcação e não parte de uma área ou rota
@@ -1211,6 +1214,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		          infowindow.open(map, marker);
         });
         marcadores.push(marker);
+        infoWindows.push(infowindow);
 			}
     });
 
@@ -1255,6 +1259,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		      infowindow.open(map, marker);
         });
         marcadores.push(marker);
+        infoWindows.push(infowindow);
 			}
 			//Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
 			let waypts=Array();

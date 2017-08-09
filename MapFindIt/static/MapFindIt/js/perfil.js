@@ -89,7 +89,7 @@ function validateNovaSenha(){
       url: '/ajax/checkarSenha/',
       data: {
         'senha': senhaAtual.val(),
-        'id': $('#userId').val()
+        'id': idUsuarioLogado
       },
       dataType: 'json',
       success: function (data) {
