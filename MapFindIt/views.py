@@ -836,5 +836,19 @@ def criarRota(request):
     return JsonResponse({'sucesso': 1})
 
 def deslogar(request):
+    #Remove o objeto de sessão do usuário
     request.session.pop('usuarioLogado', None)
+    #Redireciona para a página inicial do sistema
     return redirect('/')
+
+def compartilhar(request):
+    #Obtem o usuário
+    usuario = Usuario.objects.get(idusuario=int(request.GET.get('usuario')))
+    #Pega o id do mapa
+    mapaId = int(request.GET.get('mapa', None))
+    #Obtem o objeto do mapa
+    mapa=get_object_or_404(Mapa, idmapa=mapaId)
+    #Cria objeto postagem
+    postagem = Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa = mapa, idusuario = usuario)
+    postagem.save()
+    return JsonResponse({'sucesso': 1})
