@@ -13,6 +13,8 @@ import json
 from django.utils import timezone
 from PIL import Image
 from django.db.models import Q
+from django.core.mail import send_mail
+import binascii
 
 def home(request):
     if request.method=="POST":
@@ -852,3 +854,25 @@ def compartilhar(request):
     postagem = Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa = mapa, idusuario = usuario)
     postagem.save()
     return JsonResponse({'sucesso': 1})
+
+def recuperarSenha(request):
+    email = request.POST.get('email')
+    if Usuario.objects.filter(emailusuario=email).exists():
+        codigo = CodigoRecuperarSenha.objects.create(idusuario=Usuario.objects.get(emailusuario=email), codigo=binascii.hexlify(os.urandom(32)).decode())
+        codigo.save()
+        send_mail('Recuperar Senha', 'Para recuperar a sua senha entre no link: https://www.mapfindit.com/redefinir?cod='+codigo.codigo, 'mapfindit@gmail.com', [codigo.idusuario.emailusuario], fail_silently=True)
+    return redirect('/')
+
+def redefinirSenha(request):
+    #Se foi preenchido o formulario
+    if request.method=='POST':
+        senha = request.POST.get('senha')
+        senha = hashlib.md5((senha+'cockles').encode()).hexdigest()
+        request.session.pop('cod', None)
+        user = CodigoRecuperarSenha.objects.get(codigo=request.POST.get('cod')).idusuario
+        user.senhausuario = senha
+        user.save()
+        return redirect('/')
+    else: 
+        cod = request.GET.get('cod')
+        return render(request, 'MapFindIt/redefinirSenha.html', {'cod':cod})

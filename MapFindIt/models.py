@@ -277,3 +277,15 @@ class Area(models.Model):
 
     class Meta:
         db_table = 'Area'
+
+class CodigoRecuperarSenha(models.Model):
+    idcodigo = models.AutoField(db_column='idArea', primary_key=True)  # Field name made lowercase.
+    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
+    codigo = models.CharField(db_column='codigo', max_length=32) #Field name made lowercase
+
+
+    def __str__(self):
+        return self.codigo
+
+    class Meta:
+        db_table = 'CodigoRecuperarSenha'
