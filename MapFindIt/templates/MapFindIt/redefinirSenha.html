@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	  	<meta http-equiv="Pragma" content="no-cache" />
+	  	<meta http-equiv="Expires" content="0" />
+  		<title>MapFindIt</title>
+  		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+	</head>
+  	<body>
+    	<div class="container-fluid">
+			<div class="row">
+                <br><br><br>
+                <div class="col-md-6 col-md-offset-3" style="background: white; border:2px solid black;">
+                    <div style="text-align: center;">
+                        <h3><b>Redefina sua senha</b></h3>
+                    </div>
+                    <form id="redefinir" method="POST" onsubmit="return validateCadastro();">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="password" name="senha" id="senha" class="form-control" placeholder="Digite a nova senha">
+                        </div>
+                        <div class="form-group">
+                            <input type="password" name="confSenha" id="confSenha" class="form-control" placeholder="Confirme a nova senha">
+                        </div>
+                        <input type="hidden" name="cod" value="{{cod}}"/>
+                        <div class="form-group" style="text-align: center">
+                            <input type="submit" class="btn btn-success" value="Redefinir">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+   	 	<script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
+        <script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+        <script src="{% static "MapFindIt/js/redefinirSenha.js" %}"></script>
+  	</body>
+</html>

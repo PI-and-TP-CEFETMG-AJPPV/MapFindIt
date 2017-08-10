@@ -35,4 +35,6 @@ urlpatterns = [
     url(r'^ajax/criarRota/$', views.criarRota),
     url(r'^deslogar/$', views.deslogar),
     url(r'^ajax/compartilhar/$', views.compartilhar),
+    url(r'^recuperarSenha/$', views.recuperarSenha),
+    url(r'^redefinir/$', views.redefinirSenha, )
 ]

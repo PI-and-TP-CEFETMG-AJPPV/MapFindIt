@@ -22,6 +22,7 @@ from .models import RotaPonto
 from .models import Tema
 from .models import Usuario
 from .models import Area
+from .models import CodigoRecuperarSenha
 
 # Register your models here.
 
@@ -44,3 +45,4 @@ admin.site.register(RotaPonto)
 admin.site.register(Tema)
 admin.site.register(Usuario)
 admin.site.register(Area)
+admin.site.register(CodigoRecuperarSenha)

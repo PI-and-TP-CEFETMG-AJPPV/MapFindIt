@@ -41,7 +41,7 @@
 					       				<button type="button" href="#modal-container-cadastro" data-toggle="modal" class="btn button" id="Cadastrar">Cadastrar</button>
 					       			</div>
 					       			<div align="center" style="padding-top: 4px">
-					       				<a href>Esqueci minha senha...</a>
+					       				<a href="#modal-container-senha" data-toggle="modal">Esqueci minha senha...</a>
 					       			</div>
 								</form>
 							</div>
@@ -143,6 +143,33 @@
 						<div align="center">
 							<button type="button" onclick="validateCadastro();" class="btn button"> Confirmar </button>
 							<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!--Modal Esqueci Minha Senha-->
+		<div class="modal fade" id="modal-container-senha" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Esqueci Minha Senha</h4>
+					</div>
+					<div class="modal-body">
+						<form id="recuperar" method="POST" action="/recuperarSenha/">
+						{% csrf_token %}	
+							<div class="form-group">
+								<input type="email" name="email" class="form-control" placeholder="Digite seu e-mail" />
+							</div>
+						</form>
+						<p>Um e-mail será enviado ao seu e-mail cadastrado para redefinir a sua senha</p>
+					</div>
+					<div class="modal-footer" >
+						<div align="center">
+							<button type="submit" form="recuperar" class="btn button">Confirmar</button>
+							<button type="button" data-dismiss="modal" class="btn button">Cancelar</button>
 						</div>
 					</div>
 				</div>
