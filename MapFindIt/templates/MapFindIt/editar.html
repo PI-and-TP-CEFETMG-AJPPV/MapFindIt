@@ -139,7 +139,7 @@
 					<li onclick="selecionar(1);" id="areaLi"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
 					<li onclick="selecionar(2);" id="rotaLi"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
 					<li>&nbsp;</li>
-					<li><a href="#modal-criar-icone" data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
+					<li onclick="modalIcone()"><a data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
 					<li onclick="selIcone({{usuario.idusuario}})"><a href="#" data-toggle="modal" class="claro"><span>Editar Icone</span><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
 					<li onclick="selectIcone({{usuario.idusuario}})"><a href="#" data-toggle="modal" class="escuro"><span>Remover Icone</span><i class="fa fa-trash" aria-hidden="true"></i></a></li>
 				</ul>
