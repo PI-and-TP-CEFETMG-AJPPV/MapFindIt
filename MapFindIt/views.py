@@ -1,20 +1,20 @@
-from __future__ import unicode_literals
-from django.shortcuts import render, redirect, get_object_or_404
-from .models import *
+
 from django.http import JsonResponse, HttpResponseForbidden, HttpResponse
-from django.forms.models import model_to_dict
+from django.shortcuts import render, redirect, get_object_or_404
 from django.core.files.base import ContentFile
+from django.forms.models import model_to_dict
+from django.core.mail import send_mail
 from django.core import serializers
+from django.utils import timezone
+from django.db.models import Q
+from PIL import Image
+from .models import *
+import binascii
+import datetime
+import hashlib
 import io, os
 import base64
-import hashlib
-import datetime
 import json
-from django.utils import timezone
-from PIL import Image
-from django.db.models import Q
-from django.core.mail import send_mail
-import binascii
 
 def home(request):
     if request.method=="POST":
@@ -52,7 +52,7 @@ def feed(request):
 #Pesquisa mapas pela String passada
 def pesquisar(pesquisa):
     #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valvisualizacoes')
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
     #Contabiliza a quantidade de mapas encontrados pelo titulo
     controle = 0
     for n in result:
@@ -62,7 +62,7 @@ def pesquisar(pesquisa):
         tema = Tema.objects.filter(nomtema__icontains=pesquisa)
         for n in tema:
             result = result | Mapa.objects.filter(codtema=n.id)
-        result = result.order_by('valvisualizacoes')
+        result = result.order_by('valaprovados', 'valvisualizacoes')
         #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
         controle = 0
         for n in result:
@@ -70,9 +70,13 @@ def pesquisar(pesquisa):
         #Se for menor do que 10 busca mapas pela descrição
         if controle < 10:
             result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
-            result = result.order_by('valvisualizacoes')
+            result = result.order_by('valaprovados', 'valvisualizacoes')
     #Retorna os mapas encontrados segundo os parâmetros da pesquisa
     return result
+
+#Pesquisa com Filtro
+def filtro(request):
+    return render(request, 'MapFindIt/filtro.html', {})
 
 def checkarEmail(request):
     #Retorna um JSON dizendo se o email escolhido existe
@@ -484,13 +488,18 @@ def mapasHome(request):
     num = request.GET.get('num', None)
     num = int(num)
 
-    mapas = Mapa.objects.all().order_by('valvisualizacoes')[:10]
+    mapas = Mapa.objects.all().order_by('valaprovados')[:10]
     mapa = mapas[num]
+
 
     postagem = Postagem.objects.none()
     postagem = Postagem.objects.filter(idmapa=mapa).filter(
     idusuario=mapa.idusuario)
     getpostagem = postagem.first()
+    print("\n\n************")
+    print(postagem)
+    print("\n\n************")
+
 
     if mapa is not None:
         #Chama a função de obter os dados da postagem
@@ -873,6 +882,6 @@ def redefinirSenha(request):
         user.senhausuario = senha
         user.save()
         return redirect('/')
-    else: 
+    else:
         cod = request.GET.get('cod')
         return render(request, 'MapFindIt/redefinirSenha.html', {'cod':cod})
