@@ -485,22 +485,23 @@ def mapasPerfil(request):
         }
         return JsonResponse(data)
 
+#Carrega os mapas da Home
 def mapasHome(request):
+    #Número do mapa e da div no qual será carregado
     num = request.GET.get('num', None)
     num = int(num)
-
-    mapas = Mapa.objects.all().order_by('valaprovados')[:10]
+    #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
+    mapas = Mapa.objects.all().order_by('valaprovados', 'valvisualizacoes')[:10]
+    #Pega o mapa correspondente ao número da requisição Ajax
     mapa = mapas[num]
-
+    #Inicializa postagem
     postagem = Postagem.objects.none()
+    #Pega a postagem do autor do mapa correspondente
     postagem = Postagem.objects.filter(idmapa=mapa).filter(
     idusuario=mapa.idusuario)
     getpostagem = postagem.first()
-    print("\n\n************")
-    print(postagem)
-    print("\n\n************")
 
-
+    #Se houver mapas
     if mapa is not None:
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
@@ -520,8 +521,9 @@ def mapasHome(request):
             'pontoAreas': dados[8],
         }
         return JsonResponse(data)
+    #Caso já se tenha carregado todas as postagens
     else:
-        #Caso já se tenha carregado todas as postagens
+        #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
         }
@@ -534,9 +536,6 @@ def mapasPesquisa(request):
     num = int(num)
     #Texto utilizado para encontrar mapas
     pesquisa = request.GET.get('pesquisa', None)
-    print("\n\n\n**********")
-    print(pesquisa)
-    print("\n**********\n\n\n")
     #Retorna todos os mapas encontrados para o texto pesquisado
     mapas = pesquisar(pesquisa)
     #Pega o mapa correspondente ao número da requisição Ajax

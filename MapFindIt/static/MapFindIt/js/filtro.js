@@ -1,8 +1,10 @@
+//Função para pegar o valor de um parâmetro request
 function get(name){
-   if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
-      return decodeURIComponent(name[1]);
+	if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+		return decodeURIComponent(name[1]);
 }
 
+//Busca mapas segundo a pesquisa passada
 function carregarMapas() {
 	let div=$("#divMapas");
 	gruposCarregados++;

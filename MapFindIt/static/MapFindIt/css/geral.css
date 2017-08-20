@@ -2,6 +2,27 @@ body {
   background-color: #4388CC;
 }
 
+.box{
+  position:fixed;
+  top: 85%;
+  right: 6%;
+  font-size: 2vw;
+  border: solid;
+  border-radius: 5vh;
+  background-color: skyblue;
+  display:inline-block;
+  cursor:pointer;
+  font-family:Impact;
+  font-weight:bold;
+  padding:1vh 2vw;
+  text-decoration:none;
+}
+
+a:link
+{
+ text-decoration:none;
+}
+
 .button {
   width: 8vw;
   background-color: #4388CC;
@@ -14,8 +35,8 @@ body {
   color: white;
 }
 
-.bpesquisa { 
-  height: 4vh; 
+.bpesquisa {
+  height: 4vh;
   border: 2px solid black;
 }
 

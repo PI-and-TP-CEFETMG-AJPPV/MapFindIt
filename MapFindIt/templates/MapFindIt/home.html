@@ -61,6 +61,7 @@
 					</form>
 				</div>
 				<br>
+				<!--Mapas-->
 				<div id="divMapas"></div>
 			</div>
 		</div>
@@ -148,48 +149,49 @@
 				</div>
 			</div>
 		</div>
-
-		<!--Modal Esqueci Minha Senha-->
-		<div class="modal fade" id="modal-container-senha" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-						<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Esqueci Minha Senha</h4>
-					</div>
-					<div class="modal-body">
-						<form id="recuperar" method="POST" action="/recuperarSenha/">
-							{% csrf_token %}	
-							<div class="form-group">
-								<input type="email" name="email" class="form-control" placeholder="Digite seu e-mail" />
-							</div>
-						</form>
-						<p>Um e-mail será enviado ao seu e-mail cadastrado para redefinir a sua senha</p>
-					</div>
-					<div class="modal-footer" >
-						<div align="center">
-							<button type="submit" form="recuperar" class="btn button">Confirmar</button>
-							<button type="button" data-dismiss="modal" class="btn button">Cancelar</button>
+	</div>
+	
+	<!--Modal Esqueci Minha Senha-->
+	<div class="modal fade" id="modal-container-senha" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+					<h4 class="modal-title" id="myModalLabel" style="text-align: center;">Esqueci Minha Senha</h4>
+				</div>
+				<div class="modal-body">
+					<form id="recuperar" method="POST" action="/recuperarSenha/">
+						{% csrf_token %}	
+						<div class="form-group">
+							<input type="email" name="email" class="form-control" placeholder="Digite seu e-mail" />
 						</div>
+					</form>
+					<p>Um e-mail será enviado ao seu e-mail cadastrado para redefinir a sua senha</p>
+				</div>
+				<div class="modal-footer" >
+					<div align="center">
+						<button type="submit" form="recuperar" class="btn button">Confirmar</button>
+						<button type="button" data-dismiss="modal" class="btn button">Cancelar</button>
 					</div>
 				</div>
 			</div>
 		</div>
+	</div>
 
-		<script>
-			var imgUrl='{{baseUrl}}';
-			var idUsuarioLogado='{{usuario.idusuario}}';
-			var idUsuarioPagina = '{{idPag.idusuario}}'
-		</script>
-		
-		<script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
-		<script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
-		<script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>
-		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
-		<script src="{% static "MapFindIt/js/home.js" %}"></script>
-		<script async defer
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+	<script>
+		var imgUrl='{{baseUrl}}';
+		var idUsuarioLogado='{{usuario.idusuario}}';
+		var idUsuarioPagina = '{{idPag.idusuario}}'
 	</script>
+
+	<script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
+	<script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+	<script src="{% static "MapFindIt/js/jquery.mask.min.js" %}"></script>
+	<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+	<script src="{% static "MapFindIt/js/home.js" %}"></script>
+	<script async defer
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+</script>
 </body>
 </html>
