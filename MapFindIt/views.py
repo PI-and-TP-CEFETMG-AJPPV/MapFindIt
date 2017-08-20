@@ -15,6 +15,7 @@ import hashlib
 import io, os
 import base64
 import json
+from django.core.exceptions import ObjectDoesNotExist
 
 def home(request):
     if request.method=="POST":
@@ -268,8 +269,13 @@ def getDadosMapa(mapa):
     qset = []
     #Itera pelos pontos e caso o ponto possua icone, é adicionado a "qset" o seu objeto
     for pt in todosPontos:
-        if pt.codicone is not None:
-            qset.append(pt.codicone)
+        #Caso esteja vazio o campo codicone exceção é lançada
+        try:
+            if pt.codicone:
+                qset.append(pt.codicone)
+        except ObjectDoesNotExist:
+            #Continua o loop
+            pass
     #Serializa os icones em JSON
     icones = serializers.serialize("json", qset)
     #Obtem todas as rotas do mapa
