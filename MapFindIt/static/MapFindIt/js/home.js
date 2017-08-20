@@ -204,7 +204,7 @@ function pesquisa() {
 	let div=$("#divMapas");
 	for(let i=0; i<10; i++){
 		$.ajax({
-			url: '/ajax/carregarMapasHomePesquisa/',
+			url: '/ajax/carregarMapasPesquisa/',
 			data: {
 				'num': i,
 				'pesquisa': campo.value

@@ -2,286 +2,286 @@
 {% load static %}
 {% static "" as baseUrl %}
 <html lang="pt-br">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="X-UA-Compatible" content="IE=edge">
-		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
-		<title>MapFindIt</title>
-		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
-	</head>
-	<body>
-		{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 white" >
-						<br>
-						<div class="center">
-							{% if usuario.foto %}
-								 <img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png"></img>
-							{% else %}
-								 <img id="img" class="img-responsive" style="width:20%;display:block;margin:auto;" src="{% static "MapFindIt/img/default_user.png" %}"></img>
-							{% endif %}
-							<label for="imagemUser"><h2>{{idPag.primnomeusuario}} {{idPag.ultnomeusuario}}</h2></label>
-						</div>
-					</div>
-				</div>
-				<br>
-				<div class="row">
-					<div class="col-md-8 col-md-offset-2 white">
-						<div class="center">
-							{% if usuario.idusuario != idPag.idusuario %}
-								<p>{{idPag.txtfrase}}</p>
-							{% else %}
-								<form class="navbar-form" method="GET">
-									<textarea style="width: 80%; border: 1; padding: 0; margin: 0; resize: none;" name="fraseUsuario" class="form-control" rows="2" id="fraseUsuario">{{idPag.txtfrase}}</textarea>
-									<button type="submit" class="btn btn-default">Alterar</button>
-								</form>
-							{% endif %}
-						</div>
-					</div>
-				</div>
-				<br>
-				{% if not amigos and usuario.idusuario != idPag.idusuario %}
-				<div class="row" style="display: flex; justify-content: space-between">
-					<button type="button" class="btn btn-default">Pesquisar</button>
-					<button type="button" id="solicitarAmizade" class="btn btn-default">Solicitar Amizade</button>
-				</div>
-				<br>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<title>MapFindIt</title>
+	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
+</head>
+<body>
+	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2 white" >
+			<br>
+			<div class="center">
+				{% if usuario.foto %}
+				<img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png"></img>
+				{% else %}
+				<img id="img" class="img-responsive" style="width:20%;display:block;margin:auto;" src="{% static "MapFindIt/img/default_user.png" %}"></img>
 				{% endif %}
-				{% if amigos and usuario.idusuario != idPag.idusuario %}
-					<div class="row" style="display: flex; justify-content: center";>
-						<button type="button" class="btn btn-default">Pesquisar</button>
-					</div>
-					<br>
-				{% endif %}
-				{% if usuario.idusuario == idPag.idusuario %}
-					<div class="row" style="display: flex; justify-content: space-between">
-						<button type="button" class="btn btn-default">Pesquisar</button>
-						{% ifequal solicitacoesPendentes 0 %}
-								<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade</button>
-						{% else %}
-								<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade <span class="label label-primary" id="labelSolicitacoes">{{solicitacoesPendentes}}</span></button>
-		   			{% endifequal %}
-
-						<button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
-					</div>
-					<div class="modal fade" id="modal-solicitacoes" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" onclick='$("#modal-solicitacoes").modal("hide");' aria-hidden="true">
-										×
-									</button>
-									<h4 class="modal-title" id="myModalLabel">
-										Solicitações de Amizade
-									</h4>
-								</div>
-								<div class="modal-body" id="solicitacoesAmizade">
-										<div class="container-fluid" id="containerSolicitacoes">
-										 {% ifequal solicitacoesPendentes 0 %}
-												<h3>Não Existe Nenhuma Solicitação de Amizade Pendente</h3>
-										 {% endifequal %}
-										 {% for amizade in todosAmigos %}
-											 {% if amizade.aceita %}
-												 {% ifequal amizade.idusuario2 usuario %}
-														 {% with amigo=amizade.idusuario1 %}
-																<div class="row" id="solicitacao{{ amigo.idusuario }}">
-																	<div class="col-md-12">
-																		<div style="display:inline">
-																			{% if amigo.foto %}
-																				 <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
-																			{% else %}
-																				 <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
-																			{% endif %}
-																			&nbsp;
-																			{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}
-																			&nbsp;
-																			<button class="btn btn-success" onclick="aceitarAmizade({{amigo.idusuario}})" style="float:right;">Aceitar</button>
-																			<span style='float:right;'>&nbsp;&nbsp;&nbsp;</span>
-																			<button class="btn btn-default" onclick="recusarAmizade({{amigo.idusuario}});" style="float:right">Recusar</button>
-																		</div>
-																	</div>
-																 </div>
-															{% endwith %}
-													{% endifequal %}
-													<br>
-												{% endif %}
-										 {% endfor %}
-										</div>
-								</div>
-								<div class="modal-footer">
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal fade" id="modal-editar" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" onclick='$("#modal-editar").modal("hide");' aria-hidden="true">
-										×
-									</button>
-									<h4 class="modal-title" id="myModalLabel">
-										Alterar dados
-									</h4>
-								</div>
-								<div class="modal-body">
-									<form id="formAlteracao" method="POST">
-										{% csrf_token %}
-										<div class="row">
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-															<input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" value="{{usuario.primnomeusuario}}" required>
-													</div>
-												</div>
-												<div class="col-xs-12 col-sm-6 col-md-6">
-													<div class="form-group">
-														<input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" value="{{usuario.ultnomeusuario}}" tabindex="2" required>
-													</div>
-												</div>
-										</div>
-										<div class="form-group">
-											<label for="datetimepicker1">Data de Nascimento</label>
-											<div class='input-group date' id='datetimepicker1'>
-																<input type='text' name="nascimento" value="{{usuario.datanascimento|date:"d/m/Y"}}" id="dataNascimento"
-																placeholder="__/__/____" required class="form-control" />
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-xs-12 col-sm-6 col-md-6">
-												<div class="form-group">
-													<div class="radio">
-															<label><input type="radio" name="gender" id="masc" {% if usuario.idtsexo == 'm' %} checked {% endif %} value="masculino">Masculino</label>
-													</div>
-												</div>
-											</div>
-											<div class="col-xs-12 col-sm-6 col-md-6">
-												<div class="form-group">
-													<div class="radio">
-															<label><input type="radio"
-															id="femin" name="gender" {% if usuario.idtsexo == 'f' %} checked {% endif %} value="feminino">Feminino</label>
-													</div>
-												</div>
-											</div>
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" class="btn btn-default" href="#modal-enviarImagem" data-toggle="modal"> Alterar Imagem do Perfil </button>
-									<button type="button" class="btn btn-default" href="#modal-alterarSenha" data-toggle="modal" > Alterar Senha </button>
-									<button type="button" onclick="validateAlteracao();" class="btn btn-success"> Salvar Mudanças </button>
-									<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal fade" style="top:5%;" id="modal-alterarSenha" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" onclick='$("#modal-alterarSenha").modal("hide");' aria-hidden="true">
-										×
-									</button>
-									<h4 class="modal-title" id="myModalLabel">
-										Alterar Senha
-									</h4>
-								</div>
-								<div class="modal-body">
-									<form id="formSenha" method="POST">
-										{% csrf_token %}
-										<div class="row">
-											<div class="col-xs-12 col-sm-6 col-md-6">
-												<div class="form-group">
-													<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
-												</div>
-											</div>
-											<div class="col-xs-12 col-sm-6 col-md-6">
-												<div class="form-group">
-													<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-md-12">
-												<div class="form-group">
-													<input type="password" name="senhaAtual" id="senhaAtual" class="form-control input-lg" required placeholder="Digite sua senha atual">
-												</div>
-											</div>
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" onclick="validateNovaSenha();" class="btn btn-success"> Alterar Senha </button>
-									<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="modal fade" style="top:-5%;" id="modal-enviarImagem" aria-hidden="true">
-						<div class="modal-dialog">
-							<div class="modal-content">
-								<div class="modal-header">
-									<button type="button" class="close" onclick='$("#modal-enviarImagem").modal("hide");' aria-hidden="true">
-										×
-									</button>
-									<h4 class="modal-title" id="myModalLabel">
-										Alterar Imagem
-									</h4>
-								</div>
-								<div class="modal-body">
-									<form id="formImagem" method="POST">
-										{% csrf_token %}
-										<div class="form-group" height="800px">
-											<div class="input-group">
-													<span class="input-group-btn center">
-															<span class="btn btn-default btn-file">
-																	Escolher Imagem... <input accept="image/*" type="file" id="imgInp">
-															</span>
-													</span>
-											</div>
-											<br>
-											<input type="hidden" id="blob" name="blob">
-											<img id='novaImg'/>
-										</div>
-									</form>
-								</div>
-								<div class="modal-footer">
-									<button type="button" onclick="mudarImagem();" class="btn btn-success"> Alterar Imagem </button>
-									<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
-								</div>
-							</div>
-						</div>
-					</div>
-					<br>
-				{% endif %}
-				<div id="divMapas">
-
-				</div>
+				<label for="imagemUser"><h2>{{idPag.primnomeusuario}} {{idPag.ultnomeusuario}}</h2></label>
+			</div>
 		</div>
-		<script>
-			var imgUrl='{{baseUrl}}';
-			var idUsuarioLogado='{{usuario.idusuario}}';
-			var idUsuarioPagina = '{{idPag.idusuario}}'
-		</script>
-		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
-		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
-		<script src="{% static "MapFindIt/js/perfil.js"%}"></script>
-		<script async defer
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
-		</script>
+	</div>
+	<br>
+	<div class="row">
+		<div class="col-md-8 col-md-offset-2 white">
+			<div class="center">
+				{% if usuario.idusuario != idPag.idusuario %}
+				<p>{{idPag.txtfrase}}</p>
+				{% else %}
+				<form class="navbar-form" method="GET">
+					<textarea style="width: 80%; border: 1; padding: 0; margin: 0; resize: none;" name="fraseUsuario" class="form-control" rows="2" id="fraseUsuario">{{idPag.txtfrase}}</textarea>
+					<button type="submit" class="btn btn-default">Alterar</button>
+				</form>
+				{% endif %}
+			</div>
+		</div>
+	</div>
+	<br>
+	{% if not amigos and usuario.idusuario != idPag.idusuario %}
+	<div class="row" style="display: flex; justify-content: space-between">
+		<button type="button" class="btn btn-default">Pesquisar</button>
+		<button type="button" id="solicitarAmizade" class="btn btn-default">Solicitar Amizade</button>
+	</div>
+	<br>
+	{% endif %}
+	{% if amigos and usuario.idusuario != idPag.idusuario %}
+	<div class="row" style="display: flex; justify-content: center";>
+		<button type="button" class="btn btn-default">Pesquisar</button>
+	</div>
+	<br>
+	{% endif %}
+	{% if usuario.idusuario == idPag.idusuario %}
+	<div class="row" style="display: flex; justify-content: space-between">
+		<button type="button" class="btn btn-default">Pesquisar</button>
+		{% ifequal solicitacoesPendentes 0 %}
+		<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade</button>
+		{% else %}
+		<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade <span class="label label-primary" id="labelSolicitacoes">{{solicitacoesPendentes}}</span></button>
+		{% endifequal %}
 
-	</body>
+		<button type="button" class="btn btn-default" href="#modal-editar" data-toggle="modal">Editar meus dados</button>
+	</div>
+	<div class="modal fade" id="modal-solicitacoes" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" onclick='$("#modal-solicitacoes").modal("hide");' aria-hidden="true">
+						×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Solicitações de Amizade
+					</h4>
+				</div>
+				<div class="modal-body" id="solicitacoesAmizade">
+					<div class="container-fluid" id="containerSolicitacoes">
+						{% ifequal solicitacoesPendentes 0 %}
+						<h3>Não Existe Nenhuma Solicitação de Amizade Pendente</h3>
+						{% endifequal %}
+						{% for amizade in todosAmigos %}
+						{% if amizade.aceita %}
+						{% ifequal amizade.idusuario2 usuario %}
+						{% with amigo=amizade.idusuario1 %}
+						<div class="row" id="solicitacao{{ amigo.idusuario }}">
+							<div class="col-md-12">
+								<div style="display:inline">
+									{% if amigo.foto %}
+									<a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+									{% else %}
+									<a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
+									{% endif %}
+									&nbsp;
+									{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}
+									&nbsp;
+									<button class="btn btn-success" onclick="aceitarAmizade({{amigo.idusuario}})" style="float:right;">Aceitar</button>
+									<span style='float:right;'>&nbsp;&nbsp;&nbsp;</span>
+									<button class="btn btn-default" onclick="recusarAmizade({{amigo.idusuario}});" style="float:right">Recusar</button>
+								</div>
+							</div>
+						</div>
+						{% endwith %}
+						{% endifequal %}
+						<br>
+						{% endif %}
+						{% endfor %}
+					</div>
+				</div>
+				<div class="modal-footer">
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modal-editar" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" onclick='$("#modal-editar").modal("hide");' aria-hidden="true">
+						×
+					</button>
+					<h4 class="modal-title" id="myModalLabel">
+						Alterar dados
+					</h4>
+				</div>
+				<div class="modal-body">
+					<form id="formAlteracao" method="POST">
+						{% csrf_token %}
+						<div class="row">
+							<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="form-group">
+									<input type="text" name="primNome" id="primNome" class="form-control input-lg" placeholder="Primeiro nome" tabindex="1" value="{{usuario.primnomeusuario}}" required>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="form-group">
+									<input type="text" name="ultimoNome" id="ultimoNome" class="form-control input-lg" placeholder="Ultimo nome" value="{{usuario.ultnomeusuario}}" tabindex="2" required>
+								</div>
+							</div>
+						</div>
+						<div class="form-group">
+							<label for="datetimepicker1">Data de Nascimento</label>
+							<div class='input-group date' id='datetimepicker1'>
+								<input type='text' name="nascimento" value="{{usuario.datanascimento|date:"d/m/Y"}}" id="dataNascimento"
+								placeholder="__/__/____" required class="form-control" />
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="form-group">
+									<div class="radio">
+										<label><input type="radio" name="gender" id="masc" {% if usuario.idtsexo == 'm' %} checked {% endif %} value="masculino">Masculino</label>
+									</div>
+								</div>
+							</div>
+							<div class="col-xs-12 col-sm-6 col-md-6">
+								<div class="form-group">
+									<div class="radio">
+										<label><input type="radio"
+											id="femin" name="gender" {% if usuario.idtsexo == 'f' %} checked {% endif %} value="feminino">Feminino</label>
+										</div>
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" href="#modal-enviarImagem" data-toggle="modal"> Alterar Imagem do Perfil </button>
+						<button type="button" class="btn btn-default" href="#modal-alterarSenha" data-toggle="modal" > Alterar Senha </button>
+						<button type="button" onclick="validateAlteracao();" class="btn btn-success"> Salvar Mudanças </button>
+						<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" style="top:5%;" id="modal-alterarSenha" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" onclick='$("#modal-alterarSenha").modal("hide");' aria-hidden="true">
+							×
+						</button>
+						<h4 class="modal-title" id="myModalLabel">
+							Alterar Senha
+						</h4>
+					</div>
+					<div class="modal-body">
+						<form id="formSenha" method="POST">
+							{% csrf_token %}
+							<div class="row">
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password" id="password" class="form-control input-lg" placeholder="Senha" tabindex="5" required>
+									</div>
+								</div>
+								<div class="col-xs-12 col-sm-6 col-md-6">
+									<div class="form-group">
+										<input type="password" name="password_confirmation" id="password_confirmation" class="form-control input-lg" required placeholder="Confirmar Senha" tabindex="6">
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-md-12">
+									<div class="form-group">
+										<input type="password" name="senhaAtual" id="senhaAtual" class="form-control input-lg" required placeholder="Digite sua senha atual">
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" onclick="validateNovaSenha();" class="btn btn-success"> Alterar Senha </button>
+						<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="modal fade" style="top:-5%;" id="modal-enviarImagem" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" onclick='$("#modal-enviarImagem").modal("hide");' aria-hidden="true">
+							×
+						</button>
+						<h4 class="modal-title" id="myModalLabel">
+							Alterar Imagem
+						</h4>
+					</div>
+					<div class="modal-body">
+						<form id="formImagem" method="POST">
+							{% csrf_token %}
+							<div class="form-group" height="800px">
+								<div class="input-group">
+									<span class="input-group-btn center">
+										<span class="btn btn-default btn-file">
+											Escolher Imagem... <input accept="image/*" type="file" id="imgInp">
+										</span>
+									</span>
+								</div>
+								<br>
+								<input type="hidden" id="blob" name="blob">
+								<img id='novaImg'/>
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" onclick="mudarImagem();" class="btn btn-success"> Alterar Imagem </button>
+						<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<br>
+		{% endif %}
+		<div id="divMapas">
+
+		</div>
+	</div>
+	<script>
+		var imgUrl='{{baseUrl}}';
+		var idUsuarioLogado='{{usuario.idusuario}}';
+		var idUsuarioPagina = '{{idPag.idusuario}}'
+	</script>
+	<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/menu.js" %}"></script>
+	<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+	<script src="{% static "MapFindIt/js/perfil.js"%}"></script>
+	<script async defer
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+</script>
+
+</body>
 </html>
