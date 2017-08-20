@@ -76,7 +76,8 @@ def pesquisar(pesquisa):
 
 #Pesquisa com Filtro
 def filtro(request):
-    return render(request, 'MapFindIt/filtro.html', {})
+    resultado=getDadosMenu(request)
+    return render(request, 'MapFindIt/filtro.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
 def checkarEmail(request):
     #Retorna um JSON dizendo se o email escolhido existe
