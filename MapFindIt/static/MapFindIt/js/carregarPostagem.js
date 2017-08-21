@@ -376,8 +376,8 @@ function prepararPostagem(div, data, i){
 		}
 		//HTML do mapa
     div.append(`
-      <div class='row' style="order:${i}; padding-bottom:20px;">
-        <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
+      <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${i}; padding-bottom:20px;">
+        <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
@@ -391,7 +391,7 @@ function prepararPostagem(div, data, i){
 				</div>
 				<div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
-         </div>
+				 </div>
          <br>
          <b>${mapa.valaprovados}</b>
          &nbsp;
@@ -429,7 +429,9 @@ function prepararPostagem(div, data, i){
         </div>
        </div>
      </div>
-     <br><br><br>`);
+		 <br><br><br>`);
+		 //Cria evento para a descrição do mapa
+		$('.divPostagem').tooltip({ track: true});
 		 //Se não existirem comentários cria aviso de que não existem comentários
      if(comentarios.length<1){
        $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
