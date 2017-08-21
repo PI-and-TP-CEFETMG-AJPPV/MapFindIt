@@ -418,7 +418,7 @@ def adicionarAvaliacao(request):
     #Atualiza tabelas
     mapa.save()
     aval.save()
-    return JsonResponse({})
+    return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
 
 def mapasGrupo(request, idgrupo):
     #Pega a posicao do mapa que deve ser carregado

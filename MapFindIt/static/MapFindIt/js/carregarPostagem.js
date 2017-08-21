@@ -346,8 +346,8 @@ function comentar(id, idPost, idUser){
 
 function prepararPostagem(div, data, i){
 		//Carrega o objeto do mapa
-    let mapa=JSON.parse(data.mapa)[0];
-    mapa=mapa.fields;
+    let m=JSON.parse(data.mapa)[0];
+    let mapa=m.fields;
 		//Carrega o objeto da postagem
     let postagem=JSON.parse(data.postagem)[0];
     postagem=postagem.fields;
@@ -393,11 +393,11 @@ function prepararPostagem(div, data, i){
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
 				 </div>
          <br>
-         <b>${mapa.valaprovados}</b>
+         <b id="valapv${(10*(gruposCarregados-1)+i)}">${mapa.valaprovados}</b>
          &nbsp;
          <button id="btnaprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-success">&#128402;</button> <button id="btnreprov${(10*(gruposCarregados-1)+i)}" type="button" class="btn btn-danger">&#128403;</button>
          &nbsp;
-         <b>${mapa.valreprovados}</b>
+         <b id="valrepv${(10*(gruposCarregados-1)+i)}">${mapa.valreprovados}</b>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
             <div class='modal-dialog modal-map-dialog' >
               <div class='modal-content modal-map-content'>
@@ -518,11 +518,11 @@ function prepararPostagem(div, data, i){
     });
                     //Botao de aprovacao chama avaliar com +1
     $("#btnaprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
-	avaliar(data, 1);
+	avaliar(m.pk, 1, (10*(gruposCarregados-1)+i));
     });
                 //Botao de aprovacao chama avaliar com -1
     $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
-	avaliar(data, -1);
+	avaliar(m.pk, -1, (10*(gruposCarregados-1)+i));
 		});
 
 		//Seta o mapa do feed
@@ -651,12 +651,11 @@ function prepararPostagemVis(div, data, i){
     setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map"+(10*(gruposCarregados-1)+i));
 }
 
-function avaliar(data, aval){
-    
+function avaliar(idmapa, aval, id){
     $.ajax({
         url: '/ajax/adicionarView/',
         data: {
-            'mapa': JSON.parse(data.mapa)[0].pk,
+            'mapa': idmapa,
             'usuario': idUsuarioLogado
         },
         dataType: 'json',
@@ -667,12 +666,16 @@ function avaliar(data, aval){
     $.ajax({
 	url: '/ajax/adicionarAvaliacao/',
 	data: {
-            'mapa': JSON.parse(data.mapa)[0].pk,
+            'mapa': idmapa,
             'usuario': idUsuarioLogado,
             'aval': aval
 	},
 	dataType: 'json',
 	success: function (data) {
+            if(JSON.parse(data.sucesso)){
+                $("#valapv"+id).text(JSON.parse(data.valapv));
+                $("#valrepv"+id).text(JSON.parse(data.valrepv));
+            }
         }
     });
 }
