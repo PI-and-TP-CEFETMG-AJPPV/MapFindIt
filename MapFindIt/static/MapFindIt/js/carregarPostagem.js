@@ -557,7 +557,7 @@ function prepararPostagemVis(div, data, i){
 		//HTML do mapa
     div.append(`
       <div class='row' style="order:${i}; padding-bottom:20px;">
-        <div class='col-md-8 col-md-offset-2 white center centerDiv' style='padding-bottom: 20px; display: block;'>
+        <div title="${mapa.descmapa}"  class='col-md-8 col-md-offset-2 white center divPostagem centerDiv' style='padding-bottom: 20px; display: block;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
@@ -597,7 +597,9 @@ function prepararPostagemVis(div, data, i){
         </div>
        </div>
      </div>
-     <br><br><br>`);
+		 <br><br><br>`);
+		 //Cria evento para a descrição do mapa
+		$('.divPostagem').tooltip({ track: true});
 		 //Se não existirem comentários cria aviso de que não existem comentários
      if(comentarios.length<1){
        $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
