@@ -765,7 +765,15 @@ def salvarIcone(request):
     ponto.codicone=icone
     ponto.save()
     return JsonResponse({'sucesso': 1})
-
+def getIcone(request):
+    idIcone=int(request.GET.get('id', None))
+    icone=get_object_or_404(Iconespontos, pk=idIcone)
+    queryset=Iconespontos.objects.get(pk=icone)
+    return JsonResponse({'icones': serializers.serialize("json", queryset)})
+def editarIcone(request):
+    criarIcone(request)
+    deletarIcone(request)
+    return JsonResponse({'sucesso': 1})
 def criarIcone(request):
     idUsuario=int(request.POST.get('usuario', None))
     nome=request.POST.get('nome', None)
