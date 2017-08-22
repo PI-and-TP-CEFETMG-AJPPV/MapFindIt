@@ -2,20 +2,19 @@
 {% load static %}
 {% static "" as baseUrl %}
 <html lang="pt-br">
-	<head>
-		<meta charset="utf-8">
-		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-		<meta http-equiv="Pragma" content="no-cache" />
-		<meta http-equiv="Expires" content="0" />
-		<title>MapFindIt</title>
-		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/feed.css"%}" rel="stylesheet">
-	</head>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<title>MapFindIt</title>
+	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+</head>
 
 <body>
 	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
@@ -36,21 +35,21 @@
 	</div>
 
 	
-		<script>
-			var imgUrl='{{baseUrl}}';
-			var idUsuarioLogado='{{usuario.idusuario}}';
-			var idUsuarioPagina = '{{idPag.idusuario}}'
-		</script>
-		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
-		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/jquery-ui.min.js"%}"></script>
-		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
-		<script src="{% static "MapFindIt/js/feed.js"%}"></script>
-		<script async defer
-			src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
-		</script>
-	</body>
+	<script>
+		var imgUrl='{{baseUrl}}';
+		var idUsuarioLogado='{{usuario.idusuario}}';
+		var idUsuarioPagina = '{{idPag.idusuario}}'
+	</script>
+	<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/jquery.mask.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/menu.js" %}"></script>
+	<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/jquery-ui.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
+	<script src="{% static "MapFindIt/js/feed.js"%}"></script>
+	<script async defer
+	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
+	</script>
+</body>
 </html>
