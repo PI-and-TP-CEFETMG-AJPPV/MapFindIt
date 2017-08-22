@@ -618,11 +618,12 @@ function prepararPostagemVis(div, data, i){
               <div class="card-container">
                 <div class="card">
                   <div class="content">
-                      <div class="main">
-                          <h4>${comentario.fields.titulocomentario}</h4>
-                          <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
-                          <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
-                          <p style="text-align: left">${comentario.fields.txtcomentario}</p>
+											<div class="main">
+												<button class="btn btn-danger" style="float: right; padding: 0px 0.4em 0px 0.4em; margin:0px;">×</button>
+                        <h4>${comentario.fields.titulocomentario}</h4>
+                        <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
+                        <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
+                        <p style="text-align: left">${comentario.fields.txtcomentario}</p>
                       </div>
                     </div>
                   </div>
@@ -664,14 +665,14 @@ function avaliar(idmapa, aval, id){
     });
     
     $.ajax({
-	url: '/ajax/adicionarAvaliacao/',
-	data: {
+			url: '/ajax/adicionarAvaliacao/',
+			data: {
             'mapa': idmapa,
             'usuario': idUsuarioLogado,
             'aval': aval
-	},
-	dataType: 'json',
-	success: function (data) {
+			},
+			dataType: 'json',
+			success: function (data) {
             if(JSON.parse(data.sucesso)){
                 $("#valapv"+id).text(JSON.parse(data.valapv));
                 $("#valrepv"+id).text(JSON.parse(data.valrepv));
