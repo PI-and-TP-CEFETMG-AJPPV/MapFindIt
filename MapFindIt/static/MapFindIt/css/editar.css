@@ -144,3 +144,13 @@ Mapa
 .pac-container{
   z-index: 2000;
 }
+
+.mapaMesclar{
+    background: white;
+}
+.mapaMesclar:hover{
+    background: lightgreen !important;
+}
+.mapaMesclar:active{
+    background: green !important;
+}

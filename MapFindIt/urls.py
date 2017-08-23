@@ -40,4 +40,5 @@ urlpatterns = [
     url(r'^redefinir/$', views.redefinirSenha, ),
     url(r'^filtro/$', views.filtro),
     url(r'^ajax/mapasMesclar/$', views.mapasMesclar),
+    url(r'^fazerMescla/$', views.fazerMescla),
 ]

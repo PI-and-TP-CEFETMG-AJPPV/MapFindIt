@@ -923,3 +923,11 @@ def mapasMesclar(request):
         mapas[index][1]=mapa.titulomapa
         mapas[index][2]=mapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
+
+def fazerMescla(request):
+    id = request.GET.get('id')
+    idEditando = request.GET.get('idEditando')
+    mapaEditando = Mapa.objects.get(idmapa=idEditando)
+    mapaTarget = Mapa.objects.get(idmapa=id)
+    
+    return redirect('/editarMapa/'+idEditando)
