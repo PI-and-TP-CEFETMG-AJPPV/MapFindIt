@@ -925,9 +925,46 @@ def mapasMesclar(request):
     return JsonResponse({'mapas': json.dumps(mapas)})
 
 def fazerMescla(request):
-    id = request.GET.get('id')
-    idEditando = request.GET.get('idEditando')
-    mapaEditando = Mapa.objects.get(idmapa=idEditando)
-    mapaTarget = Mapa.objects.get(idmapa=id)
+    id = int(request.GET.get('id'))
+    idEditando = int(request.GET.get('idEditando'))
+    mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
+    mapaTarget = get_object_or_404(Mapa, idmapa=id)
+    #Obtem os pontos do mapa
+    pontos=Ponto.objects.filter(idmapa=mapaTarget)
+    for ponto in pontos:
+        novPonto = Ponto.objects.create(coordx = ponto.coordx,
+            coordy=ponto.coordy,
+            idmapa=mapaEditando,
+            nomponto=ponto.nomponto,
+            descponto=ponto.descponto,
+            idusuario=ponto.idusuario,
+            idtponto='P',
+            codicone=ponto.codicone)
+        if ponto.fotoponto is not None:
+            novPonto.fotoponto=ponto.fotoponto
+        print(novPonto.fotoponto)
+        novPonto.save()
+
+    todasRotas = Rota.objects.filter(idmapa=mapaTarget)
+    for rota in todasRotas:
+        novRota = Rota.objects.create(idtevitar=rota.idtevitar, idmapa=mapaEditando, nomerota=rota.nomerota, descrota=rota.descrota, codcor=rota.codcor, idusuario=rota.idusuario)
+        novRota.save()
+        pontosRota = RotaPonto.objects.filter(idrota=rota).order_by("seqponto")
+        for ponto in pontosRota:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='R')
+            novPonto.save()
+            pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
+            pontorota.save()
     
-    return redirect('/editarMapa/'+idEditando)
+    todasAreas = Area.objects.filter(idmapa=mapaTarget)
+    for area in todasAreas:
+        novArea = Area.objects.create(idmapa = mapaEditando, nomarea=area.nomarea, descarea=area.descarea, codcor=area.codcor, idusuario=area.idusuario)
+        area.save()
+        pontosArea = Pontoarea.objects.filter(idarea=area)
+        for ponto in pontosArea:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='A')
+            novPonto.save()
+            pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
+            pontoarea.save()
+    
+    return redirect('/editarMapa/'+str(idEditando))
