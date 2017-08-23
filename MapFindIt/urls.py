@@ -38,5 +38,6 @@ urlpatterns = [
     url(r'^ajax/compartilhar/$', views.compartilhar),
     url(r'^recuperarSenha/$', views.recuperarSenha),
     url(r'^redefinir/$', views.redefinirSenha, ),
-    url(r'^filtro/$', views.filtro)
+    url(r'^filtro/$', views.filtro),
+    url(r'^ajax/mapasMesclar/$', views.mapasMesclar),
 ]

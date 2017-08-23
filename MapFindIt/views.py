@@ -909,3 +909,17 @@ def redefinirSenha(request):
     else:
         cod = request.GET.get('cod')
         return render(request, 'MapFindIt/redefinirSenha.html', {'cod':cod})
+
+def mapasMesclar(request):
+    #Obtem texto de pesquisa
+    pesquisa = request.GET.get('pesquisa')
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
+        mapas[index][0]=mapa.idmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
+    return JsonResponse({'mapas': json.dumps(mapas)})

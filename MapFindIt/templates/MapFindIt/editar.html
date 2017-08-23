@@ -142,6 +142,8 @@
 					<li onclick="modalIcone()"><a data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
 					<li onclick="selIcone({{usuario.idusuario}})"><a href="#" data-toggle="modal" class="claro"><span>Editar Icone</span><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
 					<li onclick="selectIcone({{usuario.idusuario}})"><a href="#" data-toggle="modal" class="escuro"><span>Remover Icone</span><i class="fa fa-trash" aria-hidden="true"></i></a></li>
+					<li>&nbsp;</li>
+					<li onclick="modalMesclar()"><a data-toggle="modal" class="claro"><span>Mesclar Mapas</span><i class="fa fa-compress" aria-hidden="true"></i></a></li>
 				</ul>
 			</aside>
 			<div id="botoesContainer" style="position: fixed; top: 400px;">
@@ -211,6 +213,7 @@
 		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
 		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/editar.js"%}"></script>
+		<script src="{% static "MapFindIt/js/mescla.js"%}"></script>
 		{% if prim %}
     <script>
 			setTimeout(function(){

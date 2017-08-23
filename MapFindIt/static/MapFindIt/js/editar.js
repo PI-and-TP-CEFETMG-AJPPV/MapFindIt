@@ -569,9 +569,9 @@ $.ajax({
             </div>`
 	        $('#modalDinamico').html(conteudo);
 	        $('#modal-criar-icone').modal('show');
-	        });
+	        };
         }
-    }
+    });
 }
 
 function deletarIcone(id){
