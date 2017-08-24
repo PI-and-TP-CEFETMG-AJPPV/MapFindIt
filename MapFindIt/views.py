@@ -287,7 +287,7 @@ def getDadosMapa(mapa):
     pontosRotasArr=[]
     for rota in todasRotas:
         #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
-        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota).order_by("seqponto"), use_natural_foreign_keys=True))
     #Serializa o array em JSON
     pontoRotas=json.dumps(pontosRotasArr)
     #Obtem todas as areas do mapa
@@ -909,3 +909,67 @@ def redefinirSenha(request):
     else:
         cod = request.GET.get('cod')
         return render(request, 'MapFindIt/redefinirSenha.html', {'cod':cod})
+
+def mapasMesclar(request):
+    #Obtem texto de pesquisa
+    pesquisa = request.GET.get('pesquisa')
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
+        mapas[index][0]=mapa.idmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
+    return JsonResponse({'mapas': json.dumps(mapas)})
+
+def fazerMescla(request):
+    id = int(request.GET.get('id'))
+    idEditando = int(request.GET.get('idEditando'))
+    mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
+    mapaTarget = get_object_or_404(Mapa, idmapa=id)
+    #Obtem os pontos do mapa
+    pontos=Ponto.objects.filter(idmapa=mapaTarget)
+    for ponto in pontos:
+        if ponto.idtponto=='P':
+            novPonto = Ponto.objects.create(coordx = ponto.coordx,
+                coordy=ponto.coordy,
+                idmapa=mapaEditando,
+                nomponto=ponto.nomponto,
+                descponto=ponto.descponto,
+                idusuario=ponto.idusuario,
+                idtponto='P')
+            if ponto.fotoponto is not None:
+                novPonto.fotoponto=ponto.fotoponto
+            try:
+                if ponto.codicone:
+                    novPonto.codicone=ponto.codicone
+            except ObjectDoesNotExist:
+                #Continua o loop
+                pass  
+            novPonto.save()
+
+    todasRotas = Rota.objects.filter(idmapa=mapaTarget)
+    for rota in todasRotas:
+        novRota = Rota.objects.create(idtevitar=rota.idtevitar, idmapa=mapaEditando, nomerota=rota.nomerota, descrota=rota.descrota, codcor=rota.codcor, idusuario=rota.idusuario)
+        novRota.save()
+        pontosRota = RotaPonto.objects.filter(idrota=rota).order_by("seqponto")
+        for ponto in pontosRota:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='R')
+            novPonto.save()
+            pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
+            pontorota.save()
+    
+    todasAreas = Area.objects.filter(idmapa=mapaTarget)
+    for area in todasAreas:
+        novArea = Area.objects.create(idmapa = mapaEditando, nomarea=area.nomarea, descarea=area.descarea, codcor=area.codcor, idusuario=area.idusuario)
+        area.save()
+        pontosArea = Pontoarea.objects.filter(idarea=area)
+        for ponto in pontosArea:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='A')
+            novPonto.save()
+            pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
+            pontoarea.save()
+    
+    return redirect('/editarMapa/'+str(idEditando))

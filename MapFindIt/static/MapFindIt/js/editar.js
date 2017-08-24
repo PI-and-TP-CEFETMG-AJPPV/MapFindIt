@@ -569,9 +569,9 @@ $.ajax({
             </div>`
 	        $('#modalDinamico').html(conteudo);
 	        $('#modal-criar-icone').modal('show');
-	        });
+	        };
         }
-    }
+    });
 }
 
 function deletarIcone(id){
@@ -1307,7 +1307,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		//Para cada rota
 		rotas.forEach(function(item, index){
 			//Pontos que compõe essa rota
-			let pontosRota=pontoRotas[index];
+      let pontosRota=pontoRotas[index];
+      console.log(pontosRota);
 			//Serviço de direções do google
 			let directionsService = new google.maps.DirectionsService();
 			//Serviço de exibição das rotas
