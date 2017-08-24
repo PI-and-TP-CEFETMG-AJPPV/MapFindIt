@@ -287,7 +287,7 @@ def getDadosMapa(mapa):
     pontosRotasArr=[]
     for rota in todasRotas:
         #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
-        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota).order_by("seqponto"), use_natural_foreign_keys=True))
     #Serializa o array em JSON
     pontoRotas=json.dumps(pontosRotasArr)
     #Obtem todas as areas do mapa
@@ -932,18 +932,23 @@ def fazerMescla(request):
     #Obtem os pontos do mapa
     pontos=Ponto.objects.filter(idmapa=mapaTarget)
     for ponto in pontos:
-        novPonto = Ponto.objects.create(coordx = ponto.coordx,
-            coordy=ponto.coordy,
-            idmapa=mapaEditando,
-            nomponto=ponto.nomponto,
-            descponto=ponto.descponto,
-            idusuario=ponto.idusuario,
-            idtponto='P',
-            codicone=ponto.codicone)
-        if ponto.fotoponto is not None:
-            novPonto.fotoponto=ponto.fotoponto
-        print(novPonto.fotoponto)
-        novPonto.save()
+        if ponto.idtponto=='P':
+            novPonto = Ponto.objects.create(coordx = ponto.coordx,
+                coordy=ponto.coordy,
+                idmapa=mapaEditando,
+                nomponto=ponto.nomponto,
+                descponto=ponto.descponto,
+                idusuario=ponto.idusuario,
+                idtponto='P')
+            if ponto.fotoponto is not None:
+                novPonto.fotoponto=ponto.fotoponto
+            try:
+                if ponto.codicone:
+                    novPonto.codicone=ponto.codicone
+            except ObjectDoesNotExist:
+                #Continua o loop
+                pass  
+            novPonto.save()
 
     todasRotas = Rota.objects.filter(idmapa=mapaTarget)
     for rota in todasRotas:
