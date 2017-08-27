@@ -1,3 +1,7 @@
+function initMap(){
+	
+}
+
 //Form e Campo com a pesquisa do Usuário
 /*var form = document.getElementById('navBarSearchForm');
 var campo = document.getElementById('pesquisa');
@@ -55,3 +59,4 @@ form.addEventListener('submit', function(e) {
 	//Chama o carregamento dos Mapas com a pesquisa
 	pesquisa();
 });
+*/
