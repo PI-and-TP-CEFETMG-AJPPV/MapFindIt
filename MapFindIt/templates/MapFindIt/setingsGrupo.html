@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>MapFindIt</title>
+		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/CMVisib.css"%}" rel="stylesheet">
+	</head>
+	<body>
+    <div class="container">
+      <div class="row">
+        <div class="col-md-12">
+
+        </div>
+      </div>
+    </div>
+    <form id="formGrupo">
+         {% csrf_token %}
+    </form>
+    <script>
+      var imgUrl='{{baseUrl}}';
+      var idMapa='{{mapa.idmapa}}';
+      var idUsuarioLogado='{{usuario.idusuario}}';
+    </script>
+    <script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/menu.js" %}"></script>
+    <script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+    <script src="{% static "MapFindIt/js/setingGrupo.js"%}"></script>
+  </body>
+</html>
