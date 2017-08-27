@@ -13,6 +13,7 @@ urlpatterns = [
     url(r'^ajax/carregarMapasGrupo/(?P<idgrupo>[0-9]+)/$', views.mapasGrupo),
     url(r'^ajax/carregarMapasHome/$', views.mapasHome),
     url(r'^ajax/carregarMapasPesquisa/$', views.mapasPesquisa),
+    url(r'^ajax/carregarGruposPesquisa/$', views.gruposPesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
     url(r'^ajax/adicionarView/$', views.adicionarView),
     url(r'^ajax/adicionarAvaliacao/$', views.adicionarAvaliacao),
