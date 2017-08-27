@@ -398,9 +398,7 @@ function selectIcone(id){
     });
 }
 
-function editarIcone(id){
 
-}
 function modalIcone(){
 	$('#modalDinamico').empty();
 	let conteudo=`<div class="modal fade" id="modal-criar-icone" aria-hidden="true">
@@ -474,7 +472,7 @@ function selIcone(id){
                      </div>
                    </div>
                    <div class="modal-footer">
-                     <button type="button" id='btnEditar' class="btn btn-success"> Escolher Icone </button>
+                     <button type="button" id="btnDeletar" class="btn btn-success"> Escolher Icone </button>
                      <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
                    </div>
                  </div>
@@ -498,7 +496,7 @@ function selIcone(id){
                  $(this).addClass('iconeEscolhido');
                  //Salva o id do icone (id do elemento retirando-se a palavra icone)
                  iconeEscolhido=$(this).attr('id').substring(5);
-								 $('#btnEditar').on('click', function(){
+								 $('#btnDeletar').on('click', function(){
 									 editarIcone(iconeEscolhido);
 								 });
              });
@@ -520,9 +518,59 @@ function selIcone(id){
                  });
              });
              $('#modal-icone').modal('show');
-
           }
       }
+    });
+}
+function editarIcone(id){
+$.ajax({
+		url: '/ajax/getIcone/',
+		data: {
+			'id': idIcone
+		},dataType: 'json',
+		success: function (data) {
+			 if(data.icones){
+                $('#modal-icone').modal('hide');
+                $('#modalDinamico').empty();
+								item=icones[i].fields;
+                let conteudo=`<div class="modal fade" id="modal-criar-icone" aria-hidden="true">
+	                <div class="modal-dialog">
+		                <div class="modal-content">
+			                <div class="modal-header">
+				                <button type="button" class="close" onclick='$("#modal-criar-icone").modal("hide");' aria-hidden="true">
+					                ×
+				                </button>
+				                <h4 class="modal-title">
+					                Editar
+				                </h4>
+			                </div>
+			            <div class="modal-body">
+				            <form action="javascript:salvarEdicao()" id="criarIconeForm" name="criarIconeForm">
+					            <div class="form-group">
+						            <input required type="text" id="legendaIcone" class="form-control" placeholder="item.nomeicone" value="item.nomeicone">
+					            </div>
+					            <div class="input-group">
+							        <span class="input-group-btn center">
+									    <span class="btn btn-default btn-file">
+										    	Escolher Icone... <input accept="image/*" type="file" id="imgInpIcone" value="${imgUrl}MapFindIt/ImagemIcones/${icones.pk}.png">
+									    </span>
+							        </span>
+					            </div>
+					            <br>
+					            <img id='novaImgIcone'/>
+				            </form>
+			                <div class="modal-footer">
+				                <button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Icone </button>
+				                <button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+			                </div>
+		                </div>
+	                </div>
+                </div>
+            </div>`
+	        $('#modalDinamico').html(conteudo);
+	        $('#modal-criar-icone').modal('show');
+	        };
+        }
     });
 }
 
@@ -1259,7 +1307,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		//Para cada rota
 		rotas.forEach(function(item, index){
 			//Pontos que compõe essa rota
-			let pontosRota=pontoRotas[index];
+      let pontosRota=pontoRotas[index];
+      console.log(pontosRota);
 			//Serviço de direções do google
 			let directionsService = new google.maps.DirectionsService();
 			//Serviço de exibição das rotas
