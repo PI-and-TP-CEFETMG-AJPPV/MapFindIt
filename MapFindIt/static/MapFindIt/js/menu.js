@@ -55,7 +55,21 @@ function modalGrupos(){
 				<div class="modal-body">
 					<form action="javascript:criarGrupo()" id="criarIconeForm" name="criarIconeForm">
 						<div class="form-group">
-							<input required type="text" id="nomeGrupo" class="form-control" placeholder="Nome para o Grupo">
+              <label for="comment">Nome do grupo:</label>
+              <input required type="text" id="nomeGrupo" class="form-control" placeholder="Nome para o Grupo">
+              <label for="comment">Descrição do grupo:</label>
+              <textarea class="form-control" rows="5" id="comment" required></textarea>
+              <label for="comment">Cor do grupo:</label>
+              <div class="row">
+                <div class="col-md-4">
+                  <input required type="color" id="corGrupo" class="form-control">
+                </div>
+                <div class="col-md-8">
+                  <label class="radio-inline"><input type="radio" name="Privacidade" value="1">Privado</label>
+                  <label class="radio-inline"><input type="radio" name="Privacidade" value="2">Púlico</label>
+                  <label class="radio-inline"><input type="radio" name="Privacidade" value="3">Apenas Amigos</label>
+                </div>
+              </div>
 						</div>
 					</form>
 				<div class="modal-footer">
@@ -68,4 +82,7 @@ function modalGrupos(){
 </div>`;
 $('#modalDinamico').html(conteudo);
 $('#modalGrupos').modal('show');
+}
+function criarGrupo(){
+
 }
