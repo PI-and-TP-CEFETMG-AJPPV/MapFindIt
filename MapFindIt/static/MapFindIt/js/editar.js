@@ -434,7 +434,7 @@ function modalIcone(){
 			</div>
 		</div>
 	</div>
-</div>`
+</div>`;
 		$('#modalDinamico').html(conteudo);
 		$('#modal-criar-icone').modal('show');
 }

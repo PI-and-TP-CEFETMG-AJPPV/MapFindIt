@@ -38,3 +38,34 @@ $('#filtrarAmigos').keyup(function(event) {
       }
     });
 });
+function modalGrupos(){
+  $('#modalDinamico').empty();
+  let conteudo =`
+  <div class="modal fade" id="modalGrupos" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" onclick='$("#modalGrupos").modal("hide");' aria-hidden="true">
+						×
+					</button>
+					<h2 class="modal-title">
+						Criar um novo Grupo
+					</h2>
+				</div>
+				<div class="modal-body">
+					<form action="javascript:criarGrupo()" id="criarIconeForm" name="criarIconeForm">
+						<div class="form-group">
+							<input required type="text" id="nomeGrupo" class="form-control" placeholder="Nome para o Grupo">
+						</div>
+					</form>
+				<div class="modal-footer">
+					<button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Grupo </button>
+					<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>`;
+$('#modalDinamico').html(conteudo);
+$('#modalGrupos').modal('show');
+}

@@ -9,8 +9,7 @@
 	<meta http-equiv="Expires" content="0" />
 	<title>MapFindIt</title>
 	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
-	<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
-	<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet" >
 	<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
@@ -18,6 +17,7 @@
 	<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
 </head>
 
 <body>
@@ -36,7 +36,7 @@
 						<p></p>&nbsp&nbsp+&nbsp&nbsp<p></p>
 					</a></div>-->
 					<div class="menu pmd-floating-action"  role="navigation">
-						<a href="" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+						<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
 							<span class="pmd-floating-hidden">Primary</span>
 							<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
 						</a>
