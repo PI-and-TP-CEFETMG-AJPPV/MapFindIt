@@ -133,7 +133,19 @@ def getDadosMenu(request):
     for grupo in grupoUsuario:
         todosGrupos.append(grupo)
     return [usuarioFull, todosAmigos, todosGrupos, countPendentes]
-
+def criarGrupo(request):
+    nomeGrupo=request.GET.get('nomeGrupo')
+    descGrupo=request.GET.get('desc')
+    corGrupo=request.GET.get('corGrupo')
+    privacidade=request.GET.get('privacidade')
+    idUsuario= int(request.GET.get('usuario'))
+    usuarioFull=Usuario.objects.get(pk=idUsuario)
+    if privacidade == 1:
+        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=True, idusuario=usuarioFull)
+    else:
+        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=False, idusuario=usuarioFull)
+    url='MapFindIt/grupo/'+str(novoGrupo.idgrupo.idgrupo)
+    return redirect(url)
 #função para renderizar o template da pagina de grupo
 def grupo(request, idgrupo):
         member = False
@@ -947,7 +959,7 @@ def fazerMescla(request):
                     novPonto.codicone=ponto.codicone
             except ObjectDoesNotExist:
                 #Continua o loop
-                pass  
+                pass
             novPonto.save()
 
     todasRotas = Rota.objects.filter(idmapa=mapaTarget)
@@ -960,7 +972,7 @@ def fazerMescla(request):
             novPonto.save()
             pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
             pontorota.save()
-    
+
     todasAreas = Area.objects.filter(idmapa=mapaTarget)
     for area in todasAreas:
         novArea = Area.objects.create(idmapa = mapaEditando, nomarea=area.nomarea, descarea=area.descarea, codcor=area.codcor, idusuario=area.idusuario)
@@ -971,5 +983,5 @@ def fazerMescla(request):
             novPonto.save()
             pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
             pontoarea.save()
-    
+
     return redirect('/editarMapa/'+str(idEditando))

@@ -58,7 +58,7 @@ function modalGrupos(){
               <label for="comment">Nome do grupo:</label>
               <input required type="text" id="nomeGrupo" class="form-control" placeholder="Nome para o Grupo">
               <label for="comment">Descrição do grupo:</label>
-              <textarea class="form-control" rows="5" id="comment" required></textarea>
+              <textarea class="form-control" rows="5" id="desc" required placeholder="descrição do grupo"></textarea>
               <label for="comment">Cor do grupo:</label>
               <div class="row">
                 <div class="col-md-4">
@@ -66,8 +66,7 @@ function modalGrupos(){
                 </div>
                 <div class="col-md-8">
                   <label class="radio-inline"><input type="radio" name="Privacidade" value="1">Privado</label>
-                  <label class="radio-inline"><input type="radio" name="Privacidade" value="2">Púlico</label>
-                  <label class="radio-inline"><input type="radio" name="Privacidade" value="3">Apenas Amigos</label>
+                  <label class="radio-inline"><input type="radio" name="Privacidade" value="0">Púlico</label>
                 </div>
               </div>
 						</div>
@@ -84,5 +83,20 @@ $('#modalDinamico').html(conteudo);
 $('#modalGrupos').modal('show');
 }
 function criarGrupo(){
-
+  $.ajax({
+      url: '/ajax/criarGrupo/',
+      type: 'GET',
+      data: {
+        'nome': $('#nomeGrupo').val(),
+        'desc': $('#desc').val(),
+        'cor': $('#corGrupo').val(),
+        'usuario': idUsuarioLogado,
+        'Privacidade': $('#Privacidade').val()==1 ? "1":"0",
+        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+      },
+      dataType: 'json',
+      success: function (data) {
+        $('#modalGrupos').modal('hide');
+      }
+  });
 }
