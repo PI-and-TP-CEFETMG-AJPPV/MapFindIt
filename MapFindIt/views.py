@@ -16,6 +16,7 @@ import hashlib
 import io, os
 import base64
 import json
+import shutil
 
 
 def home(request):
@@ -975,25 +976,25 @@ def fazerMescla(request):
     mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
     mapaTarget = get_object_or_404(Mapa, idmapa=id)
     #Obtem os pontos do mapa
-    pontos=Ponto.objects.filter(idmapa=mapaTarget)
+    pontos=Ponto.objects.filter(idmapa=mapaTarget, idtponto='P')
     for ponto in pontos:
-        if ponto.idtponto=='P':
-            novPonto = Ponto.objects.create(coordx = ponto.coordx,
+        novPonto = Ponto.objects.create(coordx = ponto.coordx,
                 coordy=ponto.coordy,
                 idmapa=mapaEditando,
                 nomponto=ponto.nomponto,
                 descponto=ponto.descponto,
                 idusuario=ponto.idusuario,
-                idtponto='P')
-            if ponto.fotoponto is not None:
-                novPonto.fotoponto=ponto.fotoponto
-            try:
-                if ponto.codicone:
-                    novPonto.codicone=ponto.codicone
-            except ObjectDoesNotExist:
-                #Continua o loop
-                pass
-            novPonto.save()
+                idtponto='P',
+                fotoponto=ponto.fotoponto)
+        try:
+            if ponto.codicone:
+                novPonto.codicone=ponto.codicone
+        except ObjectDoesNotExist:
+            #Continua o loop
+            pass  
+        if ponto.fotoponto is not None:
+            shutil.copy2("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png", "MapFindIt/static/MapFindIt/imagemPonto/"+str(novPonto.idponto)+".png")
+        novPonto.save()
 
     todasRotas = Rota.objects.filter(idmapa=mapaTarget)
     for rota in todasRotas:
