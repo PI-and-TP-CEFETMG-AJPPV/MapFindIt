@@ -13,11 +13,12 @@
 		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
 		<link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/propeller.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt\css\grupo.css"%}" rel="stylesheet">
+
 
 	</head>
-	<body style="background:#4388CC;">
+	<body >
     {% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
         <div class="row">
           <div class="col-md-8 col-md-offset-2 white" >
@@ -38,51 +39,42 @@
 				</div>
         <br>
           <div class="col-md-8 col-md-offset-2" >
-            <div class="col-md-2">
-              <div class="input-group-btn" align='left'>
-                <button type="button" class="btn btn-default" >Pesquisar</button>
-              </div>
-            </div>
-            <div class="col-md-2">
-              <div class="input-group-btn" align = "left">
-                <button type="button" class="btn btn-default" href="#modal-container-membros" data-toggle="modal">Membros</button>
-              </div>
-            </div>
-            {% if member %}
-              <div class="col-md-2" align = "center" >
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" href="#modal-container-postar" data-toggle="modal">postar</button>
-                </div>
-              </div>
-              {% if admim %}
-                {% if grupo.privado %}
-                  <div class="col-md-2" align ="right">
-                    <div class="input-group-btn">
-                      <button type="button" class="btn btn-default" >convidar</button>
-                    </div>
-                  </div>
-                  {% endif %}
-									<div class="col-md-2" align="right">
-                    <div class="input-group-btn">
-                  		<button type="submit" class="btn btn-primary" value="config" href="#modal-container-admim" data-toggle="modal" sytle="background:skyblue">
-                    		<span class="glyphicon glyphicon-cog"></span>
-                  		</button><div class="col-md-2">
-										</div>
-	                 </div>
-								 </div>
-              {% endif %}
-              {% else %}
-              <div class="col-md-2">
-                <div class="input-group-btn">
-                  <button type="button" class="btn btn-default" >entrar</button>
-                </div>
-              </div>
-            {% endif %}
-          </div>
+						<div class="btn-group btn-group-justified">
+							<a role="button" class="btn pmd-ripple-effect btn-primary">Pesquisar</a>
+              <a role="button" class="btn pmd-ripple-effect btn-primary">Membros</a>
+            	{% if member %}
+              	<a role="button" class="btn pmd-ripple-effect btn-primary">postar</a>
+              	{% if admim %}
+                	{% if grupo.privado %}
+                  	<a role="button" class="btn pmd-ripple-effect btn-primary">convidar</a>
+                  	{% endif %}
+										<a role="button" class="btn pmd-ripple-effect btn-primary"><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
+              	{% endif %}
+              	{% else %}
+              	<a role="button" class="btn pmd-ripple-effect btn-primary">Entar</a>
+            	{% endif %}
+          	</div>
+					</div>
+						<div class="modalDinamico">
 
-        <div id="divMapas">
+						</div>
+        	<div id="divMapas">
 
-				</div>
+					</div>
+					<div class="menu pmd-floating-action"  role="navigation">
+						<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+							<span class="pmd-floating-hidden">Primary</span>
+							<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+						</a>
+						<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa">
+							<span class="pmd-floating-hidden">Primary</span>
+							<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+						</a>
+						<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#">
+							<span class="pmd-floating-hidden">Primary</span>
+							<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
+						</a>
+					</div>
 				<!--Modal para postagem -->
 				<div class="modal fade" id="modal-container-postar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					<div class="modal-dialog">
@@ -224,6 +216,7 @@
 		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
 		<script src="{% static "MapFindIt/js/grupo.js"%}"></script>
+		<script src="{% static "MapFindIt/js/propeller.js"%}"></script>
 		<script async defer
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
 		</script>
