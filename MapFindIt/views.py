@@ -139,12 +139,11 @@ def criarGrupo(request):
     corGrupo=request.GET.get('corGrupo')
     privacidade=request.GET.get('privacidade')
     idUsuario= int(request.GET.get('usuario'))
-    usuarioFull=Usuario.objects.get(pk=idUsuario)
     if privacidade == 1:
-        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=True, idusuario=usuarioFull)
+        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=True, idusuario=request.session.get('usuario'))
     else:
-        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=False, idusuario=usuarioFull)
-    url='MapFindIt/grupo/'+str(novoGrupo.idgrupo.idgrupo)
+        novoGrupo=Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=descGrupo, privado=False, idusuario=request.session.get('usuario'))
+    url='/grupo/'+str(novoGrupo.idgrupo)
     return redirect(url)
 #função para renderizar o template da pagina de grupo
 def grupo(request, idgrupo):

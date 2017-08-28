@@ -91,7 +91,7 @@ function criarGrupo(){
         'desc': $('#desc').val(),
         'cor': $('#corGrupo').val(),
         'usuario': idUsuarioLogado,
-        'Privacidade': $('#Privacidade').val()==1 ? "1":"0",
+        'Privacidade': $('#Privacidade').val()==1 ? 1:0,
         'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
       },
       dataType: 'json',
