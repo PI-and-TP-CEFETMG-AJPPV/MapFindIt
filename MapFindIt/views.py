@@ -995,30 +995,27 @@ def fazerMescla(request):
                 nomponto=ponto.nomponto,
                 descponto=ponto.descponto,
                 idusuario=ponto.idusuario,
-<<<<<<< HEAD
                 idtponto='P')
-            if ponto.fotoponto is not None:
-                novPonto.fotoponto=ponto.fotoponto
-            try:
-                if ponto.codicone:
-                    novPonto.codicone=ponto.codicone
-            except ObjectDoesNotExist:
-                #Continua o loop
-                pass
-            novPonto.save()
-=======
-                idtponto='P',
-                fotoponto=ponto.fotoponto)
+        if ponto.fotoponto is not None:
+            novPonto.fotoponto=ponto.fotoponto
         try:
             if ponto.codicone:
                 novPonto.codicone=ponto.codicone
         except ObjectDoesNotExist:
             #Continua o loop
-            pass  
+            pass
+        novPonto.save()
+        idtponto='P',
+        fotoponto=ponto.fotoponto
+        try:
+            if ponto.codicone:
+                novPonto.codicone=ponto.codicone
+        except ObjectDoesNotExist:
+            #Continua o loop
+            pass
         if ponto.fotoponto is not None:
             shutil.copy2("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png", "MapFindIt/static/MapFindIt/imagemPonto/"+str(novPonto.idponto)+".png")
         novPonto.save()
->>>>>>> master
 
     todasRotas = Rota.objects.filter(idmapa=mapaTarget)
     for rota in todasRotas:
