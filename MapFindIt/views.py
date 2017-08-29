@@ -309,7 +309,20 @@ def salvarComentario(request):
     #Obtem o autor do comentario
     autor = Usuario.objects.filter(idusuario=iduser)
     jsonAutor = serializers.serialize('json', autor);
-    return JsonResponse({'sucesso': True, 'autor': jsonAutor})
+    return JsonResponse({'sucesso': True, 'autor': jsonAutor, 'idComentario': comentario.pk})
+
+def deletarComentario(request):
+    #Obtem os dados
+    usuarioLogado = int(request.GET.get('usuario'))
+    idComentario = int(request.GET.get('idComentario'))
+    comentario = Comentario.objects.get(pk=idComentario)
+    #Se o usuario for o autor
+    if usuarioLogado == comentario.idusuario.idusuario:
+        #Deleta o comentario
+        comentario.delete()
+        return JsonResponse({'sucesso': True})
+    else:
+        return JsonResponse({'sucesso': False})
 
 def adicionarView(request):
     #Pega o id do mapa
