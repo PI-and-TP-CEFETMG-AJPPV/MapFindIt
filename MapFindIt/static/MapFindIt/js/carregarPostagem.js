@@ -75,7 +75,6 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		rotas.forEach(function(item, index){
 			//Pontos que compõe essa rota
 			let pontosRota=pontoRotas[index];
-			console.log(pontosRota)
 			//Serviço de direções do google
 			let directionsService = new google.maps.DirectionsService();
 			//Serviço de exibição das rotas
@@ -309,35 +308,40 @@ function comentar(id, idPost, idUser){
       },
       dataType: 'json',
       success: function (data) {
+        //Pega a id do comentario
+        idc=JSON.parse(data.idComentario);
 				//Pega o autor do comentario
 				autor=JSON.parse(data.autor)[0];
 				//Caso tenha suceso
 				if(JSON.parse(data.sucesso)){
 					//Adiciona o comentario
 					$('#comentarios'+id).append(`
-							<div class="row" style="order: ${$('#comentarios'+id).children().length}">
+							<div id="comentario${idc}" class="row" style="order: ${$('#comentarios'+id).children().length}">
 								<div class="col-md-12">
 									<div class="card-container">
 										<div class="card">
 											<div class="content">
-													<div class="main">
-															<h4>${titulo.val()}</h4>
-															<p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(dataStr)} às ${hora}</small></small></p>
-															<p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autor.pk}">${autor.fields.primnomeusuario} ${autor.fields.ultnomeusuario}</a></small></p>
-															<p style="text-align: left">${texto.val()}</p>
+                          <div class="main">
+                            <button id="btnDelComentario${idc}" class="btn btn-danger" style="float: right; padding: 0 0.3em 0 0.3em; border: 0">×</button>
+													  <h4>${titulo.val()}</h4>
+														<p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(dataStr)} às ${hora}</small></small></p>
+														<p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autor.pk}">${autor.fields.primnomeusuario} ${autor.fields.ultnomeusuario}</a></small></p>
+														<p style="text-align: left">${texto.val()}</p>
 													</div>
 												</div>
 											</div>
 										</div>
 									</div>
 								</div>
-						`);
-						//Coloca a order do botão correta, para que ele fique no topo
-						$('#botao'+id).css('order', $('#comentarios'+id).children().length);
-						//Esconde o modal de comentar e esvazia os campos
-						$(`#modal_comentar${id}`).modal("hide");
-						titulo.val('');
-						texto.val("Comentario...");
+            `);
+          //Adiciona comportamento ao botao deletar comentario
+          $("#btnDelComentario"+idc).click(function(){deletarComentario(idc)});
+					//Coloca a order do botão correta, para que ele fique no topo
+					$('#botao'+id).css('order', $('#comentarios'+id).children().length);
+					//Esconde o modal de comentar e esvazia os campos
+					$(`#modal_comentar${id}`).modal("hide");
+					titulo.val('');
+					texto.val("Comentario...");
 				}
 
       }
@@ -443,27 +447,35 @@ function prepararPostagem(div, data, i){
             </div>
         `);
      }
-		 //Adiciona os comentários ao div do mapa expandido
-    comentarios.forEach(function(comentario, index){
-      $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
-          <div class="row" style="order:${index}">
-            <div class="col-md-12">
-              <div class="card-container">
-                <div class="card">
-                  <div class="content">
-                      <div class="main">
-                          <h4>${comentario.fields.titulocomentario}</h4>
-                          <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
-                          <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
-                          <p style="text-align: left">${comentario.fields.txtcomentario}</p>
-                      </div>
-                    </div>
-                  </div>
+	  //Adiciona os comentários ao div do mapa expandido
+  comentarios.forEach(function (comentario, index) {
+    //Se o usuario logado for o autor do comentário o botão de excluir é adicionado
+    let delcoment;
+    if (idUsuarioLogado == comentario.fields.idusuario) {
+      delcoment = '<button id="btnDelComentario'+comentario.pk+'" class="btn btn-danger" style="float: right; padding: 0 0.3em 0 0.3em; border: 0">×</button>';
+    }
+    $('#comentarios' + (10 * (gruposCarregados - 1) + i)).append(`
+      <div id="comentario${comentario.pk}" class="row" style="order:${index}">
+        <div class="col-md-12">
+          <div class="card-container">
+            <div class="card">
+              <div class="content">
+			  				<div class="main">
+                  ${delcoment}
+                  <h4>${comentario.fields.titulocomentario}</h4>
+                  <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
+                  <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
+                  <p style="text-align: left">${comentario.fields.txtcomentario}</p>
                 </div>
               </div>
             </div>
-        `);
-    });
+          </div>
+        </div>
+      </div>
+    `);
+    //Adiciona comportamento ao botao deletar comentario
+    $("#btnDelComentario"+comentario.pk).click(function(){deletarComentario(comentario.pk)});
+  });
 		//Botao para comentar e modal de comentario
     $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
 			  <div id="botao${10*(gruposCarregados-1)+i}" style="order: ${$('#comentarios'+(10*(gruposCarregados-1)+i)).children().length}">
@@ -501,7 +513,7 @@ function prepararPostagem(div, data, i){
 				 </div>
 			 </div>
     `);
-		//Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
+    //Ao se abrir o mapa expandido seta o mapa e adiciona visualizacao
     $("#titulo_mapa"+(10*(gruposCarregados-1)+i)).on("click", function(){
 			$.ajax({
 					url: '/ajax/adicionarView/',
@@ -518,11 +530,11 @@ function prepararPostagem(div, data, i){
        }, 1000);
     });
                     //Botao de aprovacao chama avaliar com +1
-    $("#btnaprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+    $("#btnaprov"+(10*(gruposCarregados-1)+i)).click(function(){
 	avaliar(m.pk, 1, (10*(gruposCarregados-1)+i));
     });
                 //Botao de aprovacao chama avaliar com -1
-    $("#btnreprov"+(10*(gruposCarregados-1)+i)).on("click", function(){
+    $("#btnreprov"+(10*(gruposCarregados-1)+i)).click(function(){
 	avaliar(m.pk, -1, (10*(gruposCarregados-1)+i));
 		});
 
@@ -620,7 +632,6 @@ function prepararPostagemVis(div, data, i){
                 <div class="card">
                   <div class="content">
 											<div class="main">
-												<button class="btn btn-danger" style="float: right; padding: 0px 0.4em 0px 0.4em; margin:0px;">×</button>
                         <h4>${comentario.fields.titulocomentario}</h4>
                         <p style="text-align: left; padding: 0px; margin:0px;"><small><small>${formatarData(comentario.fields.datacomentario)} às ${comentario.fields.horacomentario}</small></small></p>
                         <p style="text-align: left; padding: 0px; margin:0px;"><small><a href="/perfil/${autores[index].pk}">${autores[index].fields.primnomeusuario} ${autores[index].fields.ultnomeusuario}</a></small></p>
@@ -699,4 +710,20 @@ function compartilhar(id){
 					}
         }
     });
+}
+
+function deletarComentario(idComentario) {
+  $.ajax({
+    url: '/ajax/deletarComentario/',
+    data: {
+      'idComentario': idComentario,
+      'usuario': idUsuarioLogado
+    },
+    dataType: 'json',
+    success: function (data) {
+      if (JSON.parse(data.sucesso)) {
+        $('#comentario'+idComentario).remove();
+      }
+    }
+  });
 }
