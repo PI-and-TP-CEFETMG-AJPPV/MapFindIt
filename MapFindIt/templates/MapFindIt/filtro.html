@@ -13,12 +13,18 @@
 	<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
+<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
+<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
+<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
+<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/filtro.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 </head>
 
 <body>
 	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
-	<div class="container-fluid">	
+	<div class="container-fluid">
 		<div class="row">
 			<div class="col-md-12">
 				<!--Filtro-->
@@ -27,26 +33,44 @@
 						<div id="filtro">
 							<div class="row" style="text-align:center;">
 								<div class="col-md-4" >
-									<div class="radio"><h4><label><input type="radio" name="escolha" value="mapas" checked>Mapas</label></h4></div>	
+									<div class="radio"><h4><label><input type="radio" name="escolha" value="mapas" checked>Mapas</label></h4></div>
 								</div>
 								<div class="col-md-4">
-									<div class="radio"><h4><label><input type="radio" name="escolha" value="pessoas">Pessoas</label></h4></div>	
+									<div class="radio"><h4><label><input type="radio" name="escolha" value="pessoas">Pessoas</label></h4></div>
 								</div>
 								<div class="col-md-4">
-									<div class="radio"><h4><label><input type="radio" name="escolha" value="grupos">Grupos</label></h4></div>	
+									<div class="radio"><h4><label><input type="radio" name="escolha" value="grupos">Grupos</label></h4></div>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
 				<br>
-				<!--Mapas-->
-				<div id="divMapas"></div>
+				<!--Conteúdo-->
+				<div id="divFiltro"></div>
 				<!--Box-->
 				<div class="col-md-offset-10 col-md-2">
 					<div class="box"><a href="/novoMapa/">
 						<p></p>+<p></p>
-					</a></div>				
+					</a></div>
+				</div>-->
+				<div class="menu pmd-floating-action"  role="navigation">
+					<a href="" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+					</a>
+					<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+					</a>
+					<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
+					</a>
+				</div>
+				<!--Div para modais adicionados pelo js !-->
+				<div id="modalDinamico">
+
 				</div>
 			</div>
 		</div>
@@ -64,6 +88,7 @@
 	<script src="{% static "MapFindIt/js/menu.js" %}"></script>
 	<script src="{% static "MapFindIt/js/filtro.js" %}"></script>
 	<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+	<script src="{% static "MapFindIt/js/jquery-ui.min.js"%}"></script>
 	<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
 	<script async defer
 	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">

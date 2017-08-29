@@ -16,6 +16,7 @@ import hashlib
 import io, os
 import base64
 import json
+import shutil
 
 
 def home(request):
@@ -50,36 +51,6 @@ def home(request):
 def feed(request):
     resultado=getDadosMenu(request)
     return render(request, 'MapFindIt/feed.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
-
-#Pesquisa mapas pela String passada
-def pesquisar(pesquisa):
-    #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
-    #Contabiliza a quantidade de mapas encontrados pelo titulo
-    controle = 0
-    for n in result:
-        controle += 1
-    #Se for menor do que 10
-    if controle < 10:
-        tema = Tema.objects.filter(nomtema__icontains=pesquisa)
-        for n in tema:
-            result = result | Mapa.objects.filter(codtema=n.id)
-        result = result.order_by('valaprovados', 'valvisualizacoes')
-        #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
-        controle = 0
-        for n in result:
-            controle += 1
-        #Se for menor do que 10 busca mapas pela descrição
-        if controle < 10:
-            result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
-            result = result.order_by('valaprovados', 'valvisualizacoes')
-    #Retorna os mapas encontrados segundo os parâmetros da pesquisa
-    return result
-
-#Pesquisa com Filtro
-def filtro(request):
-    resultado=getDadosMenu(request)
-    return render(request, 'MapFindIt/filtro.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
 def checkarEmail(request):
     #Retorna um JSON dizendo se o email escolhido existe
@@ -287,7 +258,7 @@ def getDadosMapa(mapa):
     pontosRotasArr=[]
     for rota in todasRotas:
         #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
-        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota.idrota).order_by("seqponto"), use_natural_foreign_keys=True))
+        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota).order_by("seqponto"), use_natural_foreign_keys=True))
     #Serializa o array em JSON
     pontoRotas=json.dumps(pontosRotasArr)
     #Obtem todas as areas do mapa
@@ -492,6 +463,13 @@ def mapasPerfil(request):
         }
         return JsonResponse(data)
 
+#Redireciona para a página HTML de filtro, passando o request
+def filtro(request):
+    #Dados necessários para o Menu
+    resultado=getDadosMenu(request)
+    #Redireciona passando os dados
+    return render(request, 'MapFindIt/filtro.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
+
 #Carrega os mapas da Home
 def mapasHome(request):
     #Número do mapa e da div no qual será carregado
@@ -513,7 +491,7 @@ def mapasHome(request):
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
-        postagem = serializers.serialize('json', postagem);
+        postagem = serializers.serialize('json', postagem)
         #Retorna ao AJAX todos os dados
         data = {
             'postagem': postagem,
@@ -536,6 +514,31 @@ def mapasHome(request):
         }
         return JsonResponse(data)
 
+#Pesquisa mapas pela String passada
+def pesquisarMapas(pesquisa):
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    #Contabiliza a quantidade de mapas encontrados pelo titulo
+    controle = 0
+    for n in result:
+        controle += 1
+    #Se for menor do que 10
+    if controle < 10:
+        tema = Tema.objects.filter(nomtema__icontains=pesquisa)
+        for n in tema:
+            result = result | Mapa.objects.filter(codtema=n.id)
+        result = result.order_by('valaprovados', 'valvisualizacoes')
+        #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
+        controle = 0
+        for n in result:
+            controle += 1
+        #Se for menor do que 10 busca mapas pela descrição
+        if controle < 10:
+            result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+            result = result.order_by('valaprovados', 'valvisualizacoes')
+    #Retorna os mapas encontrados segundo os parâmetros da pesquisa
+    return result
+
 #Responde ao Ajax de pesquisa de mapas
 def mapasPesquisa(request):
     #Número do mapa e da div no qual será carregado
@@ -544,7 +547,7 @@ def mapasPesquisa(request):
     #Texto utilizado para encontrar mapas
     pesquisa = request.GET.get('pesquisa', None)
     #Retorna todos os mapas encontrados para o texto pesquisado
-    mapas = pesquisar(pesquisa)
+    mapas = pesquisarMapas(pesquisa)
     #Pega o mapa correspondente ao número da requisição Ajax
     mapa = mapas[num]
     #Inicializa postagem
@@ -559,7 +562,7 @@ def mapasPesquisa(request):
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
-        postagem = serializers.serialize('json', postagem);
+        postagem = serializers.serialize('json', postagem)
         #Retorna ao AJAX todos os dados
         data = {
             'postagem': postagem,
@@ -575,6 +578,49 @@ def mapasPesquisa(request):
         }
         return JsonResponse(data)
     #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
+    else:
+        #Finaliza a requisição Ajax no lado do cliente
+        data = {
+            'erro': 1,
+        }
+        return JsonResponse(data)
+
+#Pesquisa grupos pela String passada
+def pesquisarGrupos(pesquisa):
+    #Busca grupos pelo nome
+    result1 = Grupo.objects.filter(nomegrupo__icontains=pesquisa).order_by('nomegrupo', 'idgrupo')
+    #Busca grupos pela descrição
+    result2 = Grupo.objects.filter(descgrupo__icontains=pesquisa).order_by('nomegrupo', 'idgrupo')
+    #Junta os resultados em apenas um
+    result = result1 | result2
+    #Retorna os resultados encontrados
+    return result
+
+#Responde ao Ajax de pesquisa de grupos
+def gruposPesquisa(request):
+    #Número do grupo e da div no qual será carregado
+    num = request.GET.get('num', None)
+    num = int(num)
+    #Texto utilizado para encontrar grupos
+    pesquisa = request.GET.get('pesquisa', None)
+    #Retorna todos os grupos encontrados para o texto pesquisado
+    grupos = pesquisarGrupos(pesquisa)
+    #Pega o grupo correspondente ao número da requisição Ajax
+    grupo = grupos[num]
+    #Se houver grupos
+    if grupo is not None:
+        #Retorna ao AJAX todos os dados
+        data = {
+            'idgrupo': grupo.idgrupo,
+            'nomegrupo': grupo.nomegrupo,
+            'descgrupo': grupo.descgrupo,
+            'r': grupo.codcor.r,
+            'g': grupo.codcor.g,
+            'b': grupo.codcor.b,
+            'privado': grupo.privado,
+        }
+        return JsonResponse(data)
+    #Caso já se tenha carregado todas os grupos ou não há correspondentes à pesquisa
     else:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
@@ -765,7 +811,15 @@ def salvarIcone(request):
     ponto.codicone=icone
     ponto.save()
     return JsonResponse({'sucesso': 1})
-
+def getIcone(request):
+    idIcone=int(request.GET.get('id', None))
+    icone=get_object_or_404(Iconespontos, pk=idIcone)
+    queryset=Iconespontos.objects.get(pk=icone)
+    return JsonResponse({'icones': serializers.serialize("json", queryset)})
+def editarIcone(request):
+    criarIcone(request)
+    deletarIcone(request)
+    return JsonResponse({'sucesso': 1})
 def criarIcone(request):
     idUsuario=int(request.POST.get('usuario', None))
     nome=request.POST.get('nome', None)
@@ -901,3 +955,67 @@ def redefinirSenha(request):
     else:
         cod = request.GET.get('cod')
         return render(request, 'MapFindIt/redefinirSenha.html', {'cod':cod})
+
+def mapasMesclar(request):
+    #Obtem texto de pesquisa
+    pesquisa = request.GET.get('pesquisa')
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
+        mapas[index][0]=mapa.idmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
+    return JsonResponse({'mapas': json.dumps(mapas)})
+
+def fazerMescla(request):
+    id = int(request.GET.get('id'))
+    idEditando = int(request.GET.get('idEditando'))
+    mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
+    mapaTarget = get_object_or_404(Mapa, idmapa=id)
+    #Obtem os pontos do mapa
+    pontos=Ponto.objects.filter(idmapa=mapaTarget, idtponto='P')
+    for ponto in pontos:
+        novPonto = Ponto.objects.create(coordx = ponto.coordx,
+                coordy=ponto.coordy,
+                idmapa=mapaEditando,
+                nomponto=ponto.nomponto,
+                descponto=ponto.descponto,
+                idusuario=ponto.idusuario,
+                idtponto='P',
+                fotoponto=ponto.fotoponto)
+        try:
+            if ponto.codicone:
+                novPonto.codicone=ponto.codicone
+        except ObjectDoesNotExist:
+            #Continua o loop
+            pass  
+        if ponto.fotoponto is not None:
+            shutil.copy2("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png", "MapFindIt/static/MapFindIt/imagemPonto/"+str(novPonto.idponto)+".png")
+        novPonto.save()
+
+    todasRotas = Rota.objects.filter(idmapa=mapaTarget)
+    for rota in todasRotas:
+        novRota = Rota.objects.create(idtevitar=rota.idtevitar, idmapa=mapaEditando, nomerota=rota.nomerota, descrota=rota.descrota, codcor=rota.codcor, idusuario=rota.idusuario)
+        novRota.save()
+        pontosRota = RotaPonto.objects.filter(idrota=rota).order_by("seqponto")
+        for ponto in pontosRota:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='R')
+            novPonto.save()
+            pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
+            pontorota.save()
+
+    todasAreas = Area.objects.filter(idmapa=mapaTarget)
+    for area in todasAreas:
+        novArea = Area.objects.create(idmapa = mapaEditando, nomarea=area.nomarea, descarea=area.descarea, codcor=area.codcor, idusuario=area.idusuario)
+        area.save()
+        pontosArea = Pontoarea.objects.filter(idarea=area)
+        for ponto in pontosArea:
+            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='A')
+            novPonto.save()
+            pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
+            pontoarea.save()
+
+    return redirect('/editarMapa/'+str(idEditando))

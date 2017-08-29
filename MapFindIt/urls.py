@@ -13,12 +13,14 @@ urlpatterns = [
     url(r'^ajax/carregarMapasGrupo/(?P<idgrupo>[0-9]+)/$', views.mapasGrupo),
     url(r'^ajax/carregarMapasHome/$', views.mapasHome),
     url(r'^ajax/carregarMapasPesquisa/$', views.mapasPesquisa),
+    url(r'^ajax/carregarGruposPesquisa/$', views.gruposPesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
     url(r'^ajax/adicionarView/$', views.adicionarView),
     url(r'^ajax/adicionarAvaliacao/$', views.adicionarAvaliacao),
     url(r'^ajax/criarAmizade/$', views.criarAmizade),
     url(r'^ajax/aceitarAmizade/$', views.aceitarAmizade),
     url(r'^ajax/recusarAmizade/$', views.recusarAmizade),
+    url(r'^ajax/getIcone/$', views.getIcone),
 	url(r'^novoMapa/$', views.novoMapa),
     url(r'^ajax/getTemas/$', views.getTemas),
     url(r'^ajax/deletarIcone/$', views.deletarIcone),
@@ -37,5 +39,7 @@ urlpatterns = [
     url(r'^ajax/compartilhar/$', views.compartilhar),
     url(r'^recuperarSenha/$', views.recuperarSenha),
     url(r'^redefinir/$', views.redefinirSenha, ),
-    url(r'^filtro/$', views.filtro)
+    url(r'^filtro/$', views.filtro),
+    url(r'^ajax/mapasMesclar/$', views.mapasMesclar),
+    url(r'^fazerMescla/$', views.fazerMescla),
 ]
