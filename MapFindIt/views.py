@@ -1019,3 +1019,11 @@ def fazerMescla(request):
             pontoarea.save()
 
     return redirect('/editarMapa/'+str(idEditando))
+
+def meusMapas(request):
+    resultado=getDadosMenu(request)
+    mapas = Mapa.objects.filter(idusuario=request.session['usuarioLogado'])
+    return render(request, 'MapFindIt/meusMapas.html', {'mapas': mapas, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
+
+def exibirMapa(request, idmapa):
+    return render(request, 'MapFindIt/exibirMapa.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
