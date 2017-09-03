@@ -1057,7 +1057,7 @@ function inserirArea(e){
 function carregarMapaInicial(){
   $('#divMapa').empty();
   $.ajax({
-      url: '/ajax/carregarMapaEditar/',
+      url: '/ajax/carregarMapa/',
       data: {
         'id': idMapa
       },
@@ -1095,7 +1095,7 @@ function carregarMapaInicial(){
 function carregarMapa(inicio){
   $('#divMapa').empty();
   $.ajax({
-      url: '/ajax/carregarMapaEditar/',
+      url: '/ajax/carregarMapa/',
       data: {
         'id': idMapa
       },
@@ -1131,7 +1131,7 @@ function carregarMapa(inicio){
 
 function atualizarMapa(inicio){
   $.ajax({
-      url: '/ajax/carregarMapaEditar/',
+      url: '/ajax/carregarMapa/',
       data: {
         'id': idMapa
       },

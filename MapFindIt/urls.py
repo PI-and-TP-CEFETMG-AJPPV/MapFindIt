@@ -27,7 +27,7 @@ urlpatterns = [
     url(r'^ajax/deletarIcone/$', views.deletarIcone),
     url(r'^ajax/adicionarTema/$', views.adicionarTema),
     url(r'^editarMapa/(?P<idmapa>[0-9]+)/$', views.editarMapa, name="editar"),
-    url(r'^ajax/carregarMapaEditar/$', views.carregarMapaEditar),
+    url(r'^ajax/carregarMapa/$', views.carregarMapa),
     url(r'^ajax/criarPonto/$', views.criarPonto),
     url(r'^ajax/criarImagemPonto/(?P<idPonto>[0-9]+)/$', views.criarImagemPonto),
     url(r'^ajax/getTodosIcones/$', views.getTodosIcones),
@@ -43,4 +43,6 @@ urlpatterns = [
     url(r'^filtro/$', views.filtro),
     url(r'^ajax/mapasMesclar/$', views.mapasMesclar),
     url(r'^fazerMescla/$', views.fazerMescla),
+    url(r'^meusMapas/$', views.meusMapas),
+    url(r'^exibirMapa/(?P<idmapa>[0-9]+)/$', views.exibirMapa, name="exibir"),
 ]

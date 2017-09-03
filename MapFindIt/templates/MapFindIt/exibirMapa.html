@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+		<meta http-equiv="Pragma" content="no-cache" />
+		<meta http-equiv="Expires" content="0" />
+		<title>MapFindIt</title>
+		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+		<link href="{% static "MapFindIt/css/exibirMapa.css"%}" rel="stylesheet">
+	</head>
+	<body>
+		<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:skyblue;">
+            <div style="display: flex; justify-content: space-between;">
+                <div style="order:1;">
+                    <a href="/" class="img-logo">
+                        <img border="0" src="{% static "MapFindIt/img/Logo.jpg" %}" style="width:100px; height:50px">
+                    </a>
+                </div>
+                <div style="order:2;">
+                    <h3 style="margin-top:13px">
+                        {{mapa.titulomapa}}
+                    </h3> 
+                </div>
+                <div style="order:3;">
+                    &nbsp;&nbsp;&nbsp;
+                </div>
+            </div>
+		</nav>
+		<br><br><br>
+        <div id="divMapa" class="mapa">
+
+        </div>
+        <script>
+			var imgUrl='{{baseUrl}}';
+            var idMapa='{{mapa.idmapa}}';
+		</script>
+		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/bootstrap.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/cropper.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/menu.js" %}"></script>
+		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
+		<script src="{% static "MapFindIt/js/exibirMapa.js"%}"></script>
+		<script async defer
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&libraries=places&callback=initMap">
+		</script>
+  </body>
