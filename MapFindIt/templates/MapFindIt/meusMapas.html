@@ -14,27 +14,30 @@
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/meusMapas.css"%}" rel="stylesheet">
 </head>
 
 <body>
 	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
 	<div class="container-fluid">
-            <br>
-            {% for mapa in mapas %}
-            <div class="row">
-                <div class="col-md-10 offset-md-2">
-                    <a href="/exibirMapa/{{mapa.idmapa}}">
-                        <h2 id={{mapa.idmapa}}>{{mapa.titulomapa}}</h2>
-                        <label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>      
-                    </a>           
-                </div>
+			<br>
+			<div class="row">
+                <div class="col-md-10 col-md-offset-1">
+					<div class="list-group">
+					{% for mapa in mapas %}
+						<a href="/exibirMapa/{{mapa.idmapa}}" class="list-group-item">
+							<h2 id={{mapa.idmapa}}>{{mapa.titulomapa}}</h2>
+							<label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>      
+						</a>
+					{% endfor %}
+					</div>
+				</div>
             </div>
-            {% endfor %}
 	</div>
 
 

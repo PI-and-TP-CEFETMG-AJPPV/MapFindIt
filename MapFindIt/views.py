@@ -723,7 +723,7 @@ def editarMapa(request, idmapa):
     resultado=getDadosMenu(request)
     return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'prim':primeira})
 
-def carregarMapaEditar(request):
+def carregarMapa(request):
     #Pega o ID do mapa
     id = request.GET.get('id', None)
     #Carrega o mapa
@@ -1026,4 +1026,6 @@ def meusMapas(request):
     return render(request, 'MapFindIt/meusMapas.html', {'mapas': mapas, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
 def exibirMapa(request, idmapa):
-    return render(request, 'MapFindIt/exibirMapa.html', {'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
+    mapa = get_object_or_404(Mapa, idmapa=idmapa)
+    resultado=getDadosMenu(request)
+    return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
