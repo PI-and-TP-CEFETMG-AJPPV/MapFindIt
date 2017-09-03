@@ -127,6 +127,11 @@ def grupo(request, idgrupo):
             #verifica se e adimistrador
             if q1.admim:
                 q.admim=True
+        #pega a cor do grupo
+        color= Cor.objects.filter(pk=int(grupoFull.codcor)).first()
+        r=color.r
+        g=color.g
+        b=color.b
         #Obtem todos os amigos do usuario para o menu
         todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
         todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -150,7 +155,7 @@ def grupo(request, idgrupo):
         for grupo in grupoUsuario:
             todosGrupos.append(grupo)
         #obtem a cor do grupo
-        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos, 'solicitacoesPendentes': countPendentes})
+        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':r,'g':g,'b':b, 'solicitacoesPendentes': countPendentes})
 
 def perfil(request, idusuario):
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
@@ -1004,7 +1009,7 @@ def fazerMescla(request):
                 novPonto.codicone=ponto.codicone
         except ObjectDoesNotExist:
             #Continua o loop
-            pass  
+            pass
         if ponto.fotoponto is not None:
             shutil.copy2("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png", "MapFindIt/static/MapFindIt/imagemPonto/"+str(novPonto.idponto)+".png")
         novPonto.save()
