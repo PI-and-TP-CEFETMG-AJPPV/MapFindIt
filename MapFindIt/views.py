@@ -1027,5 +1027,10 @@ def meusMapas(request):
 
 def exibirMapa(request, idmapa):
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
-    resultado=getDadosMenu(request)
-    return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
+    if mapa.idtvisibilidade=='P':
+        if request.session.__contains__('usuarioLogado'):
+            if mapa.idusuario.idusuario==request.session['usuarioLogado']:
+                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
+        return HttpResponse('Unauthorized', status=401)
+    else:
+        return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
