@@ -45,7 +45,7 @@
 						<a role="button" class="btn pmd-ripple-effect btn-primary">Pesquisar</a>
 						<a role="button" class="btn pmd-ripple-effect btn-primary">Membros</a>
 						{% if member %}
-							<a role="button" class="btn pmd-ripple-effect btn-primary">postar</a>
+							<a role="button" onclick="modalPublicar()" class="btn pmd-ripple-effect btn-primary">postar</a>
 							{% if admim %}
 								{% if grupo.privado %}
 									<a role="button" class="btn pmd-ripple-effect btn-primary">convidar</a>
@@ -57,9 +57,10 @@
 						{% endif %}
 					</div>
 				</div>
-				<div id="divFiltro"></div>
+				<div id="modalDinamico"></div>
+				<div id="mapasGrupo"></div>
 				<div class="menu pmd-floating-action"  role="navigation">
-					<a href="" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+					<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
 						<span class="pmd-floating-hidden">Primary</span>
 						<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
 					</a>
