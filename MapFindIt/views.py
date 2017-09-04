@@ -308,6 +308,11 @@ def salvarComentario(request):
     hora = request.GET.get('hora', None)
     iduser = int(request.GET.get('user', None))
     idpost = int(request.GET.get('postagem', None))
+    #Pega a postagem
+    pos = Postagem.objects.get(pk=idpost)
+    #Se a postagem for censurada retorna sem sucesso
+    if pos.censurada:
+        return JsonResponse({'sucesso': False})
     #Cria o comentario e o salva no banco
     comentario = Comentario.objects.create(titulocomentario=titulo, txtcomentario=texto, datacomentario=data, horacomentario= hora, idusuario=Usuario.objects.filter(idusuario=iduser).first(), idpostagem=Postagem.objects.filter(idpostagem=idpost).first())
     comentario.save()
@@ -328,6 +333,15 @@ def deletarComentario(request):
         return JsonResponse({'sucesso': True})
     else:
         return JsonResponse({'sucesso': False})
+
+def bloqueioComentarios(request):
+    idpost = int(request.GET.get('postagem', None))
+    pos = Postagem.objects.get(pk=idpost)
+    bloquear = (request.GET.get('bloquear', None) == 'true')
+    pos.censurada = bloquear
+    pos.save()
+    Comentario.objects.filter(idpostagem=idpost).delete()
+    return JsonResponse({'sucesso': True, 'bloqueado': bloquear})
 
 def adicionarView(request):
     #Pega o id do mapa
