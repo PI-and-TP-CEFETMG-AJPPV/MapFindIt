@@ -191,6 +191,7 @@ class Postagem(models.Model):
     idmapa = models.ForeignKey(Mapa, models.DO_NOTHING, db_column='idMapa', blank=True, null=True)  # Field name made lowercase.
     idpostagem = models.AutoField(db_column='idPostagem', primary_key=True)  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
+    censurada = models.BooleanField(db_column='censurada', default='False')# Fild name Mode lowercase
 
     class Meta:
         db_table = 'postagem'
