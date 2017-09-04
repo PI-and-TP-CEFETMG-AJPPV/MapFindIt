@@ -70,14 +70,16 @@ function prepararGrupo(data) {
 
 	contentString =`
 	<div class="row">
-		<div class="col-md-offset-2 col-md-8 col-md-offset-2">
-			<div style="background-color: rgb(${data.r},${data.g},${data.b}); border: 2px solid black; color:white">
-				<div style="text-align:center">
-					<h3>${data.nomegrupo}</h3><h4>Acesso: ${data.privado}</h4>
-				</div>
-				<h4>Descrição: ${data.descgrupo}</h4>
+			<div class="col-md-offset-2 col-md-8 col-md-offset-2">
+				<a href="/grupo/${data.idgrupo}/">
+					<div style="background-color: white; border: 2vh solid rgb(${data.r},${data.g},${data.b}); box-shadow:  0 0 0 2px black;">
+							<div style="text-align:center">
+								<h3>${data.nomegrupo}</h3><h4>Acesso: ${data.privado}</h4>
+							</div>
+							<h4>Descrição: ${data.descgrupo}</h4>
+					</div>
+				</a>
 			</div>
-		</div>
 	</div><br><br>`;
 
 	$("#divFiltro").append(contentString);
