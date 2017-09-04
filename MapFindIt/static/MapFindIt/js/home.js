@@ -196,6 +196,7 @@ function initMap() {
 			}
 	  });
 	}
+	mensagemLimite();
 }
 
 //Carrega Mapas com Pesquisa
@@ -219,6 +220,19 @@ function pesquisa() {
 				prepararPostagemVis(div, data, i)
 			}
 		});
+	}
+	mensagemLimite();
+}
+
+function mensagemLimite() {
+	nMapas = $(".row").length - 4;
+	if(nMapas == 10) {
+		contentString =`
+			<div class="row" style="order:10; padding-bottom:20px; text-align:center">
+				<h3>Você atingiu o seu limite de mapas como visitante,
+				logue ou se cadastre para continuar</h3>
+			</div>`;
+		$("#divMapas").append(contentString);
 	}
 }
 
