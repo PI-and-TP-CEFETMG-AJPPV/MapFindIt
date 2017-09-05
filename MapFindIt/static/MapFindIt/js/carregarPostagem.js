@@ -437,6 +437,12 @@ function prepararPostagem(div, data, i){
 		 <br><br><br>`);
 		 //Cria evento para a descrição do mapa
 		$('.divPostagem').tooltip({ track: true});
+		$('.tituloMapa').on('click', function(){
+			$('.divPostagem').tooltip('disable');
+		});
+		$('.close').on('click', function(){
+				$('.divPostagem').tooltip({ track: true});
+		});
 		 //Se não existirem comentários cria aviso de que não existem comentários
      if(comentarios.length<1){
        $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
@@ -613,6 +619,12 @@ function prepararPostagemVis(div, data, i){
 		 <br><br><br>`);
 		 //Cria evento para a descrição do mapa
 		$('.divPostagem').tooltip({ track: true});
+		$('.tituloMapa').on('click', function(){
+			$('.divPostagem').tooltip('disable');
+		});
+		$('.close').on('click', function(){
+				$('.divPostagem').tooltip('enable');
+		});
 		 //Se não existirem comentários cria aviso de que não existem comentários
      if(comentarios.length<1){
        $('#comentarios'+(10*(gruposCarregados-1)+i)).append(`
