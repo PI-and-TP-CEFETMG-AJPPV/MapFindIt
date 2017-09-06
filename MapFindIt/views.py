@@ -662,18 +662,28 @@ def gruposPesquisa(request):
 
 def novoMapa(request):
     if request.method=="POST" and request.POST.__contains__("temas"):
-        #Se voltou do formulário de finalizar o mapa
-        mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
-                                 idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
-                                 valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = request.POST.get('Lng'),
-                                 coordyinicial = request.POST.get('Lat'), valaprovados = 0,
-                                 valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
-        mapa.save()
+        if request.POST.get("opcInicio")=='P':
+            #Se voltou do formulário de finalizar o mapa
+            mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
+                                    idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
+                                    valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = request.POST.get('Lng'),
+                                    coordyinicial = request.POST.get('Lat'), valaprovados = 0,
+                                    valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+            mapa.save()
+            request.session['primeira']='1'
+        else:
+            mapaCopiado = get_object_or_404(Mapa, idmapa=int(request.POST.get('idCopia')))
+            mapa=Mapa.objects.create(titulomapa = request.POST.get('nomeMapa'), descmapa = request.POST.get('descMapa'),
+                                    idtvisibilidade = request.POST.get('opcVisib'), codtema = get_object_or_404(Tema, pk=request.POST.get('temas')),
+                                    valvisualizacoes = 0, datamapa = timezone.now(), coordxinicial = mapaCopiado.coordxinicial,
+                                    coordyinicial = mapaCopiado.coordyinicial, valaprovados = 0,
+                                    valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
+            mapa.save()
+            mesclaMapas(mapaCopiado.idmapa, mapa.idmapa)
         if mapa.idtvisibilidade=='A' or mapa.idtvisibilidade=='U':
             #Cria postagem do usuário autor do mapa, caso seja publico
             postagem=Postagem.objects.create(datapostagem = timezone.now(), horapostagem = datetime.datetime.now().replace(microsecond=0), idmapa=mapa, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
             postagem.save()
-        request.session['primeira']='1'
         return redirect("/editarMapa/"+str(mapa.pk))
     else:
         return render(request, 'MapFindIt/CMVisib.html', {})
@@ -992,7 +1002,7 @@ def mapasMesclar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
     #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P').order_by('valaprovados', 'valvisualizacoes')
     result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
     result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
@@ -1002,9 +1012,7 @@ def mapasMesclar(request):
         mapas[index][2]=mapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
 
-def fazerMescla(request):
-    id = int(request.GET.get('id'))
-    idEditando = int(request.GET.get('idEditando'))
+def mesclaMapas(id, idEditando):
     mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
     mapaTarget = get_object_or_404(Mapa, idmapa=id)
     #Obtem os pontos do mapa
@@ -1024,7 +1032,7 @@ def fazerMescla(request):
         except ObjectDoesNotExist:
             #Continua o loop
             pass
-        if ponto.fotoponto is not None:
+        if ponto.fotoponto is not None and os.path.isfile("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png"):
             shutil.copy2("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+".png", "MapFindIt/static/MapFindIt/imagemPonto/"+str(novPonto.idponto)+".png")
         novPonto.save()
 
@@ -1050,6 +1058,10 @@ def fazerMescla(request):
             pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
             pontoarea.save()
 
+def fazerMescla(request):
+    id = int(request.GET.get('id'))
+    idEditando = int(request.GET.get('idEditando'))
+    mesclaMapas(id, idEditando)
     return redirect('/editarMapa/'+str(idEditando))
 
 def meusMapas(request):
