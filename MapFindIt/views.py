@@ -508,7 +508,7 @@ def mapasHome(request):
     num = request.GET.get('num', None)
     num = int(num)
     #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
-    mapas = Mapa.objects.all().order_by('valaprovados', 'valvisualizacoes')[:10]
+    mapas = Mapa.objects.all().order_by('-valaprovados', '-valvisualizacoes')[:10]
     #Pega o mapa correspondente ao número da requisição Ajax
     mapa = mapas[num]
     #Inicializa postagem
@@ -517,7 +517,9 @@ def mapasHome(request):
     postagem = Postagem.objects.filter(idmapa=mapa).filter(
     idusuario=mapa.idusuario)
     getpostagem = postagem.first()
-
+    if getpostagem is None:
+        postagem = Postagem.objects.filter(idmapa=mapa)
+        getpostagem = Postagem.objects.filter(idmapa=mapa).first()
     #Se houver mapas
     if mapa is not None:
         #Chama a função de obter os dados da postagem

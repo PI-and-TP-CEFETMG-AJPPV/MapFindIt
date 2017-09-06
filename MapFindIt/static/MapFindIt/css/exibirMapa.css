@@ -20,3 +20,18 @@
     padding-top: 10px;
     padding-bottom: 10px;}
 }
+
+.legend {
+    font-family: Arial, sans-serif;
+    background: #fff;
+    padding: 10px;
+    margin: 10px;
+    border: 3px solid #000;
+}
+.legend h4 {
+    margin-top: 0;
+}
+
+.legend img {
+    vertical-align: middle;
+}

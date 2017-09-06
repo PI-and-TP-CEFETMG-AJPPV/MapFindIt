@@ -207,10 +207,11 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			infowindow.open(map);
 		});
 	});
-	//Obtem a div da legenda
-	var legend = document.getElementById(mapId + 'legend');
-	//Se a div existir, ou seja se for um mapa expandido
-	if (legend) {
+	//Se for um mapa expandido
+	if (mapId.substring(3, 6)=="Exp") {
+		var legend = document.createElement('div');
+		$(legend).html("<h4>Legenda</h4>");
+		$(legend).addClass("legend");
 		//Para cada icone
 		for (let i = 0; i < icones.length; i++) {
 			let icon = icones[i];
@@ -237,8 +238,56 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		}
 		//Adiciona a div de legendas ao mapa
 		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+		//Adiciona botão de mapa de calor
+		div = document.createElement('div');
+		//Cria uma div com a imagem do icone e o seu nome
+		div.innerHTML =
+			`<div style="display:flex; flex-direction: row; justify-content: space-between;">
+				<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
+			</div>
+			`;
+		div.addEventListener('click', function() {
+			mapa.coordyinicial=map.getCenter().lat();
+			mapa.coordxinicial=map.getCenter().lng();
+			mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
+        });
+		map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 	}
 
+}
+
+function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId){
+	let inicio = {
+		lat: mapa.coordyinicial,
+		lng: mapa.coordxinicial
+	};
+	//Cria o mapa em suas coordenadas iniciais
+	let map = new google.maps.Map(document.getElementById(mapId), {
+		zoom: 12,
+		center: inicio
+	});
+	var heatMapData = [];
+	//Para cada ponto do mapa
+	pontos.forEach(function (item, index) {
+		heatMapData.push({location: new google.maps.LatLng(item.fields.coordy, item.fields.coordx), weight: 1});
+	});
+	var heatmap = new google.maps.visualization.HeatmapLayer({
+		data: heatMapData
+	});
+	heatmap.setMap(map);
+	div = document.createElement('div');
+	//Cria uma div com a imagem do icone e o seu nome
+	div.innerHTML =
+		`<div style="display:flex; flex-direction: row; justify-content: space-between;">
+			<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
+		</div>
+		`;
+	div.addEventListener('click', function() {
+		mapa.coordyinicial=map.getCenter().lat();
+		mapa.coordxinicial=map.getCenter().lng();
+		setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
+    });
+	map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 }
 
 function pinSymbol(color) {
@@ -461,7 +510,6 @@ function prepararPostagem(div, data, i) {
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
-												<div id="mapExp${10*(gruposCarregados-1)+i}legend" class='legend'><h4>Legenda</h4></div>
 											</div>
                   </div>
                 </div>
@@ -656,7 +704,7 @@ function prepararPostagemVis(div, data, i) {
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
-												<div id="mapExp${10*(gruposCarregados-1)+i}legend" class='legend'><h4>Legenda</h4></div>
+												
 											</div>
                   </div>
                 </div>
@@ -666,6 +714,13 @@ function prepararPostagemVis(div, data, i) {
        </div>
      </div>
 		 <br><br><br>`);
+		  //Ao se abrir o mapa expandido seta o mapa
+		$("#titulo_mapa" + (10 * (gruposCarregados - 1) + i)).on("click", function () {
+			
+			setTimeout(function () {
+				setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
+			}, 1000);
+		});
 		 //Cria evento para a descrição do mapa
 		$('.divPostagem').tooltip({ track: true});
 		$('.tituloMapa').on('click', function(){
@@ -713,21 +768,6 @@ function prepararPostagemVis(div, data, i) {
               </div>
             </div>
         `);
-	});
-	//Ao se abrir o mapa expandido, aprovando ou reprovando seta o mapa e adiciona 1 visualizacao
-	$("#titulo_mapa" + (10 * (gruposCarregados - 1) + i)).on("click", function () {
-		$.ajax({
-			url: '/ajax/adicionarView/',
-			data: {
-				'mapa': JSON.parse(data.mapa)[0].pk,
-				'usuario': idUsuarioLogado
-			},
-			dataType: 'json',
-			success: function (data) {}
-		});
-		setTimeout(function () {
-			setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
-		}, 1000);
 	});
 	//Seta o mapa do feed
 	setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "map" + (10 * (gruposCarregados - 1) + i));
