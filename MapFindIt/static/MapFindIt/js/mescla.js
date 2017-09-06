@@ -54,6 +54,7 @@ function pesquisarMapas(){
                       <div class="main">
                           <h4>${mapas[i][1]}</h4>
                           <p style="text-align: left">${mapas[i][2]}</p>
+                          <a class="small" style="text-align: left" href="/exibirMapa/${mapas[i][0]}">Ver Mapa</a>
                       </div>
                     </div>
                   </div>
@@ -85,7 +86,6 @@ function pesquisarMapas(){
                         </div>
                     </div>`;
                     $('#confirmarMesclaBtn').on('click', function(){
-                        alert('oi');
                         mesclar(id);
                     });
                     $('#modalDinamico').html(conteudo);
