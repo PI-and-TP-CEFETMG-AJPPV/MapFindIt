@@ -149,8 +149,8 @@ Mapa
     background: white;
 }
 .mapaMesclar:hover{
-    background: lightgreen !important;
+    border: 2px solid lightgreen !important;
 }
 .mapaMesclar:active{
-    background: green !important;
+    border: 2px solid green !important;
 }
