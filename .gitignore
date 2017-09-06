@@ -1,0 +1,6 @@
+ProjetoPI/__pycache__/
+
+MapFindIt/__pycache__/
+
+MapFindIt/migrations/__pycache__/
+*.pyc

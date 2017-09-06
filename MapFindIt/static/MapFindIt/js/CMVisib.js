@@ -133,3 +133,52 @@ function initAutocomplete() {
         });
       }
 
+  function pesquisarMapas(){
+    let pesquisa = $("#pesquisaMescla").val();
+    $.ajax({
+          url: '/ajax/mapasMesclar/',
+          data: {
+            'pesquisa': pesquisa 
+          },
+          dataType: 'json',
+          success: function (data) {
+            mapas=JSON.parse(data.mapas);
+            $('#mapasMesclar').empty();
+            for(let i=0; i<mapas.length; i++){
+                $('#mapasMesclar').append(`<div class="col-md-12">
+                <div class="card-container mapaMesclar" id="mapaMesclar${mapas[i][0]}">
+                  <div class="card">
+                    <div class="content">
+                        <div class="main">
+                            <h4>${mapas[i][1]}</h4>
+                            <p style="text-align: left">${mapas[i][2]}</p>
+                            <a class="small" style="text-align: left" href="/exibirMapa/${mapas[i][0]}">Ver Mapa</a>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>`);
+                $('#mapaMesclar'+mapas[i][0]).on('click', function(){
+                    $('.mapaSelec').removeClass('mapaSelec');
+                    $(this).addClass('mapaSelec');
+                    $('#idCopia').val($(this).attr('id').substring(11));   
+                    $('#criarMapa').removeAttr('disabled');
+                    $('#criarMapa').removeAttr('title');
+                })
+            }
+          }
+      });
+  }
+
+  $(document).ready(function() {
+    $('input[type=radio][name=opcInicio]').change(function() {
+          if (this.value == 'P') {
+              $('#selecMapa').hide();
+              $('#selecPonto').show();
+          }
+          else if (this.value == 'M') {
+              $('#selecPonto').hide();
+              $('#selecMapa').show();
+          }
+    });
+  });
