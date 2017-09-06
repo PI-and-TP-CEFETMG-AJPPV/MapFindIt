@@ -8,6 +8,7 @@ urlpatterns = [
     url(r'^grupo/(?P<idgrupo>[0-9]+)/$', views.grupo),
     url(r'^ajax/checkarEmail/$', views.checkarEmail),
     url(r'^ajax/checkarLogin/$', views.checkarLogin),
+    url(r'^ajax/mapasPublicar/$', views.mapasPublicar),
     url(r'^ajax/checkarSenha/$', views.checkarSenha),
     url(r'^ajax/carregarMapasPerfil/$', views.mapasPerfil),
     url(r'^ajax/carregarMapasGrupo/(?P<idgrupo>[0-9]+)/$', views.mapasGrupo),

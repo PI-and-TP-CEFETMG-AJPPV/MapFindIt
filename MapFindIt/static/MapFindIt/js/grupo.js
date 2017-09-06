@@ -42,9 +42,6 @@ function pesquisarMapas(){
            mapas=JSON.parse(data.mapas);
            $('#mapasPostar').empty();
            for(let i=0; i<mapas.length; i++){
-               if(mapas[i][0]==idMapa){
-                   continue;
-               }
                $('#mapasPostar').append(`<div class="col-md-12">
               <div class="card-container mapaMesclar" id="mapaMesclar${mapas[i][0]}">
                 <div class="card">
@@ -73,9 +70,9 @@ function pesquisarMapas(){
                                     </h4>
                                 </div>
                                 <div class="modal-body">
-                                    <h4>Você tem certeza que deseja mesclar esses mapas? A ação não poderá ser desfeita</h4>
+                                    <h4>Você tem certeza que deseja esse mapa?</h4>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="mesclar(${id});" id="confirmarpublicacao">Confirmar</button>
+                                        <button class="btn btn-success" onclick="publicar(${id});" id="confirmarpublicacao">Confirmar</button>
                                         <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
                                         $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
                                     </div>
@@ -92,7 +89,18 @@ function pesquisarMapas(){
         }
     });
 }
-
+function publicar(id){
+ $.ajax({
+   url:'/ajax/publicarGrupo'
+   data:{
+     'id' : id
+   },
+   dataType: 'json',
+   success: function(data){
+     $('#modal-confirmar-post').modal('show');
+   }
+ })
+}
 function carregarMapas() {
 	//Definição de valores
 	mapasLoaded++;

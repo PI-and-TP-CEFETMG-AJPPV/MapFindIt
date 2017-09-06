@@ -151,6 +151,19 @@ def grupo(request, idgrupo):
             todosGrupos.append(grupo)
         #obtem a cor do grupo
         return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
+def mapasPublicar(request):
+    #Obtem texto de pesquisa
+    pesquisa = request.GET.get('pesquisa')
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idusuario=request.session['usuarioLogado']).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa, idusuario=request.session['usuarioLogado'])
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
+        mapas[index][0]=mapa.idmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
+    return JsonResponse({'mapas': json.dumps(mapas)})
 
 def perfil(request, idusuario):
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
