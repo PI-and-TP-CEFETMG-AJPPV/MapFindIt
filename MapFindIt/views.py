@@ -151,6 +151,18 @@ def grupo(request, idgrupo):
             todosGrupos.append(grupo)
         #obtem a cor do grupo
         return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
+def publicarGrupo(request):
+    idmapa= request.GET.get('id')
+    if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
+        return JsonResponse({'sucesso': False})
+    idgrupo= request.GET.get('idgrupo')
+    grupoFull= Grupo.objects.get(pk=idgrupo)
+    mapaFull= Mapa.objects.get(pk=idmapa)
+    usuarioFull= Usuario.objects.get(pk=mapaFull.idusuario.idusuario)
+    now = datetime.datetime.now().strftime('%H:%M:%S')
+    today = datetime.date.today()
+    Postagemgrupo.objects.create(idgrupo=grupoFull, idmapa=mapaFull, idusuario=mapaFull.idusuario, horapostagem=now, datapostagem=today)
+    return JsonResponse({'sucesso': True})
 def mapasPublicar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')

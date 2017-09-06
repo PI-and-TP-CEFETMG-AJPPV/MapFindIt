@@ -1,4 +1,4 @@
-function modalPublicar(){
+function modalPublicar(idgrupo){
   $('#modalDinamico').empty();
 	let conteudo=`<div class="modal fade" id="modalPublicar-mapa" aria-hidden="true">
 		<div class="modal-dialog">
@@ -12,7 +12,7 @@ function modalPublicar(){
 					</h4>
 				</div>
 				<div class="modal-body">
-                    <form id="searchForm"  method="GET" action="javascript:pesquisarMapas()" style="order:2;">
+                    <form id="searchForm"  method="GET" action="javascript:pesquisarMapas(${idgrupo})" style="order:2;">
                         <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Pesquise o mapa a ser postado" id="pesquisarMapas" name="pesquisaMescla" value="">
                         <div class="input-group-btn">
@@ -30,7 +30,7 @@ function modalPublicar(){
 		$('#modalDinamico').html(conteudo);
 		$('#modalPublicar-mapa').modal('show');
 }
-function pesquisarMapas(){
+function pesquisarMapas(idgrupo){
    let pesquisa = $("#pesquisarMapas").val();
    $.ajax({
         url: '/ajax/mapasPublicar/',
@@ -72,7 +72,7 @@ function pesquisarMapas(){
                                 <div class="modal-body">
                                     <h4>Você tem certeza que deseja esse mapa?</h4>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="publicar(${id});" id="confirmarpublicacao">Confirmar</button>
+                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});" id="confirmarpublicacao">Confirmar</button>
                                         <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
                                         $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
                                     </div>
@@ -89,22 +89,22 @@ function pesquisarMapas(){
         }
     });
 }
-function publicar(id){
- $.ajax({
-   url:'/ajax/publicarGrupo'
-   data:{
-     'id' : id
-   },
-   dataType: 'json',
-   success: function(data){
-     $('#modal-confirmar-post').modal('show');
-   }
- })
+function publicar(id, idgrupo){
+  $.ajax({
+    url: '/ajax/publicarGrupo/',
+    data: {
+      'id': id,
+      'idgrupo': idgrupo
+    },
+    dataType: 'json',
+    success: function (data) {
+        $('#modal-confirmar-post').modal('hide');
+    }
+  });
 }
 function carregarMapas() {
 	//Definição de valores
 	mapasLoaded++;
-	pesquisa = get('pesquisa');
 
 	for(let i=0; i<10; i++){
 		$.ajax({
