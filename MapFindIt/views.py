@@ -151,17 +151,38 @@ def grupo(request, idgrupo):
             todosGrupos.append(grupo)
         #obtem a cor do grupo
         return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
+#publicar mapa em um grupo
 def publicarGrupo(request):
+    #pega os dado do request
     idmapa= request.GET.get('id')
+    #se o mapa ja existir retorna falso
     if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
         return JsonResponse({'sucesso': False})
     idgrupo= request.GET.get('idgrupo')
     grupoFull= Grupo.objects.get(pk=idgrupo)
     mapaFull= Mapa.objects.get(pk=idmapa)
     usuarioFull= Usuario.objects.get(pk=mapaFull.idusuario.idusuario)
+    #formata data e hora
     now = datetime.datetime.now().strftime('%H:%M:%S')
     today = datetime.date.today()
+    #cria postagem
     Postagemgrupo.objects.create(idgrupo=grupoFull, idmapa=mapaFull, idusuario=mapaFull.idusuario, horapostagem=now, datapostagem=today)
+    return JsonResponse({'sucesso': True})
+def criarGrupo(request):
+
+    nomeGrupo= request.GET.get('nome')
+    r= request.GET.get('r')
+    g= request.GET.get('g')
+    b= request.GET.get('b')
+    desc= request.GET.get('desc')
+    idusuario= request.GET.get('usuario')
+    usuario= get_object_or_404(Usuario, pk= idusuario)
+    Privacidade = request.GET.get('privacidade')
+    cor = Cor.objects.create(nomecor="", r=r, g=g, b=b)
+    if Privacidade == 1:
+        grupo = Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=desc, idusuario=usuario, privado=True, codcor=cor)
+    else:
+        grupo = Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=desc, idusuario=usuario, privado=False, codcor=cor)
     return JsonResponse({'sucesso': True})
 def mapasPublicar(request):
     #Obtem texto de pesquisa

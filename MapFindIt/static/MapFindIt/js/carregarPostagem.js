@@ -465,12 +465,12 @@ function prepararPostagem(div, data, i) {
 	}
 	div.append(`
       <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${i}; padding-bottom:20px;">
-        <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block;'>
+        <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block; box-shadow: 10px 10px 5px grey;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
-					<div class="editarPostagem" style="display: flex; ">	
+					<div class="editarPostagem" style="display: flex; ">
 						${btnBloquearComentarios}
 						<p><a id=comp${JSON.parse(data.mapa)[0].pk} class="btn btn-default" onclick="compartilhar(${JSON.parse(data.mapa)[0].pk})" title="Compartilhar"><i class="fa fa-share-alt" aria-hidden="true"></i></a></p>
 						${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
@@ -677,7 +677,7 @@ function prepararPostagemVis(div, data, i) {
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
-					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>		
+					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
 				</div>
 				 <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
@@ -704,7 +704,7 @@ function prepararPostagemVis(div, data, i) {
 											</div>
                       <div class="col-md-10" style="display: block;" id="divMapa${10*(gruposCarregados-1)+i}">
                         <div class="mapaExp" name='mapExp${10*(gruposCarregados-1)+i}' id='mapExp${10*(gruposCarregados-1)+i}'></div>
-												
+
 											</div>
                   </div>
                 </div>
@@ -716,7 +716,7 @@ function prepararPostagemVis(div, data, i) {
 		 <br><br><br>`);
 		  //Ao se abrir o mapa expandido seta o mapa
 		$("#titulo_mapa" + (10 * (gruposCarregados - 1) + i)).on("click", function () {
-			
+
 			setTimeout(function () {
 				setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
 			}, 1000);
