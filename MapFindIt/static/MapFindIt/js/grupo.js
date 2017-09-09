@@ -89,6 +89,90 @@ function pesquisarMapas(idgrupo){
         }
     });
 }
+//lista os usuarios
+function selectIcone(idgrupo){
+  $.ajax({
+      url: 'ajax/getMembrosGrupo/',
+      data: {
+        'idgrupo': idgrupo
+      },
+      dataType: 'json',
+      success: function (data) {
+         if(data.icones){
+             $('#modalDinamico').empty();
+             let conteudo=`
+             <div class="modal fade" style="top:-5%;" id="modal-membros" aria-hidden="true">
+               <div class="modal-dialog" style="width: 80vw;">
+                 <div class="modal-content">
+                   <div class="modal-header">
+                     <button type="button" class="close" onclick='$("#modal-membros").modal("hide");' aria-hidden="true">
+                       ×
+                     </button>
+                     <h4 class="modal-title">
+                       Membros Grupo
+                     </h4>
+                   </div>
+                   <div class="modal-body" style="overflow: scroll; overflow-x: hidden; height: 80vh;">
+                     <div class="centerDiv">
+                        <input id="filtrarMembros" type="text" placeholder="Filtrar Membros" style="width:96%; height:90%;">
+                        <br>
+                        <br>
+                        <br>
+                     </div>
+                     <div id="container-membros" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+
+                     </div>
+                   </div>
+                   <div class="modal-footer">
+                     <button type="button" id="btn" class="btn btn-primary"> fechar </button>
+                   </div>
+                 </div>
+               </div>
+             </div>
+             `;
+             $('#modalDinamico').html(conteudo);
+             let icones=JSON.parse(data.membros);
+             let container=$("#container-membros");
+             for(let i=0; i<membros.length; i++){
+                item=membros[i].fields;
+                $('#container-membros').append(`
+                  <div id='membro${membros[i].pk}' class="imagemIcone centerDiv">
+                    <img src='${imgUrl}MapFindIt/imagemUsers/${membros[i].foto}.png'>
+                    <p>${item.primnomeusuario}</p>
+                  </div>
+                  `);
+             }
+             /*$('.imagemIcone').on('click', function(){
+                 $('.imagemIcone').removeClass('iconeEscolhido');
+                 $(this).addClass('iconeEscolhido');
+                 //Salva o id do icone (id do elemento retirando-se a palavra icone)
+                 iconeEscolhido=$(this).attr('id').substring(5);
+								 $('#btnDeletar').on('click', function(){
+									 deletarIcone(iconeEscolhido);
+								 });
+             });*/
+             $('#filtrarIcones').keyup(function(event) {
+                 //Para cada icone carregado
+                 $(".imagemIcone").each(function(i, item){
+                   //Pega o objeto JQuery da div do icone
+                   item=$(item);
+                   //Pega o titulo do icone para identifica-lo
+                   let parag = item.children('p');
+                   //Se o nome conter a string pesquisada
+                   if(parag.text().indexOf($("#filtrarMembros").val())!==-1){
+                     //Mostra o icone
+                     item.show();
+                   }else{
+                     //Esconde o icone
+                     item.hide();
+                   }
+                 });
+             });
+             $('#modal-membros').modal('show');
+          }
+      }
+    });
+}
 function publicar(id, idgrupo){
   $.ajax({
     url: '/ajax/publicarGrupo/',
@@ -102,6 +186,29 @@ function publicar(id, idgrupo){
     }
   });
 }
+function initMap(){
+
+}
+function pesquisarBar(){
+  $('#opcMenu').empty();
+  let conteudo=`<div class="row">
+    <div class="col-md-8 col-md-offset-2" >
+      <br>
+      <div class="center">
+        <form class="form-group" id="SearchForm"  method="GET" style="order:2;background: white">
+          <div class="input-group" style="border:1px solid #444;">
+            <input type="text" class="form-control input-lg" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="border: none;">
+              <div class="input-group-btn">
+                <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;" onclick="pesquisar()"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.5em;"></span></button>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>`;
+    $('#opcMenu').html(conteudo);
+}
+
 function carregarMapas() {
 	//Definição de valores
 	mapasLoaded++;

@@ -104,11 +104,19 @@ def getDadosMenu(request):
     for grupo in grupoUsuario:
         todosGrupos.append(grupo)
     return [usuarioFull, todosAmigos, todosGrupos, countPendentes]
-
+def getMembrosGrupo(request):
+    idGrupo= request.GET.get('idgrupo')
+    grupoFull = get_object_or_404(Grupo, idgrupo=idGrupo)
+    queryset = Membrosgrupo.objects.filter(idgrupo=grupoFull)
+    todosMenbros=[]
+    for membro in queryset:
+        todosMenbros.append(membro.idusuario)
+    return JsonResponse({'membros': serializers.serialize("json", todosMenbros)})
 #função para renderizar o template da pagina de grupo
 def grupo(request, idgrupo):
         member = False
         admim = False
+        ban = False
         #Pega o usuario logado
         usuarioFull=get_object_or_404(Usuario, pk=request.session.get('usuarioLogado'))
         #Pega todas as informações do grupo
@@ -123,10 +131,16 @@ def grupo(request, idgrupo):
             admim=True
         #verifica se o usuario e membro do grupo
         if q1 is not None:
+            #verifica se o usuario foi banido
+            if q1.ban:
+                ban=True
             member=True
             #verifica se e adimistrador
             if q1.admim:
                 q.admim=True
+        #verifica se o grupo e privado
+        elif grupoFull.privado:
+            ban=True
         #Obtem todos os amigos do usuario para o menu
         todosAmigos1=Amizade.objects.filter(idusuario1=request.session.get('usuarioLogado'))
         todosAmigos2=Amizade.objects.filter(idusuario2=request.session.get('usuarioLogado'))
@@ -150,7 +164,7 @@ def grupo(request, idgrupo):
         for grupo in grupoUsuario:
             todosGrupos.append(grupo)
         #obtem a cor do grupo
-        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
+        return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'ban':ban,  'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
 #publicar mapa em um grupo
 def publicarGrupo(request):
     #pega os dado do request

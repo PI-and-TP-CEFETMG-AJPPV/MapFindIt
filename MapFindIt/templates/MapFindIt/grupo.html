@@ -22,111 +22,125 @@
 	</head>
 	<body>
     {% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
-        <div class="row">
-          <div class="col-md-8 col-md-offset-2 white" >
-            <br>
-            <div class="center">
-              <h1>{{grupo.nomegrupo}}</h1>
-            </div>
-          </div>
-        </div>
-        <br>
-        <div class="row">
-					<div class="col-md-8 col-md-offset-2 white">
-						<br>
-						<div class="center">
-							<h4>{{grupo.descgrupo}}</h1>
+				{% if ban %}
+					<div class="row">
+          	<div class="col-md-8 col-md-offset-2 white" >
+            	<br>
+            	<div class="center">
+              	<b><h1 style="color: red">ACESSO NEGADO</h1></br>
+								<h2>Peça permição para um admistrador do grupo<h2>
+            	</div>
+          	</div>
+        	</div>
+				{% else %}
+					<div class="row">
+          	<div class="col-md-8 col-md-offset-2 white" >
+            	<br>
+            	<div class="center">
+              	<h1>{{grupo.nomegrupo}}</h1>
+            	</div>
+          	</div>
+        	</div>
+        	<br>
+        	<div class="row">
+						<div class="col-md-8 col-md-offset-2 white">
+							<br>
+							<div class="center">
+								<h4>{{grupo.descgrupo}}</h1>
+								</div>
+							</div>
 						</div>
-					</div>
-				</div>
-        <br>
-				<div class="col-md-8 col-md-offset-2" >
-					<div class="btn-group btn-group-justified">
-						<a role="button" class="btn pmd-ripple-effect btn-primary">Pesquisar</a>
-						<a role="button" class="btn pmd-ripple-effect btn-primary">Membros</a>
-						{% if member %}
-							<a role="button" onclick="modalPublicar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary">postar</a>
-							{% if admim %}
-								{% if grupo.privado %}
-									<a role="button" class="btn pmd-ripple-effect btn-primary">convidar</a>
-									{% endif %}
-									<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim"><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
+        	<br>
+					<div class="col-md-8 col-md-offset-2" >
+						<div class="btn-group btn-group-justified">
+							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="pesquisarBar()">Pesquisar</a>
+							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="selectIcone({{grupo.idgrupo}})">Membros</a>
+							{% if member %}
+								<a role="button" onclick="modalPublicar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary">postar</a>
+								<a role="button" onclick="modalConvidar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary">convidar</a>
+								{% if admim %}
+									{% if grupo.privado %}
+										<a role="button" class="btn pmd-ripple-effect btn-primary">convidar</a>
+										{% endif %}
+										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim"><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
+										{% endif %}
+										{% else %}
+										<a role="button" class="btn pmd-ripple-effect btn-primary">Entar</a>
+										{% endif %}
+									</div>
+								</div>
+								<div id="opcMenu"></div>
+								<div id="modalDinamico"></div>
+								<div id="mapasGrupo"></div>
+								<div class="menu pmd-floating-action"  role="navigation">
+									<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+										<span class="pmd-floating-hidden">Primary</span>
+										<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+									</a>
+									<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa">
+										<span class="pmd-floating-hidden">Primary</span>
+										<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+									</a>
+									<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#">
+										<span class="pmd-floating-hidden">Primary</span>
+										<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
+									</a>
+								</div>
 							{% endif %}
-							{% else %}
-							<a role="button" class="btn pmd-ripple-effect btn-primary">Entar</a>
-						{% endif %}
-					</div>
-				</div>
-				<div id="modalDinamico"></div>
-				<div id="mapasGrupo"></div>
-				<div class="menu pmd-floating-action"  role="navigation">
-					<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
-						<span class="pmd-floating-hidden">Primary</span>
-						<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
-					</a>
-					<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa">
-						<span class="pmd-floating-hidden">Primary</span>
-						<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
-					</a>
-					<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#">
-						<span class="pmd-floating-hidden">Primary</span>
-						<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
-					</a>
-				</div>
-					<div class="modal fade" id="modal-container-admim" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-					  <div class="modal-dialog">
-					    <div class="modal-content">
-					      <div class="modal-header">
-					        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
-					        <h2 class="modal-title" id="myModalLabel" style="text-align: center;">Configurar Grupo</h2>
-					      </div>
-					      <div class="modal-body">
-					        <form id="formAtualizar" method="POST">
-					          {% csrf_token %}
-					          <div class="row">
-					            <div class="col-md-12">
-					              <div class="form-group">
-					                Nome do Grupo: <input type="text" name="nmdGrupo" id="ndmGrupo" class="form-control input-lg" placeholder="{{grupo.nomegrupo}}" tabindex="1">
-					              </div>
-					            </div>
-					          </div>
-					            <div class="row">
-					              <div class="col-md-12">
-					                <div class="form-group">
-					                  Descrição Grupo: <input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" placeholder="{{grupo.descgrupo}}" tabindex="2">
-					                </div>
-					              </div>
-					            </div>
-					            <div class="row">
-					              <div class="col-xs-6 col-sm-6 col-md-6" align="center">
-					                <div class="form-group">
-					                  <div class="radio">
-					                    <label><input type="radio" name="gender" id="public" value="public">Publico</label>
-					                  </div>
-					                </div>
-					              </div>
-					              <div class="col-xs-6 col-sm-6 col-md-6" align="center">
-					                <div class="form-group">
-					                  <div class="radio">
-					                    <label><input type="radio" id="private" name="gender" value="private">Privado</label>
-					                  </div>
-					                </div>
-					              </div>
-					            </div>
-					          </form>
-					         <div class="btn-group btn-group-justified">
-										 	<a role="button" class="btn pmd-ripple-effect btn-primary">adimistrador</a>
-										 	<a role="button" class="btn pmd-ripple-effect btn-primary">Remover Mapa</a>
+							<div class="modal fade" id="modal-container-admim" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+					  		<div class="modal-dialog">
+					    		<div class="modal-content">
+					     			<div class="modal-header">
+					       			<button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+					       			<h2 class="modal-title" id="myModalLabel" style="text-align: center;">Configurar Grupo</h2>
+					     			</div>
+					     			<div class="modal-body">
+					      			<form id="formAtualizar" method="POST">
+					         			{% csrf_token %}
+					         			<div class="row">
+					           			<div class="col-md-12">
+					             			<div class="form-group">
+					               			Nome do Grupo: <input type="text" name="nmdGrupo" id="ndmGrupo" class="form-control input-lg" placeholder="{{grupo.nomegrupo}}" tabindex="1">
+					             			</div>
+					           			</div>
+					         			</div>
+					           	<div class="row">
+					             	<div class="col-md-12">
+					               	<div class="form-group">
+					                 	Descrição Grupo: <input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" placeholder="{{grupo.descgrupo}}" tabindex="2">
+					               	</div>
+					             	</div>
+					           	</div>
+					           	<div class="row">
+					             	<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+					               	<div class="form-group">
+					                 	<div class="radio">
+					                   	<label><input type="radio" name="gender" id="public" value="public">Publico</label>
+					                 	</div>
+					               	</div>
+					             	</div>
+					             	<div class="col-xs-6 col-sm-6 col-md-6" align="center">
+					               	<div class="form-group">
+					                 	<div class="radio">
+					                   	<label><input type="radio" id="private" name="gender" value="private">Privado</label>
+					                 	</div>
+					               	</div>
+					             	</div>
+					           	</div>
+					         	</form>
+					       		<div class="btn-group btn-group-justified">
+									 		<a role="button" class="btn pmd-ripple-effect btn-primary">adimistrador</a>
+									 		<a role="button" class="btn pmd-ripple-effect btn-primary">Remover Mapa</a>
 											<a role="button" class="btn pmd-ripple-effect btn-primary">Banidos</a>
 											<a role="button" class="btn pmd-ripple-effect btn-primary">Mudar Cor</a>
-					          </div>
-					        </div>
-					      <div class="modal-footer" >
-					        <div align="center">
-					          <button type="button" onclick="confirmar();" class="btn button"> Confirmar </button>
-					          <button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
-					        </div>
-					      </div>
+					         	</div>
+					       	</div>
+					     		<div class="modal-footer" >
+					       		<div align="center">
+					         		<button type="button" onclick="confirmar();" class="btn button"> Confirmar </button>
+					         		<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+					       	</div>
+					     	</div>
 					    </div>
 					  </div>
 					</div>
