@@ -54,7 +54,7 @@
 					<div class="col-md-8 col-md-offset-2" >
 						<div class="btn-group btn-group-justified">
 							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="pesquisarBar()">Pesquisar</a>
-							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="selectIcone({{grupo.idgrupo}})">Membros</a>
+							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="getMembro({{grupo.idgrupo}})">Membros</a>
 							{% if member %}
 								<a role="button" onclick="modalPublicar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary">postar</a>
 								<a role="button" onclick="modalConvidar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary">convidar</a>
@@ -65,7 +65,7 @@
 										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim"><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
 										{% endif %}
 										{% else %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary">Entar</a>
+										<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="entrar({{usuarioFull.idusuario}}, {{grupo.idgrupo}})">Entar</a>
 										{% endif %}
 									</div>
 								</div>
@@ -130,7 +130,7 @@
 					         	</form>
 					       		<div class="btn-group btn-group-justified">
 									 		<a role="button" class="btn pmd-ripple-effect btn-primary">adimistrador</a>
-									 		<a role="button" class="btn pmd-ripple-effect btn-primary">Remover Mapa</a>
+									 		<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="modalRemoverMapa({{grupo.idgrupo}})">Remover Mapa</a>
 											<a role="button" class="btn pmd-ripple-effect btn-primary">Banidos</a>
 											<a role="button" class="btn pmd-ripple-effect btn-primary">Mudar Cor</a>
 					         	</div>

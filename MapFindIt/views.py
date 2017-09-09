@@ -104,6 +104,11 @@ def getDadosMenu(request):
     for grupo in grupoUsuario:
         todosGrupos.append(grupo)
     return [usuarioFull, todosAmigos, todosGrupos, countPendentes]
+def entrarGrupo(request):
+    grupoFull=get_object_or_404(Grupo, idgrupo=request.GET.get('idgrupo'))
+    usuarioFull=get_object_or_404(Usuario, idusuario=request.GET.get('idusuario'))
+    Membrosgrupo.objects.create(idgrupo=grupoFull, idusuario=usuarioFull, ban=False, admim=False)
+    return JsonResponse({'success': True})
 def getMembrosGrupo(request):
     idGrupo= request.GET.get('idgrupo')
     grupoFull = get_object_or_404(Grupo, idgrupo=idGrupo)
@@ -112,6 +117,22 @@ def getMembrosGrupo(request):
     for membro in queryset:
         todosMenbros.append(membro.idusuario)
     return JsonResponse({'membros': serializers.serialize("json", todosMenbros)})
+def publicarGrupo(request):
+    #pega os dado do request
+    idmapa= request.GET.get('id')
+    #se o mapa ja existir retorna falso
+    if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
+        return JsonResponse({'sucesso': False})
+    idgrupo= request.GET.get('idgrupo')
+    grupoFull= Grupo.objects.get(pk=idgrupo)
+    mapaFull= Mapa.objects.get(pk=idmapa)
+    usuarioFull= Usuario.objects.get(pk=mapaFull.idusuario.idusuario)
+    #formata data e hora
+    now = datetime.datetime.now().strftime('%H:%M:%S')
+    today = datetime.date.today()
+    #cria postagem
+    Postagemgrupo.objects.create(idgrupo=grupoFull, idmapa=mapaFull, idusuario=mapaFull.idusuario, horapostagem=now, datapostagem=today)
+    return JsonResponse({'sucesso': True})
 #função para renderizar o template da pagina de grupo
 def grupo(request, idgrupo):
         member = False
@@ -163,25 +184,9 @@ def grupo(request, idgrupo):
         grupoUsuario=Grupo.objects.filter(idusuario=request.session.get('usuarioLogado'))
         for grupo in grupoUsuario:
             todosGrupos.append(grupo)
-        #obtem a cor do grupo
         return render(request, 'MapFindIt/grupo.html', {'usuario': usuarioFull, 'grupo': grupoFull, 'member':member, 'admim':admim, 'ban':ban,  'todosAmigos': todosAmigos, 'grupos': todosGrupos,'r':grupoFull.codcor.r,'g':grupoFull.codcor.g,'b':grupoFull.codcor.b, 'solicitacoesPendentes': countPendentes})
-#publicar mapa em um grupo
-def publicarGrupo(request):
-    #pega os dado do request
-    idmapa= request.GET.get('id')
-    #se o mapa ja existir retorna falso
-    if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
-        return JsonResponse({'sucesso': False})
-    idgrupo= request.GET.get('idgrupo')
-    grupoFull= Grupo.objects.get(pk=idgrupo)
-    mapaFull= Mapa.objects.get(pk=idmapa)
-    usuarioFull= Usuario.objects.get(pk=mapaFull.idusuario.idusuario)
-    #formata data e hora
-    now = datetime.datetime.now().strftime('%H:%M:%S')
-    today = datetime.date.today()
-    #cria postagem
-    Postagemgrupo.objects.create(idgrupo=grupoFull, idmapa=mapaFull, idusuario=mapaFull.idusuario, horapostagem=now, datapostagem=today)
-    return JsonResponse({'sucesso': True})
+
+
 def criarGrupo(request):
 
     nomeGrupo= request.GET.get('nome')
@@ -198,6 +203,14 @@ def criarGrupo(request):
     else:
         grupo = Grupo.objects.create(nomegrupo=nomeGrupo, descgrupo=desc, idusuario=usuario, privado=False, codcor=cor)
     return JsonResponse({'sucesso': True})
+def removerMapasGrupo(request):
+    #pega os dado do request
+    idmapa= request.GET.get('id')
+    #se o mapa não existir retorna falso
+    if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
+        Postagemgrupo.objects.filter(idmapa=idmapa).filter(idgrupo=request.GET.get('idgrupo')).delete()
+        return JsonResponse({'sucesso': True})
+    return JsonResponse({'sucesso': False})
 def mapasPublicar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
@@ -211,7 +224,19 @@ def mapasPublicar(request):
         mapas[index][1]=mapa.titulomapa
         mapas[index][2]=mapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
-
+def mapasRemover(request):
+    #Obtem texto de pesquisa
+    pesquisa = request.GET.get('pesquisa')
+    #Busca mapas pelo título
+    result = Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo')).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo'))
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
+        mapas[index][0]=mapa.idmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
+    return JsonResponse({'mapas': json.dumps(mapas)})
 def perfil(request, idusuario):
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
         #Pega o usuario logado
