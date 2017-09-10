@@ -66,7 +66,7 @@ function modalGrupos(){
                 </div>
                 <div class="col-md-8">
                   <label class="radio-inline"><input type="radio" name="Privacidade" value="1">Privado</label>
-                  <label class="radio-inline"><input type="radio" name="Privacidade" value="0">Púlico</label>
+                  <label class="radio-inline"><input type="radio" name="Privacidade" value="0" checked>Púlico</label>
                 </div>
               </div>
 						</div>
