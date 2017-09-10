@@ -228,11 +228,12 @@ def mapasRemover(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
     #Busca mapas pelo título
-    result = Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo')).order_by('valaprovados', 'valvisualizacoes')
-    result = result | Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo'))
-    result = result.order_by('valaprovados', 'valvisualizacoes')
-    mapas = [[0 for i in range(3)] for j in range(result.count())]
-    for index, mapa in enumerate(result):
+    result = Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo'))
+    maps = get_object_or_404(idmapa=result.first().idmapa)
+    for post in result:
+        maps = maps | Mapas.objects.filter(idmapa=post.idmapa)
+    mapas = [[0 for i in range(3)] for j in range(maps.count())]
+    for index, mapa in enumerate(maps):
         mapas[index][0]=mapa.idmapa
         mapas[index][1]=mapa.titulomapa
         mapas[index][2]=mapa.descmapa
