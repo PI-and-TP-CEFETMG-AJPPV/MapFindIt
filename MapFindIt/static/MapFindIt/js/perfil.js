@@ -14,6 +14,11 @@ function solicitacaoAmizade(){
 		});
 }
 
+//Coloca a mascara na data de nascimento
+$('document').ready(function(){
+	$("#dataNascimento").mask("99/99/9999");
+});
+
 //Variaveis para guardar os erros
 var erroData;
 var erroSenhaConf;
