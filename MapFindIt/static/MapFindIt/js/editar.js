@@ -757,7 +757,7 @@ function finalizarRota(){
 function inserirRota(e){
   let coord=e.latLng;
   if(arrayPontoRota.length==0){
-    $('#botoesContainer').append(`<br>
+    $('#botoesContainer').append(`<br><br><br><br>
       &nbsp;&nbsp;&nbsp;<label for="#corRota">Cor:&nbsp;&nbsp;</label><input type="color" id="corRota"/><br><br>
       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarRota();">Concluir Rota</button><br><br>
       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Rota</button>
@@ -1025,7 +1025,7 @@ var areaTemp;
 function inserirArea(e){
    let coord=e.latLng;
    if(arrayPontosArea.length==0){
-     $('#botoesContainer').append(`<br>
+     $('#botoesContainer').append(`<br><br><br><br>
        &nbsp;&nbsp;&nbsp;<label for="#corArea">Cor:&nbsp;&nbsp;</label><input type="color" id="corArea"/><br><br>
        &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarArea();">Concluir Área</button><br><br>
        &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Área</button>
