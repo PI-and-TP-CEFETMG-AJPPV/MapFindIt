@@ -18,6 +18,9 @@
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
 </head>
 <body>
 	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
@@ -117,6 +120,7 @@
 						{% endif %}
 						{% endfor %}
 					</div>
+
 				</div>
 				<div class="modal-footer">
 				</div>

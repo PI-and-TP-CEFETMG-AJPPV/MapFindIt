@@ -392,7 +392,6 @@ function selectIcone(id){
                  });
              });
              $('#modal-icone').modal('show');
-
           }
       }
     });
