@@ -239,6 +239,8 @@ def mapasRemover(request):
         mapas[index][2]=mapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
 def perfil(request, idusuario):
+    if not request.session.__contains__('usuarioLogado'):
+        return render(request, 'MapFindIt/loga.html', {})
     if request.method=="POST" and request.POST.__contains__('primNome'): #Usuario alterou um dos dados de cadastro
         #Pega o usuario logado
         usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
@@ -252,8 +254,8 @@ def perfil(request, idusuario):
         #Usando a variavel idusuario, indicada pela url do perfil, pega o usuario dono do perfil
         usuario = get_object_or_404(Usuario, idusuario=idusuario)
         #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-        amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-        amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+        amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+        amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
         resultado=getDadosMenu(request)
         return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
     else:
@@ -266,8 +268,8 @@ def perfil(request, idusuario):
           #Obtem o dono do perfil
           usuario = get_object_or_404(Usuario, idusuario=idusuario)
           #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-          amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-          amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+          amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+          amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
           resultado=getDadosMenu(request)
           return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
       else:
@@ -280,8 +282,8 @@ def perfil(request, idusuario):
               #Obtem o dono do perfil
               usuario = get_object_or_404(Usuario, idusuario=idusuario)
               #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-              amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-              amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+              amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+              amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
               resultado=getDadosMenu(request)
               return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
           else:
@@ -303,8 +305,8 @@ def perfil(request, idusuario):
                   #Obtem o dono do perfil
                   usuario = get_object_or_404(Usuario, idusuario=idusuario)
                   #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-                  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-                  amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+                  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+                  amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                   resultado=getDadosMenu(request)
                   return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
               else: #Request padrão da pagina
@@ -313,8 +315,8 @@ def perfil(request, idusuario):
                   #Obtem o usuario logado
                   usuarioFull=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado'))
                   #Verifica se o usuario logado e o dono do perfil sao amigos, para enviar à página
-                  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-                  amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+                  amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+                  amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                   resultado=getDadosMenu(request)
                   return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
 
@@ -839,15 +841,22 @@ def adicionarTema(request):
     return JsonResponse(data)
 
 def editarMapa(request, idmapa):
-    #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
-    primeira=False
-    if request.session.__contains__('primeira') and request.session['primeira']=='1':
-        primeira=True
-        request.session['primeira']=None
+    if not request.session.__contains__('usuarioLogado'):
+        return render(request, 'MapFindIt/loga.html', {})
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
-    resultado=getDadosMenu(request)
-    return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'prim':primeira})
-
+    amigos=Amizade.objects.filter(idusuario1=mapa.idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+    amigos=amigos or Amizade.objects.filter(idusuario2=mapa.idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+                  
+    if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos) or (mapa.idtvisibilidade=='U'):
+        #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
+        primeira=False
+        if request.session.__contains__('primeira') and request.session['primeira']=='1':
+            primeira=True
+            request.session['primeira']=None
+        resultado=getDadosMenu(request)
+        return render(request, 'MapFindIt/editar.html', {'mapa': mapa, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2], 'prim':primeira})
+    else:
+        return HttpResponse('Unauthorized', status=401)
 def carregarMapa(request):
     #Pega o ID do mapa
     id = request.GET.get('id', None)
@@ -1163,8 +1172,8 @@ def exibirMapa(request, idmapa):
         if mapa.idtvisibilidade=='A':
             if request.session.__contains__('usuarioLogado'):
                 idusuario=mapa.idusuario
-                amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).exists()
-                amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).exists()
+                amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
+                amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 print(amigos)
                 if amigos:
                     return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})

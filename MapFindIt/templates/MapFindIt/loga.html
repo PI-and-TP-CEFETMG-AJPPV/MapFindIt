@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+{% load static %}
+{% static "" as baseUrl %}
+<html lang="pt-br">
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+	<meta http-equiv="Pragma" content="no-cache" />
+	<meta http-equiv="Expires" content="0" />
+	<title>MapFindIt</title>
+	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/home.css" %}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
+</head>
+<body>
+	<div class="container-fluid" style="position: relative;">
+		<div class="row">
+            <div class="col-md-10 col-md-offset-1" style="color: black; background: white; position: absolute; top: 50%; right: 50%; transform: translate(50%, 50%);">
+                <h3>Realize o Login para utilizar todas as funções do sistema</h3>
+                <br>
+                <h4><a style="text-decoration: none; color: black;" href="/">Retornar à página principal</a></h4>        
+            </div>
+        </div>
+    </div>
+
+	<script src="{% static "MapFindIt/js/jquery.min.js" %}"></script>
+	<script src="{% static "MapFindIt/js/bootstrap.min.js" %}"></script>
+	<script src="{% static "MapFindIt/js/home.js" %}"></script>
+</body>
+</html>

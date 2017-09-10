@@ -9,6 +9,13 @@ function solicitacaoAmizade(){
 		      },
 		      dataType: 'json',
 		      success: function (data) {
+            $('#solicitarAmizade').parent().html(`
+            <div class="alert alert-success" role="alert">
+              Solicitação de Amizade enviada
+            </div>
+            `)
+            $('#solicitarAmizade').hide();
+
 		      }
 		  });
 		});

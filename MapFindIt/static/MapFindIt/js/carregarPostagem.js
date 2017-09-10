@@ -457,6 +457,7 @@ function prepararPostagem(div, data, i) {
 	if ($('#amigo' + mapa.idusuario).length) {
 		amigos = true;
 	}
+	btnBloquearComentarios = '';
 	//HTML do mapa
 	if (idUsuarioLogado == postagem.idusuario) {
 		btnBloquearComentarios = '<p><a id=bloq' + pos.pk + ' class="btn btn-default" title="' +
