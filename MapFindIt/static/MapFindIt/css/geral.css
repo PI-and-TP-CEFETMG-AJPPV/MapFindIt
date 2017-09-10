@@ -14,7 +14,9 @@
   padding:1vh 2vw;
   text-decoration:none;
 }
-
+body {
+  background-color: #4388CC;
+}
 a:link
 {
  text-decoration:none;
