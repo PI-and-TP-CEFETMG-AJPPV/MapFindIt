@@ -399,8 +399,57 @@ function selectIcone(id){
     });
 }
 
-function editarIcone(id){
-
+function ModalEditarIcone(id){
+	$.ajax({
+      url: '/ajax/modalEditarIcone/',
+      data: {
+        'id': id
+      },
+      dataType: 'json',
+      success: function (data) {
+				   $('#modal-icone').modal('hide');
+					 $('#modalDinamico').empty();
+				 	let conteudo=`<div class="modal fade" id="modal-criar-icone" aria-hidden="true">
+				 			<div class="vertical-alignment-helper">
+				 				<div class="modal-dialog vertical-align-center">
+				 					<div class="modal-content">
+				 						<div class="modal-header">
+				 							<button type="button" class="close" onclick='$("#modal-criar-icone").modal("hide");' aria-hidden="true">
+				 								×
+				 							</button>
+				 							<h4 class="modal-title">
+				 								Editar o Icone
+				 						</h4>
+				 					</div>
+				 					<div class="modal-body">
+				 						<form action="javascript:criarIcone()" id="criarIconeForm" name="criarIconeForm">
+				 							<div class="form-group">
+				 								<input required type="text" id="legendaIcone" class="form-control" placeholder="${data.legendaIcone}" value="${data.legendaIcone}">
+				 							</div>
+				 							<div class="input-group">
+				 								<span class="input-group-btn center">
+				 									<span class="btn btn-default btn-file">
+				 										Escolher Icone... <input accept="image/*" type="file" id="imgInpIcone" value="${data.img}" placeholder="${data.img}">
+				 									</span>
+				 								</span>
+				 							</div>
+				 							<br>
+				 							<img id=${data.img}/>
+				 						</form>
+				 						<div class="modal-footer">
+				 							<button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Icone </button>
+				 							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
+				 						</div>
+				 					</div>
+				 				</div>
+				 			</div>
+				 			</div>
+				 		</div>`
+				 		$('#modalDinamico').html(conteudo);
+				 		$('#modal-criar-icone').modal('show');
+						deletarIcone(id);
+      }
+   });
 }
 function modalIcone(){
 	$('#modalDinamico').empty();
@@ -451,6 +500,7 @@ function selIcone(id){
       },
       dataType: 'json',
       success: function (data) {
+
          if(data.icones){
              $('#modalDinamico').empty();
              let conteudo=`
@@ -504,7 +554,7 @@ function selIcone(id){
                  //Salva o id do icone (id do elemento retirando-se a palavra icone)
                  iconeEscolhido=$(this).attr('id').substring(5);
 								 $('#btnEditar').on('click', function(){
-									 editarIcone(iconeEscolhido);
+									 ModalEditarIcone(iconeEscolhido);
 								 });
              });
              $('#filtrarIcones').keyup(function(event) {

@@ -37,6 +37,7 @@ urlpatterns = [
     url(r'^editarMapa/(?P<idmapa>[0-9]+)/$', views.editarMapa, name="editar"),
     url(r'^ajax/carregarMapa/$', views.carregarMapa),
     url(r'^ajax/criarPonto/$', views.criarPonto),
+    url(r'^ajax/modalEditarIcone/$', views.editarIcone),
     url(r'^ajax/criarImagemPonto/(?P<idPonto>[0-9]+)/$', views.criarImagemPonto),
     url(r'^ajax/getTodosIcones/$', views.getTodosIcones),
     url(r'^ajax/salvarIcone/$', views.salvarIcone),

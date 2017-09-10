@@ -846,7 +846,7 @@ def editarMapa(request, idmapa):
     mapa = get_object_or_404(Mapa, idmapa=idmapa)
     amigos=Amizade.objects.filter(idusuario1=mapa.idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
     amigos=amigos or Amizade.objects.filter(idusuario2=mapa.idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
-                  
+
     if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos) or (mapa.idtvisibilidade=='U'):
         #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
         primeira=False
@@ -951,9 +951,8 @@ def getIcone(request):
     queryset=Iconespontos.objects.get(pk=icone)
     return JsonResponse({'icones': serializers.serialize("json", queryset)})
 def editarIcone(request):
-    criarIcone(request)
-    deletarIcone(request)
-    return JsonResponse({'sucesso': 1})
+    iconeFull=get_object_or_404(Iconespontos, codicone=request.GET.get('id'))
+    return JsonResponse({'sucesso': 1, 'img': json.dumps(str(iconeFull.imgicone)), 'legendaIcone': iconeFull.nomeicone})
 def criarIcone(request):
     idUsuario=int(request.POST.get('usuario', None))
     nome=request.POST.get('nome', None)
