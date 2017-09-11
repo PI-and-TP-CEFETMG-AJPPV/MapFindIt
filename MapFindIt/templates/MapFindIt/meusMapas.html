@@ -27,17 +27,31 @@
 	<div class="container-fluid">
 			<br>
 			<div class="row">
-                <div class="col-md-10 col-md-offset-1">
+        <div class="col-md-10 col-md-offset-1">
 					<div class="list-group">
 					{% for mapa in mapas %}
 						<a href="/exibirMapa/{{mapa.idmapa}}" class="list-group-item">
 							<h2 id={{mapa.idmapa}}>{{mapa.titulomapa}}</h2>
-							<label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>      
+							<label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>
 						</a>
 					{% endfor %}
 					</div>
 				</div>
-            </div>
+				<div class="menu pmd-floating-action"  role="navigation">
+					<a href="" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+					</a>
+					<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+					</a>
+					<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#">
+						<span class="pmd-floating-hidden">Primary</span>
+						<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
+					</a>
+				</div>
+      </div>
 	</div>
 
 

@@ -18,6 +18,9 @@
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/perfil.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
 </head>
 <body>
 	{% include "./menu.html" with user=usuario grupos=grupos amigos=todosAmigos %}
@@ -25,11 +28,7 @@
 		<div class="col-md-8 col-md-offset-2 white" >
 			<br>
 			<div class="center">
-				{% if usuario.foto %}
-				<img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png"></img>
-				{% else %}
-				<img id="img" class="img-responsive" style="width:20%;display:block;margin:auto;" src="{% static "MapFindIt/img/default_user.png" %}"></img>
-				{% endif %}
+				<img id="img" style="display:block; margin:auto;width:300px;height:300px" class="img-responsive" src="{{baseUrl}}MapFindIt/ImagemUsers/{{idPag.idusuario}}.png" onerror="this.src='{{baseUrl}}MapFindIt/img/default_user.png';"></img>
 				<label for="imagemUser"><h2>{{idPag.primnomeusuario}} {{idPag.ultnomeusuario}}</h2></label>
 			</div>
 		</div>
@@ -52,20 +51,18 @@
 	<br>
 	{% if not amigos and usuario.idusuario != idPag.idusuario %}
 	<div class="row" style="display: flex; justify-content: space-between">
-		<button type="button" class="btn btn-default">Pesquisar</button>
 		<button type="button" id="solicitarAmizade" class="btn btn-default">Solicitar Amizade</button>
 	</div>
 	<br>
 	{% endif %}
 	{% if amigos and usuario.idusuario != idPag.idusuario %}
 	<div class="row" style="display: flex; justify-content: center";>
-		<button type="button" class="btn btn-default">Pesquisar</button>
+		
 	</div>
 	<br>
 	{% endif %}
 	{% if usuario.idusuario == idPag.idusuario %}
 	<div class="row" style="display: flex; justify-content: space-between">
-		<button type="button" class="btn btn-default">Pesquisar</button>
 		{% ifequal solicitacoesPendentes 0 %}
 		<button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">Solicitações de Amizade</button>
 		{% else %}
@@ -117,6 +114,7 @@
 						{% endif %}
 						{% endfor %}
 					</div>
+
 				</div>
 				<div class="modal-footer">
 				</div>
@@ -226,7 +224,7 @@
 				</div>
 			</div>
 		</div>
-		<div class="modal fade" style="top:-5%;" id="modal-enviarImagem" aria-hidden="true">
+		<div class="modal fade" style="top:5%;" id="modal-enviarImagem" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">

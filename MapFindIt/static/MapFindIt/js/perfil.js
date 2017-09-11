@@ -9,10 +9,22 @@ function solicitacaoAmizade(){
 		      },
 		      dataType: 'json',
 		      success: function (data) {
+            $('#solicitarAmizade').parent().html(`
+            <div class="alert alert-success" role="alert">
+              Solicitação de Amizade enviada
+            </div>
+            `)
+            $('#solicitarAmizade').hide();
+
 		      }
 		  });
 		});
 }
+
+//Coloca a mascara na data de nascimento
+$('document').ready(function(){
+	$("#dataNascimento").mask("99/99/9999");
+});
 
 //Variaveis para guardar os erros
 var erroData;
