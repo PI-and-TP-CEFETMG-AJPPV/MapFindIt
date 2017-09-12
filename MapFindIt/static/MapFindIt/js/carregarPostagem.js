@@ -457,13 +457,7 @@ function prepararPostagem(div, data, i) {
 	if ($('#amigo' + mapa.idusuario).length) {
 		amigos = true;
 	}
-	btnBloquearComentarios = '';
 	//HTML do mapa
-	if (idUsuarioLogado == postagem.idusuario) {
-		btnBloquearComentarios = '<p><a id=bloq' + pos.pk + ' class="btn btn-default" title="' +
-			(postagem.censurada ? 'Desbloquear' : 'Bloquear') + ' comentários">' +
-			(postagem.censurada ? '<i class="fa fa-comment-o" aria-hidden="true"></i>' : '<i class="fa fa-comments" aria-hidden="true"></i>') + '</i></a></p>';
-	}
 	div.append(`
       <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${i}; padding-bottom:20px;">
         <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block; box-shadow: 10px 10px 5px grey;'>
@@ -472,7 +466,7 @@ function prepararPostagem(div, data, i) {
 				 <div style="display: flex; justify-content: space-between; width:100%">
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
 					<div class="editarPostagem" style="display: flex; ">
-						${btnBloquearComentarios}
+						${`<p><a id=bloq${pos.pk} class="btn btn-default" title="${postagem.censurada ? 'Desbloquear' : 'Bloquear'} comentários"> <i class="fa fa-comment${postagem.censurada ? '-o' : 's'}" aria-hidden="true"></i></a></p>`}
 						<p><a id=comp${JSON.parse(data.mapa)[0].pk} class="btn btn-default" onclick="compartilhar(${JSON.parse(data.mapa)[0].pk})" title="Compartilhar"><i class="fa fa-share-alt" aria-hidden="true"></i></a></p>
 						${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
 							'<p><a class="btn btn-default" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/" title="Editar"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></p>':""
