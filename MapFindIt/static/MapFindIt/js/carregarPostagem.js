@@ -474,11 +474,11 @@ function prepararPostagem(div, data, i) {
 					<div class="editarPostagem" style="display: flex; ">
 						${`<p><a id=bloq${pos.pk} class="btn btn-default" title="${postagem.censurada ? 'Desbloquear' : 'Bloquear'} comentários"> <i class="fa fa-comment${postagem.censurada ? '-o' : 's'}" aria-hidden="true"></i></a></p>`}
 						<div class="dropdown">
-							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
+							<button id=comp${m.pk} class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
 							<ul class="dropdown-menu">
-								<li><a class="btn" id=comp${m.pk} onclick="compartilhar(${m.pk})" style="text-transform: none;" title="">MapFindIt</a></li>
+								<li><a class="btn" onclick="compartilhar(${m.pk})" style="text-transform: none;" title="">MapFindIt</a></li>
 								<li><a class="btn" onclick="popup('http://www.facebook.com/sharer.php?u=${endereco+'/exibirMapa/'+m.pk}',400,300);" style="text-transform: none;" title="">Facebook</a></li>
-								<li><a class="btn" onclick="popup('http://twitter.com/home?status=${endereco+'/exibirMapa/'+m.pk}',800,420);" style="text-transform: none;" title="">Twitter</a></li>
+								<li><a class="btn" onclick="popup('http://twitter.com/intent/tweet?text=${encodeURI('Mapa: ')}&url=${encodeURIComponent(endereco+'/exibirMapa/'+m.pk)}',600,285);" style="text-transform: none;" title="">Twitter</a></li>
 							</ul>
 						</div>
 						${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
@@ -692,11 +692,10 @@ function prepararPostagemVis(div, data, i) {
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
 				<div class="editarPostagem" style="display: flex; ">
 				<div class="dropdown">
-					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
+					<button id=comp${m.pk} class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
 					<ul class="dropdown-menu">
-						<li><a class="btn" id=comp${m.pk} onclick="compartilhar(${m.pk})" style="text-transform: none;" title="">MapFindIt</a></li>
 						<li><a class="btn" onclick="popup('http://www.facebook.com/sharer.php?u=${endereco+'/exibirMapa/'+m.pk}',400,300);" style="text-transform: none;" title="">Facebook</a></li>
-						<li><a class="btn" onclick="popup('http://twitter.com/home?status=${endereco+'/exibirMapa/'+m.pk}',800,420);" style="text-transform: none;" title="">Twitter</a></li>
+						<li><a class="btn" onclick="popup('http://twitter.com/intent/tweet?text=${encodeURI('Mapa: ')}&url=${encodeURIComponent(endereco+'/exibirMapa/'+m.pk)}',600,285);" style="text-transform: none;" title="">Twitter</a></li>
 					</ul>
 				</div>
 			</div>
@@ -826,7 +825,7 @@ function avaliar(idmapa, aval, id) {
 }
 
 function popup(url, width, height) {
-	let newwindow = window.open(url, 'Compartilhamento', 'width='+width+',height='+height+',titlebar=0');
+	let newwindow = window.open(url, 'Compartilhamento', 'width=' + width + ',height=' + height + ',titlebar=0');
 	if (window.focus) {
 		newwindow.focus();
 	}
@@ -842,7 +841,15 @@ function compartilhar(id) {
 		dataType: 'json',
 		success: function (data) {
 			if (JSON.parse(data.sucesso) == '1') {
-				
+				let anchor = $('#comp' + id);
+				anchor.removeClass('btn-default');
+				anchor.addClass('btn-success');
+				anchor.html('<i class="fa fa-check" aria-hidden="true"></i>');
+				window.setTimeout(function () {
+					anchor.removeClass('btn-success');
+					anchor.addClass('btn-default');
+					anchor.html('<i class="fa fa-share-alt" aria-hidden="true"></i>');
+				}, 1500);
 			}
 		}
 	});
