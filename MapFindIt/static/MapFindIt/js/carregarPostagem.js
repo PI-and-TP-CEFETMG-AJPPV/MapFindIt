@@ -7,6 +7,9 @@
 	Para que se tenha o diretorio dos caminhos estáticos e o id do usuário que está logado
 */
 
+//Endereço da página
+let endereco = window.location.origin;
+
 //Quantidade de grupos de 10 mapas carregados
 var gruposCarregados = 0;
 
@@ -208,7 +211,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		});
 	});
 	//Se for um mapa expandido
-	if (mapId.substring(3, 6)=="Exp") {
+	if (mapId.substring(3, 6) == "Exp") {
 		var legend = document.createElement('div');
 		$(legend).html("<h4>Legenda</h4>");
 		$(legend).addClass("legend");
@@ -246,17 +249,17 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
 			</div>
 			`;
-		div.addEventListener('click', function() {
-			mapa.coordyinicial=map.getCenter().lat();
-			mapa.coordxinicial=map.getCenter().lng();
+		div.addEventListener('click', function () {
+			mapa.coordyinicial = map.getCenter().lat();
+			mapa.coordxinicial = map.getCenter().lng();
 			mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
-        });
+		});
 		map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 	}
 
 }
 
-function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId){
+function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId) {
 	let inicio = {
 		lat: mapa.coordyinicial,
 		lng: mapa.coordxinicial
@@ -269,7 +272,10 @@ function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, m
 	var heatMapData = [];
 	//Para cada ponto do mapa
 	pontos.forEach(function (item, index) {
-		heatMapData.push({location: new google.maps.LatLng(item.fields.coordy, item.fields.coordx), weight: 1});
+		heatMapData.push({
+			location: new google.maps.LatLng(item.fields.coordy, item.fields.coordx),
+			weight: 1
+		});
 	});
 	var heatmap = new google.maps.visualization.HeatmapLayer({
 		data: heatMapData
@@ -282,11 +288,11 @@ function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, m
 			<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
 		</div>
 		`;
-	div.addEventListener('click', function() {
-		mapa.coordyinicial=map.getCenter().lat();
-		mapa.coordxinicial=map.getCenter().lng();
+	div.addEventListener('click', function () {
+		mapa.coordyinicial = map.getCenter().lat();
+		mapa.coordxinicial = map.getCenter().lng();
 		setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
-    });
+	});
 	map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 }
 
@@ -467,9 +473,16 @@ function prepararPostagem(div, data, i) {
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
 					<div class="editarPostagem" style="display: flex; ">
 						${`<p><a id=bloq${pos.pk} class="btn btn-default" title="${postagem.censurada ? 'Desbloquear' : 'Bloquear'} comentários"> <i class="fa fa-comment${postagem.censurada ? '-o' : 's'}" aria-hidden="true"></i></a></p>`}
-						<p><a id=comp${JSON.parse(data.mapa)[0].pk} class="btn btn-default" onclick="compartilhar(${JSON.parse(data.mapa)[0].pk})" title="Compartilhar"><i class="fa fa-share-alt" aria-hidden="true"></i></a></p>
+						<div class="dropdown">
+							<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
+							<ul class="dropdown-menu">
+								<li><a class="btn" id=comp${m.pk} onclick="compartilhar(${m.pk})" style="text-transform: none;" title="">MapFindIt</a></li>
+								<li><a class="btn" onclick="popup('http://www.facebook.com/sharer.php?u=${endereco+'/exibirMapa/'+m.pk}',400,300);" style="text-transform: none;" title="">Facebook</a></li>
+								<li><a class="btn" onclick="popup('http://twitter.com/home?status=${endereco+'/exibirMapa/'+m.pk}',800,420);" style="text-transform: none;" title="">Twitter</a></li>
+							</ul>
+						</div>
 						${((idUsuarioLogado==mapa.idusuario) || (mapa.idtvisibilidade=='U') || (mapa.idtvisibilidade=='A' && amigos==true))?
-							'<p><a class="btn btn-default" href="/editarMapa/'+JSON.parse(data.mapa)[0].pk+'/" title="Editar"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></p>':""
+							'<p><a class="btn btn-default" href="/editarMapa/'+m.pk+'/" title="Editar"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a></p>':""
 						}
 					</div>
 				</div>
@@ -514,14 +527,18 @@ function prepararPostagem(div, data, i) {
        </div>
      </div>
 		 <br><br><br>`);
-		 //Cria evento para a descrição do mapa
-		$('.divPostagem').tooltip({ track: true});
-		$('.tituloMapa').on('click', function(){
-			$('.divPostagem').tooltip('disable');
+	//Cria evento para a descrição do mapa
+	$('.divPostagem').tooltip({
+		track: true
+	});
+	$('.tituloMapa').on('click', function () {
+		$('.divPostagem').tooltip('disable');
+	});
+	$('.close').on('click', function () {
+		$('.divPostagem').tooltip({
+			track: true
 		});
-		$('.close').on('click', function(){
-				$('.divPostagem').tooltip({ track: true});
-		});
+	});
 	//Se não existirem comentários cria aviso de que não existem comentários
 	if (postagem.censurada) {
 		$('#comentarios' + (10 * (gruposCarregados - 1) + i)).append(`
@@ -613,7 +630,7 @@ function prepararPostagem(div, data, i) {
 		$.ajax({
 			url: '/ajax/adicionarView/',
 			data: {
-				'mapa': JSON.parse(data.mapa)[0].pk,
+				'mapa': m.pk,
 				'usuario': idUsuarioLogado
 			},
 			dataType: 'json',
@@ -642,8 +659,8 @@ function prepararPostagem(div, data, i) {
 
 function prepararPostagemVis(div, data, i) {
 	//Carrega o objeto do mapa
-	let mapa = JSON.parse(data.mapa)[0];
-	mapa = mapa.fields;
+	let m = JSON.parse(data.mapa)[0];
+	let mapa = m.fields;
 	//Carrega o objeto da postagem
 	let postagem = JSON.parse(data.postagem)[0];
 	postagem = postagem.fields;
@@ -673,7 +690,17 @@ function prepararPostagemVis(div, data, i) {
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
 				 <div style="display: flex; justify-content: space-between; width:100%">
 					<p class="infoPostagem"><small>Postado em: ${formatarData(postagem.datapostagem)} às ${postagem.horapostagem}</small></p>
+				<div class="editarPostagem" style="display: flex; ">
+				<div class="dropdown">
+					<button class="btn btn-default dropdown-toggle" type="button" data-toggle="dropdown"><i class="fa fa-share-alt" aria-hidden="true"></i></button>
+					<ul class="dropdown-menu">
+						<li><a class="btn" id=comp${m.pk} onclick="compartilhar(${m.pk})" style="text-transform: none;" title="">MapFindIt</a></li>
+						<li><a class="btn" onclick="popup('http://www.facebook.com/sharer.php?u=${endereco+'/exibirMapa/'+m.pk}',400,300);" style="text-transform: none;" title="">Facebook</a></li>
+						<li><a class="btn" onclick="popup('http://twitter.com/home?status=${endereco+'/exibirMapa/'+m.pk}',800,420);" style="text-transform: none;" title="">Twitter</a></li>
+					</ul>
 				</div>
+			</div>
+			</div>
 				 <div class='centerDiv'>
            <div class="mapa" name='map${10*(gruposCarregados-1)+i}' id='map${10*(gruposCarregados-1)+i}'></div>
          </div>
@@ -709,21 +736,23 @@ function prepararPostagemVis(div, data, i) {
        </div>
      </div>
 		 <br><br><br>`);
-		  //Ao se abrir o mapa expandido seta o mapa
-		$("#titulo_mapa" + (10 * (gruposCarregados - 1) + i)).on("click", function () {
+	//Ao se abrir o mapa expandido seta o mapa
+	$("#titulo_mapa" + (10 * (gruposCarregados - 1) + i)).on("click", function () {
 
-			setTimeout(function () {
-				setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
-			}, 1000);
-		});
-		 //Cria evento para a descrição do mapa
-		$('.divPostagem').tooltip({ track: true});
-		$('.tituloMapa').on('click', function(){
-			$('.divPostagem').tooltip('disable');
-		});
-		$('.close').on('click', function(){
-				$('.divPostagem').tooltip('enable');
-		});
+		setTimeout(function () {
+			setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
+		}, 1000);
+	});
+	//Cria evento para a descrição do mapa
+	$('.divPostagem').tooltip({
+		track: true
+	});
+	$('.tituloMapa').on('click', function () {
+		$('.divPostagem').tooltip('disable');
+	});
+	$('.close').on('click', function () {
+		$('.divPostagem').tooltip('enable');
+	});
 	if (postagem.censurada) {
 		$('#comentarios' + (10 * (gruposCarregados - 1) + i)).append(`
 		<div class="row" id="comentariosDesativados${10*(gruposCarregados-1)+i}">
@@ -796,6 +825,13 @@ function avaliar(idmapa, aval, id) {
 	});
 }
 
+function popup(url, width, height) {
+	let newwindow = window.open(url, 'Compartilhamento', 'width='+width+',height='+height+',titlebar=0');
+	if (window.focus) {
+		newwindow.focus();
+	}
+}
+
 function compartilhar(id) {
 	$.ajax({
 		url: '/ajax/compartilhar/',
@@ -806,10 +842,7 @@ function compartilhar(id) {
 		dataType: 'json',
 		success: function (data) {
 			if (JSON.parse(data.sucesso) == '1') {
-				let anchor = $('#comp' + id);
-				anchor.removeClass('btn-default');
-				anchor.addClass('btn-success');
-				anchor.html('<i class="fa fa-check" aria-hidden="true"></i>');
+				
 			}
 		}
 	});
