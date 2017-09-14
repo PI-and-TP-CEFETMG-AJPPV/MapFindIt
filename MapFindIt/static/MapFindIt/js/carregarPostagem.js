@@ -99,9 +99,23 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
 		//Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
 		for (let x = 0; x < pontosRota.length; x++) {
-			let marker = new google.maps.Marker({
-				position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
-				map: map,
+			let cor;
+			//Algoritmo para detectar melhor cor da fonte
+			let a = 1 - ( 0.299 * item.fields.codcor[0] + 0.587 * item.fields.codcor[1] + 0.114 * item.fields.codcor[2])/255;
+			if (a < 0.5)
+			cor='black';
+			else
+			cor='white';
+					let marker = new google.maps.Marker({
+						position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
+			map: map,
+			label: {
+				text: (pontosRota[x].fields.seqponto+1).toString(),
+				fontWeight: 'bold',
+				fontSize: '12px',
+				fontFamily: '"Courier New", Courier,Monospace',
+				color: cor
+			},
 				icon: pinSymbol(pinColor)
 			});
 			let contentString =
@@ -290,29 +304,30 @@ function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, m
 	map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 }
 
+//Desenha o icone de marker
 function pinSymbol(color) {
-	//Retorna o desenho de um ponto de determinada cor
-	if (color == 'rgb(0,0,0)') {
-		//Se o ponto for preto o contorno é branco
-		return {
-			path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-			fillColor: color,
-			fillOpacity: 1,
-			strokeColor: '#FFF',
-			strokeWeight: 1,
-			scale: 1,
-		};
-	} else {
-		//Para outras cores o contorno é preto
-		return {
-			path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
-			fillColor: color,
-			fillOpacity: 1,
-			strokeColor: '#000',
-			strokeWeight: 2,
-			scale: 1,
-		};
-	}
+		//Retorna o desenho de um ponto de determinada cor
+		if(color=='#000' || color=='#000000' || color=='rgb(0,0,0)'){
+			//Se o ponto for preto o contorno é branco
+			return {
+	        path: google.maps.SymbolPath.CIRCLE,
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#FFF',
+	        strokeWeight: 1,
+	        scale: 10,
+	   };
+		}else{
+			//Para outras cores o contorno é preto
+			return {
+	        path: google.maps.SymbolPath.CIRCLE,
+	        fillColor: color,
+	        fillOpacity: 1,
+	        strokeColor: '#000',
+	        strokeWeight: 2,
+	        scale: 10,
+	   };
+		}
 }
 
 //Formata a data do input
