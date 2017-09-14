@@ -7,6 +7,7 @@ var marcadores=[];
 var poligonos=[];
 var rotasArr=[];
 var infoWindows=[];
+var infoWindowControl=[];
 
 //Desenha o icone de marker
 function pinSymbol(color) {
@@ -14,22 +15,22 @@ function pinSymbol(color) {
 		if(color=='#000' || color=='#000000' || color=='rgb(0,0,0)'){
 			//Se o ponto for preto o contorno é branco
 			return {
-	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        path: google.maps.SymbolPath.CIRCLE,
 	        fillColor: color,
 	        fillOpacity: 1,
 	        strokeColor: '#FFF',
 	        strokeWeight: 1,
-	        scale: 1,
+	        scale: 10,
 	   };
 		}else{
 			//Para outras cores o contorno é preto
 			return {
-	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        path: google.maps.SymbolPath.CIRCLE,
 	        fillColor: color,
 	        fillOpacity: 1,
 	        strokeColor: '#000',
 	        strokeWeight: 2,
-	        scale: 1,
+	        scale: 10,
 	   };
 		}
 }
@@ -1333,9 +1334,23 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
 			//Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
 			for(let x=0; x<pontosRota.length; x++){
+        let cor;
+        //Algoritmo para detectar melhor cor da fonte
+        let a = 1 - ( 0.299 * item.fields.codcor[0] + 0.587 * item.fields.codcor[1] + 0.114 * item.fields.codcor[2])/255;
+        if (a < 0.5)
+          cor='black';
+        else
+          cor='white';
 				let marker = new google.maps.Marker({
 					 position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
-					 map: map,
+           map: map,
+           label: {
+            text: (pontosRota[x].fields.seqponto+1).toString(),
+            fontWeight: 'bold',
+            fontSize: '12px',
+            fontFamily: '"Courier New", Courier,Monospace',
+            color: cor
+           },
 					 icon: pinSymbol(pinColor)
         });
 				let contentString=
@@ -1385,7 +1400,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
           rotasArr.push(directionsDisplay);
 			  }
       });
-		});
+    });
 		//Para cada uma das areas criadas
 		areas.forEach(function(item, index){
 			//Todos os pontos que compoe uma area
@@ -1393,7 +1408,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			//Array com as posicoes de todos os pontos
 			let coords=Array();
 			for(let x=0; x<pontosArea.length; x++){
-				coords.push({lat: pontosArea[x].fields.idponto[0], lng: pontosArea[x].fields.idponto[1]});
+				coords.push(new google.maps.LatLng(pontosArea[x].fields.idponto[0],pontosArea[x].fields.idponto[1]));
 			}
 			//Cria um poligono com a cor da area, e seus pontos
 			let areaPoligono = new google.maps.Polygon({
@@ -1406,6 +1421,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
       });
 			//Define o mapa do poligono
       areaPoligono.setMap(map);
+      //Define o z-index para as áreas maiores ficarem em segundo plano
+      areaPoligono.set('zIndex', 1+(100000/google.maps.geometry.spherical.computeArea(coords)));
 			let contentString=
 				`<div id="content">
 						<h2 id="firstHeading" class="firstHeading">${item.fields.nomarea}</h2>
@@ -1416,11 +1433,19 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		  //Cria a janela de informacao da area
 			let infowindow = new google.maps.InfoWindow({
 				 content: contentString
-			});
+      });
 			//Adiciona o evento de click à area para exibir a janela de informacao
 			google.maps.event.addListener(areaPoligono, 'click', function (event) {
-				infowindow.setPosition(event.latLng);
-				infowindow.open(map);
+        //Caso não tenha infowindow aberta
+        if(!infoWindowControl[index]){
+          infowindow.setPosition(event.latLng);
+          infowindow.open(map);
+          infoWindowControl[index]=true;
+        }
+      });
+      google.maps.event.addListener(infowindow, 'closeclick', function (event) {
+        //Ao se fechar uma infowindow
+        infoWindowControl[index]=false;
       });
       poligonos.push(areaPoligono);
 	  });
