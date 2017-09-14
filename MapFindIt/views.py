@@ -1179,3 +1179,31 @@ def exibirMapa(request, idmapa):
             return HttpResponse('Unauthorized', status=401)
         else:
             return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
+
+def deletarPonto(request):
+    id = request.POST.get('id')
+    ponto = get_object_or_404(Ponto, idponto=id)
+    ponto.delete()
+    return JsonResponse({'sucesso':1})
+
+def deletarArea(request):
+    id = request.POST.get('id')
+    area = get_object_or_404(Area, idarea=id)
+    areaPontos = Pontoarea.objects.filter(idarea=id)
+    for pontoarea in areaPontos:
+        ponto = pontoarea.idponto
+        ponto.delete()
+        pontoarea.delete()
+    area.delete()
+    return JsonResponse({'sucesso':1})
+
+def deletarRota(request):
+    id = request.POST.get('id')
+    rota = get_object_or_404(Rota, idrota=id)
+    rotaPontos = RotaPonto.objects.filter(idrota=id)
+    for pontorota in rotaPontos:
+        ponto = pontorota.idponto
+        ponto.delete()
+        pontorota.delete()
+    rota.delete()
+    return JsonResponse({'sucesso':1})

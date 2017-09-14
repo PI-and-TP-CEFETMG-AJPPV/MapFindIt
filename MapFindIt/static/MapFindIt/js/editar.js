@@ -47,26 +47,23 @@ function selecionar(idt){
    if(ferramentaSelec!=-1){
      let paiR, elemR;
      switch(ferramentaSelec){
-       case 0: paiR=$('#selecInserir');
-               elemR=$('#selecPonto');
+       case 0: elemR=$('#selecPonto');
                break;
-       case 1: paiR=$('#selecInserir');
-               elemR=$('#selecArea');
+       case 1: elemR=$('#selecArea');
                arrayPontosArea=[];
                if(areaTemp)
                   areaTemp.setMap(null);
                break;
-       case 2: paiR=$('#selecInserir');
-               elemR=$('#selecRota');
+       case 2: elemR=$('#selecRota');
                if(tempRota){
                  tempRota.setMap(null);
                  for(let i=0; i<tempMarker.length; i++){
                    tempMarker[i].setMap(null);
                  }
                }
+               arrayPontoRota=[];
                break;
      }
-     paiR.removeClass('selecionado');
      elemR.removeClass('selecionado');
      $('#botoesContainer').empty();
      map.setOptions({ draggableCursor : 'auto' });
@@ -74,22 +71,18 @@ function selecionar(idt){
    //Estiliza os elementos da ferramenta escolhida, caso ela não estivesse já selecionada
    if(idt!=ferramentaSelec){
      switch(idt){
-       case 0: pai=$('#selecInserir');
-               elem=$('#selecPonto');
+       case 0: elem=$('#selecPonto');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Ponto.png"), auto' });
                break;
-       case 1: pai=$('#selecInserir');
-               elem=$('#selecArea');
+       case 1: elem=$('#selecArea');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Area.png"), auto' });
                break;
-       case 2: pai=$('#selecInserir');
-               elem=$('#selecRota');
+       case 2: elem=$('#selecRota');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Rota.png"), auto' });
                break;
      }
-     pai.addClass('selecionado');
-     elem.addClass('selecionado');
      ferramentaSelec=idt;
+     elem.addClass('selecionado');
    }else{
      ferramentaSelec=-1;
    }
@@ -718,7 +711,7 @@ function gravaRota(){
         success: function (data) {
           $('#modal-rota').modal("hide");
           carregarMapa(map.getCenter());
-          selecionar('-1');
+          selecionar(-1);
         }
     });
   }else{
@@ -739,7 +732,7 @@ function gravaRota(){
         success: function (data) {
           $('#modal-rota').modal("hide");
           carregarMapa(map.getCenter());
-          selecionar('-1');
+          selecionar(-1);
         }
     });
   }
@@ -1214,7 +1207,7 @@ function initMap(){
    setInterval(function(){
       atualizarMapa(map.getCenter());
       console.log('atualizou');
-   }, 3000);
+   }, 5000);
 }
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId, inicio, reset){
@@ -1284,7 +1277,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		            		<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${item.pk}.png">
 		            		<p>${item.fields.descponto}</p>
                     <button class="btn btn-default" onClick="escolherIcone(${item.pk});">Escolher Icone</button>
-		            	</div>
+                    <button class="btn btn-default" onClick="deletarPonto(${item.pk});">Excluir</button>  
+                  </div>
 		            </div>`;
 				}else{
 					//Se o ponto não possui foto
@@ -1295,6 +1289,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		            		<p>${item.fields.descponto}</p>
                     <div class="centerDiv">
                       <button class="btn btn-default" onClick="escolherIcone(${item.pk});">Escolher Icone</button>
+                      <button class="btn btn-default" onClick="deletarPonto(${item.pk});">Excluir</button>
                     </div>
 		            	</div>
 		            </div>`;
@@ -1357,7 +1352,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 					`<div id="content">
 		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
 		          <div id="bodyContent">
-		             <p>${item.fields.descrota}</p>
+                 <p>${item.fields.descrota}</p>
+                 <button class="btn btn-default" onClick="deletarRota(${item.pk});">Excluir</button>
 		          </div>
 		       </div>`;
 		    let infowindow = new google.maps.InfoWindow({
@@ -1427,7 +1423,8 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				`<div id="content">
 						<h2 id="firstHeading" class="firstHeading">${item.fields.nomarea}</h2>
 						<div id="bodyContent">
-							 <p>${item.fields.descarea}</p>
+               <p>${item.fields.descarea}</p>
+               <button class="btn btn-default" onClick="deletarArea(${item.pk});">Excluir</button>
 						</div>
 				 </div>`;
 		  //Cria a janela de informacao da area
@@ -1449,6 +1446,51 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
       });
       poligonos.push(areaPoligono);
 	  });
+}
+
+function deletarPonto(id){
+    $.ajax({
+      url: '/ajax/deletarPonto/',
+      type: 'POST',
+      data: {
+          'id': id,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          carregarMapa({'lat': map.getCenter().lat(), 'lng': map.getCenter().lng()});
+        }
+    });
+}
+
+function deletarArea(id){
+    $.ajax({
+      url: '/ajax/deletarArea/',
+      type: 'POST',
+      data: {
+          'id': id,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          carregarMapa({'lat': map.getCenter().lat(), 'lng': map.getCenter().lng()});
+        }
+    });
+}
+
+function deletarRota(id){
+    $.ajax({
+      url: '/ajax/deletarRota/',
+      type: 'POST',
+      data: {
+          'id': id,
+          'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+        },
+        dataType: 'json',
+        success: function (data) {
+          carregarMapa({'lat': map.getCenter().lat(), 'lng': map.getCenter().lng()});
+        }
+    });
 }
 
 function iniciarBarraPesquisa(){

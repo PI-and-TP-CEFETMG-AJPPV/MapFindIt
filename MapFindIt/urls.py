@@ -54,4 +54,7 @@ urlpatterns = [
     url(r'^fazerMescla/$', views.fazerMescla),
     url(r'^meusMapas/$', views.meusMapas),
     url(r'^exibirMapa/(?P<idmapa>[0-9]+)/$', views.exibirMapa, name="exibir"),
+    url(r'^ajax/deletarPonto/$', views.deletarPonto),
+    url(r'^ajax/deletarArea/$', views.deletarArea),
+    url(r'^ajax/deletarRota/$', views.deletarRota)
 ]
