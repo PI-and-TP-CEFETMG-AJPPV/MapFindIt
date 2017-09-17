@@ -745,6 +745,49 @@ def gruposPesquisa(request):
         }
         return JsonResponse(data)
 
+#Pesquisa pessoas pela String passada
+def pesquisarPessoas(pesquisa):
+    #Busca pessoas pelo primeiro nome
+    result1 = Usuario.objects.filter(primnomeusuario__icontains=pesquisa).order_by('primnomeusuario', 'idusuario')
+    #Busca pessoas pelo segundo nome
+    result2 = Usuario.objects.filter(ultnomeusuario__icontains=pesquisa).order_by('ultnomeusuario', 'idusuario')
+    #Junta os resultados em apenas um
+    result = result1 | result2
+    #Retorna os resultados encontrados
+    return result
+
+#Responde ao Ajax de pesquisa de pessoas
+def pessoasPesquisa(request):
+    #Número da pessoa e da div no qual será carregada
+    num = request.GET.get('num', None)
+    num = int(num)
+    #Texto utilizado para encontrar pessoas
+    pesquisa = request.GET.get('pesquisa', None)
+    #Retorna todas as pessoas encontrados para o texto pesquisado
+    pessoas = pesquisarPessoas(pesquisa)
+    #Pega a pessoa correspondente ao número da requisição Ajax
+    pessoa = pessoas[num]
+    #Se houver pessoas
+    if pessoa is not None:
+        #Retorna ao AJAX todos os dados
+        data = {
+            'idusuario': pessoa.idusuario,
+            'primnomeusuario': pessoa.primnomeusuario,
+            'emailusuario': pessoa.emailusuario,
+            'datanascimento': pessoa.datanascimento,
+            'idtsexo': pessoa.idtsexo,
+            'ultnomeusuario': pessoa.ultnomeusuario,
+            #'foto': pessoa.foto,
+        }
+        return JsonResponse(data)
+    #Caso já se tenha carregado todas as pessoas ou não há correspondentes à pesquisa
+    else:
+        #Finaliza a requisição Ajax no lado do cliente
+        data = {
+            'erro': 1,
+        }
+        return JsonResponse(data)
+
 def novoMapa(request):
     if request.method=="POST" and request.POST.__contains__("temas"):
         if request.POST.get("opcInicio")=='P':

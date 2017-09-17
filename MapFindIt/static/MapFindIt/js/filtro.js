@@ -58,6 +58,7 @@ function carregarGrupos() {
 	}
 }
 
+//Prepara o HTML para a exibição do grupo
 function prepararGrupo(data) {
 	//Define o nível de acesso do grupo
 	if(data.privado)
@@ -68,23 +69,69 @@ function prepararGrupo(data) {
 	if(data.descgrupo==="")
 		data.descgrupo = "Não há descrição";
 
+	//HTML
 	contentString =`
 	<div class="row">
-		<div class="col-md-offset-2 col-md-8 col-md-offset-2">
-			<div style="background-color: rgb(${data.r},${data.g},${data.b}); border: 2px solid black; color:white">
-				<div style="text-align:center">
-					<h3>${data.nomegrupo}</h3><h4>Acesso: ${data.privado}</h4>
-				</div>
-				<h4>Descrição: ${data.descgrupo}</h4>
+			<div class="col-md-offset-2 col-md-8 col-md-offset-2">
+				<a href="/grupo/${data.idgrupo}/">
+					<div style="background-color: white; border: 2vh solid rgb(${data.r},${data.g},${data.b}); box-shadow:  0 0 0 2px black;">
+							<div style="text-align:center">
+								<h3>${data.nomegrupo}</h3><h4>Acesso: ${data.privado}</h4>
+							</div>
+							<h4>Descrição: ${data.descgrupo}</h4>
+					</div>
+				</a>
 			</div>
-		</div>
 	</div><br><br>`;
 
+	//Inserer o HTML
 	$("#divFiltro").append(contentString);
 }
 
 //Busca pessoas segundo a pesquisa passada
 function carregarPessoas() {
+	pessoasLoaded++;
+	pesquisa = get('pesquisa');
+
+	for(let i=0; i<10; i++){
+		$.ajax({
+			url: '/ajax/carregarPessoasPesquisa/',
+			data: {
+				'num': 10*(pessoasLoaded-1)+i,
+				'pesquisa': pesquisa
+			},
+			dataType: 'json',
+			success: function (data) {
+				//Se todas as postagens tiverem sido carregas
+				if(data.erro){
+					return;
+				}
+				//Prepara o grupo para ser exibido
+				prepararPessoa(data);
+			}
+		});
+	}
+}
+
+//Prepara o HTML para a exibição da pessoa
+function prepararPessoa(data) {
+  //HTML
+	contentString =`
+	<div class="row">
+			<div class="col-md-offset-2 col-md-8 col-md-offset-2">
+				<a href="/perfil/${data.idusuario}/">
+					<div style="background-color: white; border: 2vh solid skyblue; box-shadow:  0 0 0 2px black;">
+						<div style="text-align: center">
+							<h2>${data.primnomeusuario} ${data.ultnomeusuario}</h2>
+							<h4>${data.emailusuario}</h4>
+						</div>
+					</div>
+				</a>
+			</div>
+	</div><br><br>`;
+
+	//Insere o HTML
+	$("#divFiltro").append(contentString);
 }
 
 //Detecta o filtro escolhido no clique
