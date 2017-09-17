@@ -346,7 +346,7 @@ def getDadosMapa(mapa):
     pontosRotasArr=[]
     for rota in todasRotas:
         #Para cada rota, adiciona ao array os seus pontos já serlializados em JSON
-        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota).order_by("seqponto"), use_natural_foreign_keys=True))
+        pontosRotasArr.append(serializers.serialize("json", RotaPonto.objects.filter(idrota=rota).order_by("seqponto")))
     #Serializa o array em JSON
     pontoRotas=json.dumps(pontosRotasArr)
     #Obtem todas as areas do mapa
@@ -1032,6 +1032,10 @@ def criarRota(request):
     pontosY = json.loads(request.POST.get('pontosY'))
     usuario = get_object_or_404(Usuario, idusuario=idUsuario)
     mapa = get_object_or_404(Mapa, idmapa=idMapa)
+    nomesPontos = json.loads(request.POST.get('nomesPontos'))
+    descPontos = json.loads(request.POST.get('descPontos'))
+    blobPontos = json.loads(request.POST.get('blobPontos'))
+    pontosTrans = json.loads(request.POST.get('pontosTransformados'))
     cor=None
     if 'nomeCor' in request.POST:
         cor = Cor.objects.create(nomecor=request.POST.get('nomeCor'), r=request.POST.get('r'), g=request.POST.get('g'), b=request.POST.get('b'))
@@ -1041,12 +1045,35 @@ def criarRota(request):
     rota = Rota.objects.create(idtevitar=1, idmapa=mapa, nomerota=nome, descrota=desc, codcor=cor, idusuario=usuario)
     rota.save()
     cont=0
-    for x, y in zip(pontosX, pontosY):
-        ponto = Ponto.objects.create(coordx=x, coordy=y, idusuario=usuario, idmapa=mapa, idtponto='R')
+    for x, y, nom, desc, blob in zip(pontosX, pontosY, nomesPontos, descPontos, blobPontos):
+        blob=str(blob)
+        ponto = Ponto.objects.create(coordx=x, coordy=y, idusuario=usuario, idmapa=mapa, idtponto='R', nomponto=nom, descponto=desc)
         ponto.save()
-        pontoarea = RotaPonto.objects.create(idrota=rota, idponto=ponto, seqponto=cont)
-        pontoarea.save()
+        if blob!="0":
+            #Cria a foto a partir do blob se ele existir
+            format, imgstr = blob.split(';base64,')
+            ext = format.split('/')[-1]
+            #Deleta a foto se ela existir
+            if os.path.exists("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+"."+ext):
+                os.remove("MapFindIt/static/MapFindIt/imagemPonto/"+str(ponto.idponto)+"."+ext)
+            data = ContentFile(base64.b64decode(imgstr), name=str(ponto.idponto) + "." + ext)
+            #Adiciona a foto ao objeto Ponto
+            ponto.fotoponto=data
+            #Salva o ponto
+            ponto.save()
+            #Obtem a imagem do ponto
+            image = Image.open(ponto.fotoponto)
+            #Muda o tamanho da imagem para 170X170
+            size = (170, 170)
+            image=image.resize(size, Image.ANTIALIAS)
+            #Salva a nova imagem
+            image.save(ponto.fotoponto.path)
+        pontorota = RotaPonto.objects.create(idrota=rota, idponto=ponto, seqponto=cont)
+        pontorota.save()
         cont+=1
+    for pontoT in pontosTrans:
+        ponto = get_object_or_404(Ponto, idponto=pontoT)
+        ponto.delete()
     return JsonResponse({'sucesso': 1})
 
 def deslogar(request):
