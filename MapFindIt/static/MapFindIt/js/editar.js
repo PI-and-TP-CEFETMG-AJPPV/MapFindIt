@@ -8,6 +8,9 @@ var poligonos=[];
 var rotasArr=[];
 var infoWindows=[];
 var infoWindowControl=[];
+var abertos=[];
+//Identificador para pontos da rota
+var formPontosRota=false;
 
 //Desenha o icone de marker
 function pinSymbol(color) {
@@ -62,9 +65,14 @@ function selecionar(idt){
                  }
                }
                arrayPontoRota=[];
+               nomPontoRota=[];
+               descPontoRota=[];
+               imgPontoRota=[];
+               idPontosExistentes=[];
                break;
      }
      elemR.removeClass('selecionado');
+     atualizarMapa(map.getCenter());
      $('#botoesContainer').empty();
      map.setOptions({ draggableCursor : 'auto' });
    }
@@ -79,10 +87,12 @@ function selecionar(idt){
                break;
        case 2: elem=$('#selecRota');
                map.setOptions({ draggableCursor : 'url("'+imgUrl+'MapFindIt/iconesEditar/Rota.png"), auto' });
+               formPontosRota=false;
                break;
      }
      ferramentaSelec=idt;
-     elem.addClass('selecionado');
+     if(idt!=-1)
+      elem.addClass('selecionado');
    }else{
      ferramentaSelec=-1;
    }
@@ -681,13 +691,32 @@ var arrayPontoRota=[];
 var tempRota=null;
 //Pontos da rota sendo criadas
 var tempMarker=[];
+//Nomes dos Pontos da Rota
+var nomPontoRota=[];
+//Descrições dos pontos da rota
+var descPontoRota=[];
+//Imagens dos pontos da rota
+var imgPontoRota=[];
+//Id's de pontos que viraram rota
+var idPontosExistentes=[];
+//InfoWindow
+var infoWindowForm;
+//Blob de rota
+var blobFinalRota;
+function lerBlob(blob){
+  var reader = new window.FileReader();
+  reader.readAsDataURL(blob);
+  reader.onloadend = function() {
+    blobFinalRota = reader.result;
+  }
+}
 //Grava a rota inserida
 function gravaRota(){
   arrayX=[];
   arrayY=[];
   for(let i=0; i<arrayPontoRota.length; i++){
-    arrayX[i]=arrayPontoRota[i].lng();
-    arrayY[i]=arrayPontoRota[i].lat();
+    arrayX[i]=arrayPontoRota[i].lng;
+    arrayY[i]=arrayPontoRota[i].lat;
   }
   corRGB = hexToRgb($('#corRota').val());
   if($('#nomeCor').length>0){
@@ -705,6 +734,10 @@ function gravaRota(){
           'r': corRGB.r,
           'g': corRGB.g,
           'b': corRGB.b,
+          'nomesPontos': JSON.stringify(nomPontoRota), 
+          'descPontos': JSON.stringify(descPontoRota),
+          'blobPontos': JSON.stringify(imgPontoRota),
+          'pontosTransformados': JSON.stringify(idPontosExistentes),
           'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
         },
         dataType: 'json',
@@ -726,6 +759,10 @@ function gravaRota(){
           'pontosX': JSON.stringify(arrayX),
           'pontosY': JSON.stringify(arrayY),
           'idCor': $('#idCor').val(),
+          'nomesPontos': JSON.stringify(nomPontoRota), 
+          'descPontos': JSON.stringify(descPontoRota),
+          'blobPontos': JSON.stringify(imgPontoRota),
+          'pontosTransformados': JSON.stringify(idPontosExistentes),
           'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
         },
         dataType: 'json',
@@ -739,7 +776,8 @@ function gravaRota(){
 }
 //Finalizar a rota inserida
 function finalizarRota(){
-  if(arrayPontoRota.length>2){
+  console.log(arrayPontoRota);
+  if(arrayPontoRota.length>=2){
       $('#modalDinamico').empty();
       $('#modalDinamico').append(`
         <div class="modal fade" id="modal-rota" aria-hidden="true">
@@ -797,17 +835,38 @@ function finalizarRota(){
         });
     }
 }
+//Salva a informação do ponto de uma rota
+function salvarInfoPontoRota(x){
+  blobFinalPonto=0;
+  if($('#imgInpPonto').val()){
+     mudarImagemPonto();
+  }
+  setTimeout(function (){
+           nomPontoRota[x]= $('#pontoTitulo').val();
+           descPontoRota[x]= $('#pontoDesc').val();
+           imgPontoRota[x]=blobFinalPonto;
+           infoWindowForm.close();
+  }, 500);
+  formPontosRota=false;
+}
 //Para inserir rota
-function inserirRota(e){
+function inserirRota(e, existe){
+  if(existe===undefined){
+    existe=false;
+  }
   let coord=e.latLng;
   if(arrayPontoRota.length==0){
     $('#botoesContainer').append(`<br><br><br><br>
       &nbsp;&nbsp;&nbsp;<label for="#corRota">Cor:&nbsp;&nbsp;</label><input type="color" id="corRota"/><br><br>
-      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="finalizarRota();">Concluir Rota</button><br><br>
+      &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="if(!formPontosRota){finalizarRota();}">Concluir Rota</button><br><br>
       &nbsp;&nbsp;&nbsp;<button type="button" class="btn btn-default" onclick="selecionar(-1);">Cancelar Rota</button>
       `);
   }
-  arrayPontoRota.push(coord);
+  if(typeof coord.lat != 'function'){
+    arrayPontoRota.push(coord);
+  }else{
+    arrayPontoRota.push({lat: coord.lat(), lng: coord.lng()});
+  }
   if(tempRota){
     tempRota.setMap(null);
     for(let i=0; i<tempMarker.length; i++){
@@ -832,12 +891,101 @@ function inserirRota(e){
   let pinColor = `${$('#corRota').val()}`;
   //Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
   for(let x=0; x<arrayPontoRota.length; x++){
-    let marker = new google.maps.Marker({
-       position: arrayPontoRota[x],
-       map: map,
-       icon: pinSymbol(pinColor)
-     });
-     tempMarker.push(marker);
+    let cor;
+    //Algoritmo para detectar melhor cor da fonte
+    let a = 1 - ( 0.299 * Number($('#corRota').val().substr(1, 2)) + 0.587 * Number($('#corRota').val().substr(3, 4)) + 0.114 * Number($('#corRota').val().substr(5, 6)))/255;
+    if (a < 0.5)
+      cor='black';
+    else
+      cor='white';
+		let marker = new google.maps.Marker({
+		  position: arrayPontoRota[x],
+      map: map,
+      label: {
+        text: (x+1).toString(),
+        fontWeight: 'bold',
+        fontSize: '12px',
+        fontFamily: '"Courier New", Courier,Monospace',
+        color: cor
+      },
+		  icon: pinSymbol(pinColor)
+    });
+    if(x==arrayPontoRota.length-1 && !existe){
+      formPontosRota=true;
+      var contentString =
+      `<div id="content">
+         <form id="pontoForm" action="javascript:salvarInfoPontoRota(${x})">
+            <div class="form-group">
+               <input id="pontoTitulo" required type="text" class="form-control" placeholder="Titulo do Ponto">
+            </div>
+            <div class="form-group">
+               <textarea id="pontoDesc" class="form-control" placeholder="Descrição do Ponto" rows=2></textarea>
+            </div>
+            <div class="form-group" height="150px">
+              <div class="input-group">
+                  <span class="input-group-btn center">
+                      <span class="btn btn-default btn-file">
+                          Escolher Imagem do Ponto... <input accept="image/*" type="file" id="imgInpPonto">
+                      </span>
+                  </span>
+              </div>
+              <br>
+              <img id='novaImgPonto'/>
+            </div>
+            <div class="form-group">
+               <button type="submit" class="btn btn-default">Criar Ponto da Rota</button>
+            </div>
+         </form>
+      </div>`;
+      infoWindowForm = new google.maps.InfoWindow({
+        content: contentString
+      });
+      //Para o upload de imagens
+      $(document).on('change','#imgInpPonto',function(){
+        readURLPonto(this);
+      });
+      infoWindowForm.open(map, marker);
+      google.maps.event.addListener(infoWindowForm,'closeclick', function(){
+        if(arrayPontoRota.length==1){
+          selecionar(-1);
+        }else{
+          marker.setMap(null); //Remove marker
+          formPontosRota=false;
+          arrayPontoRota.splice(x, 1);
+          //Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
+          let waypts=Array();
+          for(let x=1; x<arrayPontoRota.length-1; x++){
+            waypts.push({location:arrayPontoRota[x], stopover:false});
+          }
+          //Define o mapa da rota
+          tempRota.setMap(map);
+          let request;
+          if(waypts.length>0){
+            //Se existem mais de dois pontos
+            request = {
+              origin: arrayPontoRota[0],
+              destination: arrayPontoRota[arrayPontoRota.length-1],
+              waypoints: waypts,
+              travelMode: 'DRIVING'
+            };
+          }else{
+            //Se existem apenas dois pontos
+            request = {
+              origin: arrayPontoRota[0],
+              destination: arrayPontoRota[arrayPontoRota.length-1],
+              travelMode: 'DRIVING'
+            };
+          }
+          //Requisita a rota ao servidor da google
+          directionsService.route(request, function(response, status) {
+            if (status == 'OK') {
+              tempRota.setDirections(response);
+            }
+          });
+        }
+      });
+    }
+    tempMarker.push(marker);
   }
   //Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
   let waypts=Array();
@@ -894,12 +1042,26 @@ function inserirRota(e){
     let pinColor = `${$('#corRota').val()}`;
     //Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
     for(let x=0; x<arrayPontoRota.length; x++){
+      let cor;
+      //Algoritmo para detectar melhor cor da fonte
+      let a = 1 - ( 0.299 * Number($('#corRota').val().substr(1, 2)) + 0.587 * Number($('#corRota').val().substr(3, 4)) + 0.114 * Number($('#corRota').val().substr(5, 6)))/255;
+      if (a < 0.5)
+        cor='black';
+      else
+        cor='white';
       let marker = new google.maps.Marker({
-         position: arrayPontoRota[x],
-         map: map,
-         icon: pinSymbol(pinColor)
-       });
-       tempMarker.push(marker);
+        position: arrayPontoRota[x],
+        map: map,
+        label: {
+          text: (x+1).toString(),
+          fontWeight: 'bold',
+          fontSize: '12px',
+          fontFamily: '"Courier New", Courier,Monospace',
+          color: cor
+        },
+        icon: pinSymbol(pinColor)
+      });
+      tempMarker.push(marker);
     }
     //Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
     let waypts=Array();
@@ -920,8 +1082,8 @@ function inserirRota(e){
     }else{
       //Se existem apenas dois pontos
       request = {
-        origin: arrayPontosRota[0],
-        destination: arrayPontosRota[arrayPontoRota.length-1],
+        origin: arrayPontoRota[0],
+        destination: arrayPontoRota[arrayPontoRota.length-1],
         travelMode: 'DRIVING'
       };
     }
@@ -932,6 +1094,39 @@ function inserirRota(e){
       }
     });
   });
+}
+//Carrega Imagem
+function imagemToBlob(url) {
+    var img = new Image;
+    var c = document.createElement("canvas");
+    var ctx = c.getContext("2d");
+    img.onload = function() {
+      c.width = this.naturalWidth;  
+      c.height = this.naturalHeight;
+      ctx.drawImage(this, 0, 0);
+      c.toBlob(function(blob) {
+        lerBlob(blob);
+        setTimeout(function(){
+          imgPontoRota.push(blobFinalRota);
+        }, 300);
+      });
+    };
+    img.onerror = function (evt){
+      imgPontoRota.push(0);
+    }
+    img.src = url;
+}
+//Para adicionar um ponto à uma rota
+function adicionarPontoExistente(id, nome, desc, latlng, marker, markerObj){
+  idPontosExistentes.push(id);
+  nomPontoRota.push(nome);
+  descPontoRota.push(desc);
+  imagemToBlob(imgUrl+"MapFindIt/ImagemPonto/"+id+".png");
+  setTimeout(function(){
+    console.log(imgPontoRota);
+  }, 1000);
+  inserirRota({latLng: latlng}, true);
+  markerObj.setMap(null);
 }
 //Grava a area inserida
 function gravaArea(){
@@ -1133,7 +1328,7 @@ function carregarMapaInicial(){
         switch(ferramentaSelec){
           case 0: inserirPonto(e); break;
           case 1: inserirArea(e); break;
-          case 2: inserirRota(e); break;
+          case 2: if(!formPontosRota){inserirRota(e);} break;
         }
       }
     });
@@ -1170,7 +1365,7 @@ function carregarMapa(inicio){
         switch(ferramentaSelec){
           case 0: inserirPonto(e); break;
           case 1: inserirArea(e); break;
-          case 2: inserirRota(e); break;
+          case 2: if(!formPontosRota){inserirRota(e);} break;
         }
       }
     });
@@ -1230,9 +1425,12 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
       map.setOptions({styles: removerPOI});
     }else{
       marcadores.forEach(function(item, index){
-        let infoMap = infoWindows[index].getMap();
-        if(infoMap === null && typeof infoMap === "undefined")
+        let infoMap = infoWindows[index];
+        if(!infoMap.getMap()){
           item.setMap(null);
+        }else{
+          abertos.push(index);
+        }
       });
       rotasArr.forEach(function(item){
         item.setMap(null);
@@ -1245,10 +1443,11 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
     rotasArr=[];
     poligonos=[];
     infoWindows=[];
+    console.log(abertos);
     //Para cada ponto do mapa
 		pontos.forEach(function(item, index){
       //Verifica se o ponto é uma marcação e não parte de uma área ou rota
-      if(item.fields.idtponto=='P'){
+      if(item.fields.idtponto=='P' && !idPontosExistentes.includes(item.pk) && !abertos.includes(index)){
         let iconePonto=null;
 				let codIcone=item.fields.codicone;
 				for(let i=0; i<icones.length; i++){
@@ -1297,10 +1496,19 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 				//Cria a janela de informações do ponto
 		    let infowindow = new google.maps.InfoWindow({
 		       content: contentString
-		    });
+        });
+        let indexMarcador=marcadores.length;
 				//Evento de exibir a janela ao clicar no ponto
 				marker.addListener('click', function() {
-		          infowindow.open(map, marker);
+          if(ferramentaSelec==2 && !formPontosRota){
+            adicionarPontoExistente(item.pk, item.fields.nomponto, item.fields.descponto, {lat: item.fields.coordy, lng: item.fields.coordx}, indexMarcador, marker);
+          }else{
+            infowindow.open(map, marker);
+          }
+        });
+        google.maps.event.addListener(infowindow,'closeclick', function(){
+          console.log(abertos.indexOf(index));
+          abertos.splice(abertos.indexOf(index), 1);
         });
         marcadores.push(marker);
         infoWindows.push(infowindow);
@@ -1326,9 +1534,19 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
         preserveViewport: true
 			});
 			//Cor dos pontos de uma rota
-			let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
+      let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
+      //Pontos da rota
+      let objsPonto=[];
 			//Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
 			for(let x=0; x<pontosRota.length; x++){
+        let ponto;
+        pontos.forEach(function(item){
+          if(item.pk==pontosRota[x].fields.idponto){
+            ponto=item;
+            return;
+          }
+        });
+        objsPonto.push(ponto);
         let cor;
         //Algoritmo para detectar melhor cor da fonte
         let a = 1 - ( 0.299 * item.fields.codcor[0] + 0.587 * item.fields.codcor[1] + 0.114 * item.fields.codcor[2])/255;
@@ -1337,7 +1555,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
         else
           cor='white';
 				let marker = new google.maps.Marker({
-					 position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
+					 position: new google.maps.LatLng(ponto.fields.coordy, ponto.fields.coordx),
            map: map,
            label: {
             text: (pontosRota[x].fields.seqponto+1).toString(),
@@ -1348,19 +1566,43 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
            },
 					 icon: pinSymbol(pinColor)
         });
-				let contentString=
+        if(ponto.fields.fotoponto!=""){
+					//Se o ponto possui foto
+					contentString =
 					`<div id="content">
-		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
-		          <div id="bodyContent">
-                 <p>${item.fields.descrota}</p>
-                 <button class="btn btn-default" onClick="deletarRota(${item.pk});">Excluir</button>
-		          </div>
-		       </div>`;
+		            	<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+		            	<div id="bodyContent">
+		            		<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${ponto.pk}.png">
+		            		<p>${ponto.fields.descponto}</p>
+                    <hr>
+                    <h2 class="firstHeading">${item.fields.nomerota}</h2>
+                    <div id="bodyContent">
+                      <p>${item.fields.descrota}</p>
+                      <button class="btn btn-default" onClick="deletarRota(${item.pk});">Excluir Rota</button>
+                    </div>
+                  </div>
+		            </div>`;
+				}else{
+					//Se o ponto não possui foto
+					contentString =
+					`<div id="content">
+		            	<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+		            	<div id="bodyContent">
+		            		<p>${ponto.fields.descponto}</p>
+                    <hr>
+                    <h2 class="firstHeading">${item.fields.nomerota}</h2>
+                    <div id="bodyContent">
+                      <p>${item.fields.descrota}</p>
+                      <button class="btn btn-default" onClick="deletarRota(${item.pk});">Excluir Rota</button>
+                    </div>
+		            	</div>
+		            </div>`;
+				}
 		    let infowindow = new google.maps.InfoWindow({
 		       content: contentString
 		    });
 				marker.addListener('click', function() {
-		      infowindow.open(map, marker);
+          infowindow.open(map, marker);
         });
         marcadores.push(marker);
         infoWindows.push(infowindow);
@@ -1368,24 +1610,24 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			//Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
 			let waypts=Array();
 			for(let x=1; x<pontosRota.length-1; x++){
-				waypts.push({location:{lat: pontosRota[x].fields.idponto[0], lng: pontosRota[x].fields.idponto[1]}, stopover:false});
+				waypts.push({location:{lat: objsPonto[x].fields.coordy, lng: objsPonto[x].fields.coordx}, stopover:false});
 			}
-			//Define o mapa da rota
+      //Define o mapa da rota
       directionsDisplay.setMap(map);
 			let request;
 			if(waypts.length>0){
 				//Se existem mais de dois pontos
 				request = {
-					origin: {lat: pontosRota[0].fields.idponto[0], lng: pontosRota[0].fields.idponto[1]},
-					destination: {lat: pontosRota[pontosRota.length-1].fields.idponto[0], lng: pontosRota[pontosRota.length-1].fields.idponto[1]},
+					origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+					destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 					waypoints: waypts,
 					travelMode: 'DRIVING'
 				};
 			}else{
 				//Se existem apenas dois pontos
 				request = {
-					origin: {lat: pontosRota[0].fields.idponto[0], lng: pontosRota[0].fields.idponto[1]},
-					destination: {lat: pontosRota[pontosRota.length-1].fields.idponto[0], lng: pontosRota[pontosRota.length-1].fields.idponto[1]},
+					origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+					destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 					travelMode: 'DRIVING'
 				};
 			}

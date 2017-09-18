@@ -80,106 +80,122 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 	//Para cada rota
 	rotas.forEach(function (item, index) {
 		//Pontos que compõe essa rota
-		let pontosRota = pontoRotas[index];
+		let pontosRota=pontoRotas[index];
 		//Serviço de direções do google
 		let directionsService = new google.maps.DirectionsService();
 		//Serviço de exibição das rotas
 		let directionsDisplay = new google.maps.DirectionsRenderer({
-			polylineOptions: {
+		  polylineOptions: {
 				//Cor da rota
-				strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
+		    strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
 				//Grossura do traçado
 				strokeWeight: 5
 			},
 			//Remove o indicador de pontos padrão da google
 			suppressMarkers: true,
-			preserveViewport: true
+        	preserveViewport: true
 		});
 		//Cor dos pontos de uma rota
 		let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
+		//Pontos da rota
+		let objsPonto=[];
 		//Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
-		for (let x = 0; x < pontosRota.length; x++) {
+		for(let x=0; x<pontosRota.length; x++){
+			let ponto;
+			pontos.forEach(function(item){
+				if(item.pk==pontosRota[x].fields.idponto){
+					ponto=item;
+					return;
+				}
+			});
+			objsPonto.push(ponto);
 			let cor;
 			//Algoritmo para detectar melhor cor da fonte
 			let a = 1 - ( 0.299 * item.fields.codcor[0] + 0.587 * item.fields.codcor[1] + 0.114 * item.fields.codcor[2])/255;
 			if (a < 0.5)
-			cor='black';
+				cor='black';
 			else
-			cor='white';
-					let marker = new google.maps.Marker({
-						position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
-			map: map,
-			label: {
-				text: (pontosRota[x].fields.seqponto+1).toString(),
-				fontWeight: 'bold',
-				fontSize: '12px',
-				fontFamily: '"Courier New", Courier,Monospace',
-				color: cor
-			},
+				cor='white';
+			let marker = new google.maps.Marker({
+				position: new google.maps.LatLng(ponto.fields.coordy, ponto.fields.coordx),
+				map: map,
+				label: {
+					text: (pontosRota[x].fields.seqponto+1).toString(),
+					fontWeight: 'bold',
+					fontSize: '12px',
+					fontFamily: '"Courier New", Courier,Monospace',
+					color: cor
+				},
 				icon: pinSymbol(pinColor)
 			});
-			let contentString =
+			if(ponto.fields.fotoponto!=""){
+				//Se o ponto possui foto
+				contentString =
 				`<div id="content">
-		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
-		          <div id="bodyContent">
-		             <p>${item.fields.descrota}</p>
-		          </div>
-		       </div>`;
+					<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+					<div id="bodyContent">
+						<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${ponto.pk}.png">
+						<p>${ponto.fields.descponto}</p>
+						<hr>
+						<h2 class="firstHeading">${item.fields.nomerota}</h2>
+						<div id="bodyContent">
+							<p>${item.fields.descrota}</p>
+						</div>
+					</div>
+				</div>`;
+			}else{
+				//Se o ponto não possui foto
+				contentString =
+					`<div id="content">
+						<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+						<div id="bodyContent">
+							<p>${ponto.fields.descponto}</p>
+							<hr>
+							<h2 class="firstHeading">${item.fields.nomerota}</h2>
+							<div id="bodyContent">
+								<p>${item.fields.descrota}</p>
+							</div>
+						</div>
+					</div>`;
+			}
 			let infowindow = new google.maps.InfoWindow({
 				content: contentString
 			});
-			marker.addListener('click', function () {
+			marker.addListener('click', function() {
 				infowindow.open(map, marker);
 			});
 		}
 		//Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
-		let waypts = Array();
-		for (let x = 1; x < pontosRota.length - 1; x++) {
-			waypts.push({
-				location: {
-					lat: pontosRota[x].fields.idponto[0],
-					lng: pontosRota[x].fields.idponto[1]
-				},
-				stopover: false
-			});
+		let waypts=Array();
+		for(let x=1; x<pontosRota.length-1; x++){
+			waypts.push({location:{lat: objsPonto[x].fields.coordy, lng: objsPonto[x].fields.coordx}, stopover:false});
 		}
 		//Define o mapa da rota
 		directionsDisplay.setMap(map);
 		let request;
-		if (waypts.length > 0) {
+		if(waypts.length>0){
 			//Se existem mais de dois pontos
 			request = {
-				origin: {
-					lat: pontosRota[0].fields.idponto[0],
-					lng: pontosRota[0].fields.idponto[1]
-				},
-				destination: {
-					lat: pontosRota[pontosRota.length - 1].fields.idponto[0],
-					lng: pontosRota[pontosRota.length - 1].fields.idponto[1]
-				},
+				origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+				destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 				waypoints: waypts,
 				travelMode: 'DRIVING'
 			};
-		} else {
+		}else{
 			//Se existem apenas dois pontos
 			request = {
-				origin: {
-					lat: pontosRota[0].fields.idponto[0],
-					lng: pontosRota[0].fields.idponto[1]
-				},
-				destination: {
-					lat: pontosRota[pontosRota.length - 1].fields.idponto[0],
-					lng: pontosRota[pontosRota.length - 1].fields.idponto[1]
-				},
+				origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+				destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 				travelMode: 'DRIVING'
 			};
 		}
 		//Requisita a rota ao servidor da google
-		directionsService.route(request, function (response, status) {
-			if (status == 'OK') {
-				directionsDisplay.setDirections(response);
-			}
-		});
+		directionsService.route(request, function(response, status) {
+		if (status == 'OK') {
+			directionsDisplay.setDirections(response);
+			rotasArr.push(directionsDisplay);
+		}
+      });
 	});
 	//Para cada uma das areas criadas
 	areas.forEach(function (item, index) {
