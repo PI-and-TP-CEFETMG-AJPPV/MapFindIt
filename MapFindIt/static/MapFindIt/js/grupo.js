@@ -146,8 +146,7 @@ function pesquisarMapasRemover(idgrupo){
                             </div>
                         </div>
                     </div>`;
-                    $('#confirmarMesclaBtn').on('click', function(){
-                    });
+                    $('#modalPublicar-mapa').modal('hide');
                     $('#modalDinamico').html(conteudo);
                     $('#modal-confirmar-post').modal('show');
               })
@@ -205,9 +204,6 @@ function pesquisarMapas(idgrupo){
                             </div>
                         </div>
                     </div>`;
-                    $('#confirmarMesclaBtn').on('click', function(){
-                    });
-                    $('#modalDinamico').empty();
                     $('#modalDinamico').html(conteudo);
                     $('#modal-confirmar-post').modal('show');
               })
@@ -332,7 +328,8 @@ function publicar(id, idgrupo){
     },
     dataType: 'json',
     success: function (data) {
-        $('#modalDinamico').empty();
+        $('#modal-confirmar-post').modal('hide');
+
     }
   });
 }
