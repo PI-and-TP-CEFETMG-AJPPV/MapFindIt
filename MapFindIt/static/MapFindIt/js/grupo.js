@@ -30,6 +30,42 @@ function modalPublicar(idgrupo){
 		$('#modalDinamico').html(conteudo);
 		$('#modalPublicar-mapa').modal('show');
 }
+//Função para converter cores
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function editarGrupo(idGrupo){
+let privacidade;
+corRGB = hexToRgb($('#corGrupo').val());
+  $('#criarIconeForm').click(function () {
+    privacidade = $("input[name='Privacidade']:checked").val();
+  });
+  $.ajax({
+      url: '/ajax/editarGrupo/',
+      type: 'GET',
+      data: {
+        'nome': $('#nomeGrupo').val(),
+        'desc': $('#desc').val(),
+        'r': corRGB.r,
+        'b': corRGB.b,
+        'g': corRGB.g,
+        'usuario': idUsuarioLogado,
+        'Privacidade': privacidade,
+        'id': idGrupo,
+        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+      },
+      dataType: 'json',
+      success: function (data) {
+        $('#modalGrupos').modal('hide');
+      }
+  });
+}
 function modalRemoverMapa(idgrupo){
   $('#modalDinamico').empty();
   $('#modal-container-admim').modal('hide')

@@ -20,7 +20,7 @@
 		<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
-		<link href="{% static "MapFindIt/css/farbtastic.css"%}" rel="stylesheet">
+
 
 	</head>
 	<body>
@@ -103,14 +103,14 @@
 					         			<div class="row">
 					           			<div class="col-md-12">
 					             			<div class="form-group">
-					               			Nome do Grupo: <input type="text" name="nmdGrupo" id="ndmGrupo" class="form-control input-lg" value="{{grupo.nomegrupo}}" tabindex="1">
+					               			Nome do Grupo: <input type="text" name="nmdGrupo" id="nomeGrupo" class="form-control input-lg" value="{{grupo.nomegrupo}}" tabindex="1">
 					             			</div>
 					           			</div>
 					         			</div>
 					           	<div class="row">
 					             	<div class="col-md-12">
 					               	<div class="form-group">
-					                 	Descrição Grupo: <input type="text" name="descGrupo" id="descGrupo" class="form-control input-lg" value="{{grupo.descgrupo}}" tabindex="2">
+					                 	Descrição Grupo: <input type="text" name="descGrupo" id="desc" class="form-control input-lg" value="{{grupo.descgrupo}}" tabindex="2">
 					               	</div>
 					             	</div>
 					           	</div>
@@ -123,14 +123,14 @@
 												<div class="col-xs-4 col-sm-4 col-md-4" align="center">
 					               	<div class="form-group">
 					                 	<div class="radio">
-					                   	<label><input type="radio" name="privacidade" id="public" value="public">Publico</label>
+					                   	<label><input type="radio" name="Privacidade" id="public" value="0" checked>Publico</label>
 					                 	</div>
 					               	</div>
 					             	</div>
 					             	<div class="col-xs-4 col-sm-4 col-md-4" align="center">
 					               	<div class="form-group">
 					                 	<div class="radio">
-					                   	<label><input type="radio" id="private" name="privacidade" value="private" checked>Privado</label>
+					                   	<label><input type="radio" id="private" name="Privacidade" value="1">Privado</label>
 					                 	</div>
 					               	</div>
 					             	</div>
@@ -166,7 +166,7 @@
 		<script src="{% static "MapFindIt/js/jquery.ui.map.min.js"%}"></script>
 		<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
 		<script src="{% static "MapFindIt/js/grupo.js"%}"></script>
-		<script src="{% static "MapFindIt/js/farbtastic.js"%}"></script>
+
 		<script async defer
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap">
 		</script>
