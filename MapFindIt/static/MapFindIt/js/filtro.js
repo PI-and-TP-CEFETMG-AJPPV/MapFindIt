@@ -1,20 +1,19 @@
 //Variáveis globais
 //Os itens são carregados em grupos de 10 em 10
-var mapasLoaded = 0;
-var gruposLoaded = 0;
-var pessoasLoaded = 0;
+var mapasLoaded = 1;
+var gruposLoaded = 1;
+var pessoasLoaded = 1;
 
 //Busca mapas segundo a pesquisa passada
 function carregarMapas() {
 	//Definição de valores
-	mapasLoaded++;
 	pesquisa = get('pesquisa');
 
-	for(let i=0; i<10; i++){
+	for(let i=0; i<3; i++){
 		$.ajax({
 			url: '/ajax/carregarMapasPesquisa/',
 			data: {
-				'num': 10*(mapasLoaded-1)+i,
+				'num': 3*(mapasLoaded-1)+i,
 				'pesquisa': pesquisa
 			},
 			dataType: 'json',
@@ -35,7 +34,6 @@ function carregarMapas() {
 //Busca grupos segundo a pesquisa passada
 function carregarGrupos() {
 	//Definição de valores
-	gruposLoaded++;
 	pesquisa = get('pesquisa');
 
 	for(let i=0; i<10; i++){
@@ -90,7 +88,7 @@ function prepararGrupo(data) {
 
 //Busca pessoas segundo a pesquisa passada
 function carregarPessoas() {
-	pessoasLoaded++;
+	//Definição de valores
 	pesquisa = get('pesquisa');
 
 	for(let i=0; i<10; i++){
@@ -141,18 +139,64 @@ $('input:radio').on('click', function(e) {
 	//Retira o conteúdo anterior
 	$("#divFiltro").html("");
 	//Reseta a quantidade carregada
-	mapasLoaded = 0;
-	gruposLoaded = 0;
-	pessoasLoaded = 0;
+	mapasLoaded = 1;
+	gruposLoaded = 1;
+	pessoasLoaded = 1;
 	//Chama o carregamento segundo a escolha
 	if(value=="mapas")
-	carregarMapas();
+		carregarMapas();
 	else {
 		if(value=="pessoas")
-		carregarPessoas();
+			carregarPessoas();
 		else {
 			if(value=="grupos")
-			carregarGrupos();
+				carregarGrupos();
+		}
+	}
+});
+
+//Avança uma página no paginamento
+$("#next").on('click', function(e) {
+	//Capta o opção escolhida no filtro
+	op = $( "input[type=radio][name=escolha]:checked" ).val();
+	//Retira os dados atuais
+	$("#divFiltro").html("");
+	//Chama o carregamento segundo a opção
+	if(op=="mapas") {
+		mapasLoaded++;
+		carregarMapas();
+	} else {
+		if(op=="pessoas") {
+			pessoasLoaded++;
+			carregarPessoas();
+		} else {
+			if(op=="grupos") {
+				gruposLoaded++;
+				carregarGrupos();
+			}
+		}
+	}
+});
+
+//Retorna uma página no paginamento
+$("#back").on('click', function(e) {
+	//Capta o opção escolhida no filtro
+	op = $( "input[type=radio][name=escolha]:checked" ).val();
+	//Retira os dados atuais
+	$("#divFiltro").html("");
+	//Chama o carregamento segundo a opção
+	if(op=="mapas") {
+		mapasLoaded--;
+		carregarMapas();
+	} else {
+		if(op=="pessoas") {
+			pessoasLoaded--;
+			carregarPessoas();
+		} else {
+			if(op=="grupos") {
+				gruposLoaded--;
+				carregarGrupos();
+			}
 		}
 	}
 });

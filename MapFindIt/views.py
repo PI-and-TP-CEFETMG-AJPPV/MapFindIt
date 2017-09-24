@@ -673,6 +673,9 @@ def mapasPesquisa(request):
     postagem = Postagem.objects.filter(idmapa=mapa).filter(
     idusuario=mapa.idusuario)
     getpostagem = postagem.first()
+    print("\n\n\n*****\n")
+    print(mapas)
+    print("\n*****\n\n\n")
 
     #Se houver mapas
     if mapa is not None:

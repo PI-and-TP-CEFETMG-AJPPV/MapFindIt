@@ -4,9 +4,6 @@
 <html lang="pt-br">
 <head>
 	<meta charset="utf-8">
-	<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
-	<meta http-equiv="Pragma" content="no-cache" />
-	<meta http-equiv="Expires" content="0" />
 	<title>MapFindIt</title>
 	<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
@@ -14,10 +11,10 @@
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/jquery-ui.min.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
-<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
+	<link href="{% static "MapFindIt/css/google-icons.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/filtro.css"%}" rel="stylesheet">
 	<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 </head>
@@ -47,7 +44,15 @@
 				</div>
 				<br>
 				<!--Conteúdo-->
-				<div id="divFiltro"></div>
+				<div>
+					<div id="divFiltro"></div>
+					<div style="text-align:center;">
+						<button class="btn button" id="back"><-</button>
+						<button class="btn button" id="next">-></button>
+					</div>
+					<br>
+				</div>
+				<!--Float Button-->
 				<div class="menu pmd-floating-action"  role="navigation">
 					<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo">
 						<span class="pmd-floating-hidden">Primary</span>
@@ -62,14 +67,11 @@
 						<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
 					</a>
 				</div>
-				<!--Div para modais adicionados pelo js !-->
-				<div id="modalDinamico">
-
-				</div>
+				<!--Modais adicionados-->
+				<div id="modalDinamico"></div>
 			</div>
 		</div>
 	</div>
-
 
 	<script>
 		var imgUrl='{{baseUrl}}';
@@ -85,7 +87,7 @@
 	<script src="{% static "MapFindIt/js/jquery-ui.min.js"%}"></script>
 	<script src="{% static "MapFindIt/js/carregarPostagem.js"%}"></script>
 	<script async defer
-	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap&libraries=visualization,geometry">
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyD0fWO2PpCW6UHi_woXq2Y4zXJpo2Ki_cU&callback=initMap&libraries=visualization,geometry">
 	</script>
 </body>
 </html>
