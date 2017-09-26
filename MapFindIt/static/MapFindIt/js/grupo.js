@@ -30,6 +30,41 @@ function modalPublicar(idgrupo){
 		$('#modalDinamico').html(conteudo);
 		$('#modalPublicar-mapa').modal('show');
 }
+//Função para converter cores
+function hexToRgb(hex) {
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16)
+    } : null;
+}
+
+function editarGrupo(idgrupo){
+let privacidade;
+corRGB = hexToRgb($('#corGrupo').val());
+  $('#criarIconeForm').click(function () {
+    privacidade = $("input[name='Privacidade']:checked").val();
+  });
+  $.ajax({
+      url: '/ajax/editarGrupo/',
+      type: 'GET',
+      data: {
+        'nome': $('#nomeGrupo').val(),
+        'desc': $('#desc').val(),
+        'r': corRGB.r,
+        'b': corRGB.b,
+        'g': corRGB.g,
+        'Privacidade': privacidade,
+        'id': idgrupo,
+        'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
+      },
+      dataType: 'json',
+      success: function (data) {
+        $('#modalGrupos').modal('hide');
+      }
+  });
+}
 function modalRemoverMapa(idgrupo){
   $('#modalDinamico').empty();
   $('#modal-container-admim').modal('hide')
@@ -122,7 +157,6 @@ function pesquisarMapasRemover(idgrupo){
               </div>`);
               $('#mapaMesclar'+mapas[i][0]).on('click', function(){
                   let id = $(this).attr('id').substring(11);
-                  $("#modalPublicar-mapa").modal("hide");
                   $('#modalDinamico').empty();
                     let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
                         <div class="modal-dialog">
@@ -146,7 +180,6 @@ function pesquisarMapasRemover(idgrupo){
                             </div>
                         </div>
                     </div>`;
-                    $('#modalPublicar-mapa').modal('hide');
                     $('#modalDinamico').html(conteudo);
                     $('#modal-confirmar-post').modal('show');
               })
@@ -180,8 +213,6 @@ function pesquisarMapas(idgrupo){
               </div>`);
               $('#mapaMesclar'+mapas[i][0]).on('click', function(){
                   let id = $(this).attr('id').substring(11);
-                  $("#modalPublicar-mapa").modal("hide");
-                  $('#modalDinamico').empty();
                     let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -196,9 +227,9 @@ function pesquisarMapas(idgrupo){
                                 <div class="modal-body">
                                     <h4>Você tem certeza que deseja esse mapa?</h4>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});" id="confirmarpublicacao">Confirmar</button>
+                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" id="confirmarpublicacao" data-dismiss="modal">Confirmar</button>
                                         <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
-                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
+                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -328,13 +359,9 @@ function publicar(id, idgrupo){
     },
     dataType: 'json',
     success: function (data) {
-        $('#modal-confirmar-post').modal('hide');
-
+      $(".btn-warning").click();
     }
   });
-}
-function initMap(){
-
 }
 function pesquisarBar(){
   $('#opcMenu').empty();
@@ -342,11 +369,11 @@ function pesquisarBar(){
     <div class="col-md-8 col-md-offset-2" >
       <br>
       <div class="center">
-        <form class="form-group" id="SearchForm"  method="GET" style="order:2;background: white">
+        <form class="form-group" id="SearchForm" action="javascript:pesquisarMapas()"  method="GET" style="order:2;background: white">
           <div class="input-group" style="border:1px solid #444;">
             <input type="text" class="form-control input-lg" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="border: none;">
               <div class="input-group-btn">
-                <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;" onclick="pesquisar()"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.5em;"></span></button>
+                <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.5em;"></span></button>
               </div>
             </div>
           </form>
@@ -355,29 +382,88 @@ function pesquisarBar(){
     </div>`;
     $('#opcMenu').html(conteudo);
 }
-
-function carregarMapas() {
-	//Definição de valores
-	mapasLoaded++;
-
+//Carrega o grupo de 10 mapas
+function carregarMapas(){
+	//Seleciona a div dos mapas
+	let div=$("#divMapas");
+	gruposCarregados++;
 	for(let i=0; i<10; i++){
 		$.ajax({
-			url: '/ajax/carregarMapasGrupo/',
-			data: {
-				'num': 10*(mapasLoaded-1)+i,
-				'pesquisa': pesquisa
-			},
-			dataType: 'json',
-			success: function (data) {
-				//Se todas as 10 postagens tiverem sido carregas
-				if(data.erro){
-					return;
+	      url: '/ajax/carregarMapasGrupo/',
+	      data: {
+          'num':i,
+	        'id': idGrupo
+	      },
+	      dataType: 'json',
+	      success: function (data) {
+					//Se todas as postagens tiverem sido carregas
+					if(data.erro){
+						return;
+					}
+					//Prepara a postagem carregada
+					prepararPostagem(div, data, i)
 				}
-				//Solução para a utilização do prepararPostagem
-				gruposCarregados = mapasLoaded
-				//Prepara a postagem carregada
-				prepararPostagem($("#divFiltro"), data, i)
-			}
-		});
+	  });
 	}
+}
+function modalAdicionar(){
+  let conteudo=`<div class="modal fade" id="modal-convidar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+          <h2 class="modal-title" id="myModalLabel" style="text-align: center;">Adicionar Outro Usuario</h2>
+        </div>
+        <div class="modal-body">
+          <form id="formAtualizar" method="GET">
+            {% csrf_token %}
+            <div class="col-xs-4 col-sm-4 col-md-4" align="center">
+              <div class="form-group">
+                <input type="text" name="email" id="email" class="form-control input-lg" placeholder="Digite o nome do usuario" tabindex="1">
+              </div>
+            </div>
+          </div>
+          <div id="conteudoDinamico"></div>
+        </form>
+      </div>
+      <div class="modal-footer" >
+        <div align="center">
+          <button type="button" onclick="Adicionar();" class="btn button"data-dismiss="modal"> Confirmar </button>
+          <button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>`;
+$('#modalDinamico').html(conteudo);
+}
+
+//Carrega o grupo de 10 mapas
+function pesquisarMapas(){
+	//Seleciona a div dos mapas
+	let div=$("#divPeesquisa");
+	gruposCarregados++;
+	for(let i=0; i<10; i++){
+		$.ajax({
+	      url: '/ajax/PesquisaGrupo/',
+	      data: {
+          'num':i,
+	        'id': idGrupo,
+          'pesquisa' : $('#pesquisarBar').val()
+	      },
+	      dataType: 'json',
+	      success: function (data) {
+					//Se todas as postagens tiverem sido carregas
+					if(data.erro){
+						return;
+					}
+					//Prepara a postagem carregada
+					prepararPostagem(div, data, i)
+				}
+	  });
+	}
+}
+function initMap(){
+		//Carrega o primeiro grupo de postagens
+		carregarMapas();
 }

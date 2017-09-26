@@ -104,6 +104,28 @@ def getDadosMenu(request):
     for grupo in grupoUsuario:
         todosGrupos.append(grupo)
     return [usuarioFull, todosAmigos, todosGrupos, countPendentes]
+def editarGrupo(request):
+    nomeGrupo= request.GET.get('nome')
+    r= request.GET.get('r')
+    g= request.GET.get('g')
+    b= request.GET.get('b')
+    desc= request.GET.get('desc')
+    Privacidade = request.GET.get('privacidade')
+    idGrupo=request.GET.get('id')
+    cor = Cor.objects.create(nomecor="", r=r, g=g, b=b)
+    grupo=get_object_or_404(Grupo, pk=idGrupo)
+    if Privacidade == 1:
+        grupo.nomegrupo=nomeGrupo
+        grupo.descgrupo=desc
+        grupo.privado=True
+        grupo.codcor=cor
+    else:
+        grupo.nomegrupo=nomeGrupo
+        grupo.descgrupo=desc
+        grupo.privado=False
+        grupo.codcor=cor
+    grupo.save()
+    return JsonResponse({'sucesso': True})
 def entrarGrupo(request):
     grupoFull=get_object_or_404(Grupo, idgrupo=request.GET.get('idgrupo'))
     usuarioFull=get_object_or_404(Usuario, idusuario=request.GET.get('idusuario'))
@@ -227,16 +249,17 @@ def mapasPublicar(request):
 def mapasRemover(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
+    idGrupo = request.GET.get('id')
     #Busca mapas pelo título
-    result = Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo'))
-    maps = get_object_or_404(idmapa=result.first().idmapa)
-    for post in result:
-        maps = maps | Mapas.objects.filter(idmapa=post.idmapa)
-    mapas = [[0 for i in range(3)] for j in range(maps.count())]
-    for index, mapa in enumerate(maps):
+    result = Postagemgrupo.objects.filter(idgrupo=idGrupo)
+    for val in result:
+        result = result | val.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+        result = result | val.objects.filter(descmapa__icontains=pesquisa)
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
         mapas[index][0]=mapa.idmapa
-        mapas[index][1]=mapa.titulomapa
-        mapas[index][2]=mapa.descmapa
+        mapas[index][1]=mapa.idmapa.titulomapa
+        mapas[index][2]=mapa.idmapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
 def perfil(request, idusuario):
     if not request.session.__contains__('usuarioLogado'):
@@ -505,17 +528,80 @@ def adicionarAvaliacao(request):
     mapa.save()
     aval.save()
     return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
+def pesquisarMapasGrupo(pesquisa):
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+    #Contabiliza a quantidade de mapas encontrados pelo titulo
+    controle = 0
+    for n in result:
+        controle += 1
+    #Se for menor do que 10
+    if controle < 10:
+        tema = Tema.objects.filter(nomtema__icontains=pesquisa)
+        for n in tema:
+            result = result | Mapa.objects.filter(codtema=n.id)
+        result = result.order_by('valaprovados', 'valvisualizacoes')
+        #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
+        controle = 0
+        for n in result:
+            controle += 1
 
-def mapasGrupo(request, idgrupo):
-    #Pega a posicao do mapa que deve ser carregado
+    #Retorna os mapas encontrados segundo os parâmetros da pesquisa
+    return result
+
+def pesquisaMapasGrupo(request):
+    #Número do mapa e da div no qual será carregado
     num = request.GET.get('num', None)
     num = int(num)
-    #Pega o ID do usuario
+    idgrupo=request.GET.get('id')
+    #Texto utilizado para encontrar mapas
+    pesquisa = request.GET.get('pesquisa')
+    #Retorna todos os mapas encontrados para o texto pesquisado
+    mapas = pesquisarMapasGrupo(pesquisa)
+    #Pega o mapa correspondente ao número da requisição Ajax
+    mapa = mapas[num]
+
+    #Pega a postagem do autor do mapa correspondente
+    postagem = Postagemgrupo.objects.filter(idmapa=mapa).filter(
+    idgrupo=idgrupo)
+    getpostagem = postagem.first()
+    #Se houver mapas
+    if mapa is not None:
+        #Chama a função de obter os dados da postagem
+        dados = getDadosPostagem(getpostagem)
+        #Serializa a postagem em JSON
+        postagem = serializers.serialize('json', postagem)
+        #Retorna ao AJAX todos os dados
+        data = {
+            'postagem': postagem,
+            'mapa': dados[0],
+            'pontos': dados[1],
+            'icones': dados[2],
+            'comentarios': dados[3],
+            'autores': dados[4],
+            'rotas': dados[5],
+            'pontoRotas': dados[6],
+            'areas': dados[7],
+            'pontoAreas': dados[8],
+        }
+        return JsonResponse(data)
+    #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
+    else:
+        #Finaliza a requisição Ajax no lado do cliente
+        data = {
+            'erro': 1,
+        }
+        return JsonResponse(data)
+def mapasGrupo(request):
+    #Load de 10 ultimos Mapas
+    num = int(request.GET.get('num'))
+    idgrupo = request.GET.get('id')
+    #Pega o ID do grupo
     grupoFull=get_object_or_404(Grupo, pk=idgrupo)
     #Carrega todas as postagens do usuario logado, ordenando pela datada postagem
-    todasPostagens=Postagemgrupo.objects.filter(fk=grupoFull.idgrupo).order_by('-datapostagem')
+    todasPostagens=Postagemgrupo.objects.filter(idgrupo=grupoFull.idgrupo).order_by('-datapostagem')
     #Verifica se as postagens já foram todas carregadas
-    if todasPostagens.count()>int(num):
+    while num<todasPostagens.count():
         #Caso ainda tenham postagens não carregadas
         #Serializa a postagem em JSON
         postagem = serializers.serialize('json', [ todasPostagens[num], ]);
