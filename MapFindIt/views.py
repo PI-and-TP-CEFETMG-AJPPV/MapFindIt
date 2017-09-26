@@ -104,6 +104,28 @@ def getDadosMenu(request):
     for grupo in grupoUsuario:
         todosGrupos.append(grupo)
     return [usuarioFull, todosAmigos, todosGrupos, countPendentes]
+def editarGrupo(request):
+    nomeGrupo= request.GET.get('nome')
+    r= request.GET.get('r')
+    g= request.GET.get('g')
+    b= request.GET.get('b')
+    desc= request.GET.get('desc')
+    Privacidade = request.GET.get('privacidade')
+    idGrupo=request.GET.get('id')
+    cor = Cor.objects.create(nomecor="", r=r, g=g, b=b)
+    grupo=get_object_or_404(Grupo, pk=idGrupo)
+    if Privacidade == 1:
+        grupo.nomegrupo=nomeGrupo
+        grupo.descgrupo=desc
+        grupo.privado=True
+        grupo.codcor=cor
+    else:
+        grupo.nomegrupo=nomeGrupo
+        grupo.descgrupo=desc
+        grupo.privado=False
+        grupo.codcor=cor
+    grupo.save()
+    return JsonResponse({'sucesso': True})
 def entrarGrupo(request):
     grupoFull=get_object_or_404(Grupo, idgrupo=request.GET.get('idgrupo'))
     usuarioFull=get_object_or_404(Usuario, idusuario=request.GET.get('idusuario'))
@@ -227,16 +249,17 @@ def mapasPublicar(request):
 def mapasRemover(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
+    idGrupo = request.GET.get('id')
     #Busca mapas pelo título
-    result = Postagemgrupo.objects.filter(idgrupo=request.GET.get('idgrupo'))
-    maps = get_object_or_404(idmapa=result.first().idmapa)
-    for post in result:
-        maps = maps | Mapas.objects.filter(idmapa=post.idmapa)
-    mapas = [[0 for i in range(3)] for j in range(maps.count())]
-    for index, mapa in enumerate(maps):
+    result = Postagemgrupo.objects.filter(idgrupo=idGrupo)
+    for val in result:
+        result = result | val.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
+        result = result | val.objects.filter(descmapa__icontains=pesquisa)
+    mapas = [[0 for i in range(3)] for j in range(result.count())]
+    for index, mapa in enumerate(result):
         mapas[index][0]=mapa.idmapa
-        mapas[index][1]=mapa.titulomapa
-        mapas[index][2]=mapa.descmapa
+        mapas[index][1]=mapa.idmapa.titulomapa
+        mapas[index][2]=mapa.idmapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
 def perfil(request, idusuario):
     if not request.session.__contains__('usuarioLogado'):
@@ -506,16 +529,16 @@ def adicionarAvaliacao(request):
     aval.save()
     return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
 
-def mapasGrupo(request, idgrupo):
-    #Pega a posicao do mapa que deve ser carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    #Pega o ID do usuario
+def mapasGrupo(request):
+    #Load de 10 ultimos Mapas
+    num = int(request.GET.get('num'))
+    idgrupo = request.GET.get('id')
+    #Pega o ID do grupo
     grupoFull=get_object_or_404(Grupo, pk=idgrupo)
     #Carrega todas as postagens do usuario logado, ordenando pela datada postagem
-    todasPostagens=Postagemgrupo.objects.filter(fk=grupoFull.idgrupo).order_by('-datapostagem')
+    todasPostagens=Postagemgrupo.objects.filter(idgrupo=grupoFull.idgrupo).order_by('-datapostagem')
     #Verifica se as postagens já foram todas carregadas
-    if todasPostagens.count()>int(num):
+    while num<todasPostagens.count():
         #Caso ainda tenham postagens não carregadas
         #Serializa a postagem em JSON
         postagem = serializers.serialize('json', [ todasPostagens[num], ]);

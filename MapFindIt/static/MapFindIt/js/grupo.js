@@ -40,7 +40,7 @@ function hexToRgb(hex) {
     } : null;
 }
 
-function editarGrupo(idGrupo){
+function editarGrupo(idgrupo){
 let privacidade;
 corRGB = hexToRgb($('#corGrupo').val());
   $('#criarIconeForm').click(function () {
@@ -55,9 +55,8 @@ corRGB = hexToRgb($('#corGrupo').val());
         'r': corRGB.r,
         'b': corRGB.b,
         'g': corRGB.g,
-        'usuario': idUsuarioLogado,
         'Privacidade': privacidade,
-        'id': idGrupo,
+        'id': idgrupo,
         'csrfmiddlewaretoken': $('input[name="csrfmiddlewaretoken"]').val()
       },
       dataType: 'json',
@@ -158,7 +157,6 @@ function pesquisarMapasRemover(idgrupo){
               </div>`);
               $('#mapaMesclar'+mapas[i][0]).on('click', function(){
                   let id = $(this).attr('id').substring(11);
-                  $("#modalPublicar-mapa").modal("hide");
                   $('#modalDinamico').empty();
                     let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
                         <div class="modal-dialog">
@@ -182,7 +180,6 @@ function pesquisarMapasRemover(idgrupo){
                             </div>
                         </div>
                     </div>`;
-                    $('#modalPublicar-mapa').modal('hide');
                     $('#modalDinamico').html(conteudo);
                     $('#modal-confirmar-post').modal('show');
               })
@@ -216,8 +213,6 @@ function pesquisarMapas(idgrupo){
               </div>`);
               $('#mapaMesclar'+mapas[i][0]).on('click', function(){
                   let id = $(this).attr('id').substring(11);
-                  $("#modalPublicar-mapa").modal("hide");
-                  $('#modalDinamico').empty();
                     let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
                         <div class="modal-dialog">
                             <div class="modal-content">
@@ -232,9 +227,9 @@ function pesquisarMapas(idgrupo){
                                 <div class="modal-body">
                                     <h4>Você tem certeza que deseja esse mapa?</h4>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});" id="confirmarpublicacao">Confirmar</button>
+                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" id="confirmarpublicacao" data-dismiss="modal">Confirmar</button>
                                         <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
-                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
+                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" data-dismiss="modal">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -364,13 +359,9 @@ function publicar(id, idgrupo){
     },
     dataType: 'json',
     success: function (data) {
-        $('#modal-confirmar-post').modal('hide');
-
+      $(".btn-warning").click();
     }
   });
-}
-function initMap(){
-
 }
 function pesquisarBar(){
   $('#opcMenu').empty();
@@ -391,29 +382,32 @@ function pesquisarBar(){
     </div>`;
     $('#opcMenu').html(conteudo);
 }
-
-function carregarMapas() {
-	//Definição de valores
-	mapasLoaded++;
-
+//Carrega o grupo de 10 mapas
+function carregarMapas(){
+	//Seleciona a div dos mapas
+	let div=$("#divMapas");
+	gruposCarregados++;
 	for(let i=0; i<10; i++){
 		$.ajax({
-			url: '/ajax/carregarMapasGrupo/',
-			data: {
-				'num': 10*(mapasLoaded-1)+i,
-				'pesquisa': pesquisa
-			},
-			dataType: 'json',
-			success: function (data) {
-				//Se todas as 10 postagens tiverem sido carregas
-				if(data.erro){
-					return;
+	      url: '/ajax/carregarMapasGrupo/',
+	      data: {
+          'num':i,
+	        'id': idGrupo
+	      },
+	      dataType: 'json',
+	      success: function (data) {
+					//Se todas as postagens tiverem sido carregas
+					if(data.erro){
+						return;
+					}
+					//Prepara a postagem carregada
+					prepararPostagem(div, data, i)
 				}
-				//Solução para a utilização do prepararPostagem
-				gruposCarregados = mapasLoaded
-				//Prepara a postagem carregada
-				prepararPostagem($("#divFiltro"), data, i)
-			}
-		});
+	  });
 	}
+}
+
+function initMap(){
+		//Carrega o primeiro grupo de postagens
+		carregarMapas();
 }

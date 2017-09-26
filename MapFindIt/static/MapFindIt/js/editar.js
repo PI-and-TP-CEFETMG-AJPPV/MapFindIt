@@ -438,10 +438,10 @@ function ModalEditarIcone(id){
 				 								</span>
 				 							</div>
 				 							<br>
-				 							<img id=${data.img}/>
+				 							<img scr=${data.img}/>
 				 						</form>
 				 						<div class="modal-footer">
-				 							<button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Icone </button>
+				 							<button type="submit" form="criarIconeForm"  class="btn btn-success" onclick="$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" data-dismiss="modal"> Criar Icone </button>
 				 							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
 				 						</div>
 				 					</div>
@@ -734,7 +734,7 @@ function gravaRota(){
           'r': corRGB.r,
           'g': corRGB.g,
           'b': corRGB.b,
-          'nomesPontos': JSON.stringify(nomPontoRota), 
+          'nomesPontos': JSON.stringify(nomPontoRota),
           'descPontos': JSON.stringify(descPontoRota),
           'blobPontos': JSON.stringify(imgPontoRota),
           'pontosTransformados': JSON.stringify(idPontosExistentes),
@@ -759,7 +759,7 @@ function gravaRota(){
           'pontosX': JSON.stringify(arrayX),
           'pontosY': JSON.stringify(arrayY),
           'idCor': $('#idCor').val(),
-          'nomesPontos': JSON.stringify(nomPontoRota), 
+          'nomesPontos': JSON.stringify(nomPontoRota),
           'descPontos': JSON.stringify(descPontoRota),
           'blobPontos': JSON.stringify(imgPontoRota),
           'pontosTransformados': JSON.stringify(idPontosExistentes),
@@ -1101,7 +1101,7 @@ function imagemToBlob(url) {
     var c = document.createElement("canvas");
     var ctx = c.getContext("2d");
     img.onload = function() {
-      c.width = this.naturalWidth;  
+      c.width = this.naturalWidth;
       c.height = this.naturalHeight;
       ctx.drawImage(this, 0, 0);
       c.toBlob(function(blob) {
@@ -1476,7 +1476,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		            		<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${item.pk}.png">
 		            		<p>${item.fields.descponto}</p>
                     <button class="btn btn-default" onClick="escolherIcone(${item.pk});">Escolher Icone</button>
-                    <button class="btn btn-default" onClick="deletarPonto(${item.pk});">Excluir</button>  
+                    <button class="btn btn-default" onClick="deletarPonto(${item.pk});">Excluir</button>
                   </div>
 		            </div>`;
 				}else{
