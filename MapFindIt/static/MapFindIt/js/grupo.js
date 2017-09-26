@@ -369,11 +369,11 @@ function pesquisarBar(){
     <div class="col-md-8 col-md-offset-2" >
       <br>
       <div class="center">
-        <form class="form-group" id="SearchForm"  method="GET" style="order:2;background: white">
+        <form class="form-group" id="SearchForm" action="javascript:pesquisarMapas()"  method="GET" style="order:2;background: white">
           <div class="input-group" style="border:1px solid #444;">
             <input type="text" class="form-control input-lg" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="border: none;">
               <div class="input-group-btn">
-                <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;" onclick="pesquisar()"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.5em;"></span></button>
+                <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.5em;"></span></button>
               </div>
             </div>
           </form>
@@ -406,7 +406,63 @@ function carregarMapas(){
 	  });
 	}
 }
+function modalAdicionar(){
+  let conteudo=`<div class="modal fade" id="modal-convidar" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">X</button>
+          <h2 class="modal-title" id="myModalLabel" style="text-align: center;">Adicionar Outro Usuario</h2>
+        </div>
+        <div class="modal-body">
+          <form id="formAtualizar" method="GET">
+            {% csrf_token %}
+            <div class="col-xs-4 col-sm-4 col-md-4" align="center">
+              <div class="form-group">
+                <input type="text" name="email" id="email" class="form-control input-lg" placeholder="Digite o nome do usuario" tabindex="1">
+              </div>
+            </div>
+          </div>
+          <div id="conteudoDinamico"></div>
+        </form>
+      </div>
+      <div class="modal-footer" >
+        <div align="center">
+          <button type="button" onclick="Adicionar();" class="btn button"data-dismiss="modal"> Confirmar </button>
+          <button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>`;
+$('#modalDinamico').html(conteudo);
+}
 
+//Carrega o grupo de 10 mapas
+function pesquisarMapas(){
+	//Seleciona a div dos mapas
+	let div=$("#divPeesquisa");
+	gruposCarregados++;
+	for(let i=0; i<10; i++){
+		$.ajax({
+	      url: '/ajax/PesquisaGrupo/',
+	      data: {
+          'num':i,
+	        'id': idGrupo,
+          'pesquisa' : $('#pesquisarBar').val()
+	      },
+	      dataType: 'json',
+	      success: function (data) {
+					//Se todas as postagens tiverem sido carregas
+					if(data.erro){
+						return;
+					}
+					//Prepara a postagem carregada
+					prepararPostagem(div, data, i)
+				}
+	  });
+	}
+}
 function initMap(){
 		//Carrega o primeiro grupo de postagens
 		carregarMapas();

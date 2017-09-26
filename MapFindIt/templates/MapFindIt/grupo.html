@@ -14,13 +14,13 @@
 		<link href="{% static "MapFindIt/css/bootstrap.min.css" %}" rel="stylesheet">
 		<link  href="{% static "MapFindIt/css/cropper.min.css" %}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/postagem.css"%}" rel="stylesheet">
+    <link href="{% static "MapFindIt/css/font-awesome.min.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/menu.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/geral.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/button.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/floating-action-button.css"%}" rel="stylesheet">
 		<link href="{% static "MapFindIt/css/typography.css"%}" rel="stylesheet">
-
 
 	</head>
 	<body>
@@ -61,10 +61,10 @@
 							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="getMembro({{grupo.idgrupo}})" >Membros</a>
 							{% if member %}
 								<a role="button" onclick="modalPublicar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary" >postar</a>
-								<a role="button" onclick="modalConvidar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary" >convidar</a>
+								<a role="button" data-toggle="modal" dara-target="#modal-convidar" class="btn pmd-ripple-effect btn-primary" >convidar</a>
 								{% if admim %}
 									{% if grupo.privado %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary" style="background-color:rgb({{r}},{{g}},{{b}})">convidar</a>
+										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" dara-target="#modal-convidar">convidar</a>
 										{% endif %}
 										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim" ><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
 										{% endif %}
@@ -83,8 +83,6 @@
                   <div id="divMapas"></div>
                 </div>
               </div>
-
-
 								<div class="menu pmd-floating-action"  role="navigation">
 									<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo" >
 										<span class="pmd-floating-hidden">Primary</span>
@@ -99,7 +97,8 @@
 										<i><span class="glyphicon glyphicon-plus" style="font-size:1.5em; color:white;" aria-hidden="true"></span></i>
 									</a>
 								</div>
-							{% endif %}
+
+              {% endif %}
 							<div class="modal fade" id="modal-container-admim" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 					  		<div class="modal-dialog">
 					    		<div class="modal-content">
@@ -162,6 +161,7 @@
 					    </div>
 					  </div>
 					</div>
+
 		<script>
 			var imgUrl='{{baseUrl}}';
 			var idUsuarioLogado='{{usuario.idusuario}}';
