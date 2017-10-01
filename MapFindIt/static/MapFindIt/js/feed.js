@@ -1,11 +1,19 @@
 var gruposCarregados=0;
 
+$(window).scroll(function(){
+	//Menu = 56 px
+	//Postagem = 627 px
+	if($(window).scrollTop()>=56+(627*gruposCarregados*9)){
+		initMap();
+	}
+});
+
 function initMap() {
 	let div=$("#divMapas");
 	gruposCarregados++;
 	for(let i=0; i<10; i++){
 		$.ajax({
-	    	url: '/ajax/carregarMapasHome/',
+	    	url: '/ajax/mapasFeed/',
 	    	data: {
 	      		'num': ((Number(gruposCarregados)-1)*10)+Number(i)
 	    	},
@@ -17,12 +25,11 @@ function initMap() {
 				}
 				//Prepara a postagem carregada
 				prepararPostagem(div, data, i)	
-				if(i==9){
-					$(`linha${10*(gruposCarregados-1)+i}`).scroll(function(){
-						alert('oi');
-					});
-				}
 			}
 		});
 	}
+}
+
+function carregaMapa(pos){
+
 }

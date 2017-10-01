@@ -498,7 +498,7 @@ function prepararPostagem(div, data, i) {
 			(postagem.censurada ? '<i class="fa fa-comment-o" aria-hidden="true"></i>' : '<i class="fa fa-comments" aria-hidden="true"></i>') + '</i></a></p>';
 	}
 	div.append(`
-      <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${i}; padding-bottom:20px;">
+      <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${10*(gruposCarregados-1)+i}; padding-bottom:20px;">
         <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block; box-shadow: 10px 10px 5px grey;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
