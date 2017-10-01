@@ -17,7 +17,7 @@ import io, os
 import base64
 import json
 import shutil
-
+import math
 
 def home(request):
     if request.method=="POST":
@@ -342,6 +342,11 @@ def perfil(request, idusuario):
                   amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                   resultado=getDadosMenu(request)
                   return render(request, 'MapFindIt/perfil.html', {'usuario': resultado[0], 'idPag': usuario, 'amigos':amigos, 'todosAmigos': resultado[1], 'grupos': resultado[2], 'solicitacoesPendentes': resultado[3]})
+
+def isAmigos(usuario, amigo):
+    amigos=Amizade.objects.filter(idusuario1=usuario).filter(idusuario2=amigo).filter(aceita=False).exists()
+    amigos=amigos or Amizade.objects.filter(idusuario2=amigo).filter(idusuario1=usuario).exists()
+    return amigos      
 
 def getDadosMapa(mapa):
     #Obtem os pontos do mapa
@@ -687,13 +692,49 @@ def mapasFeed(request):
     mapasAmigos=Mapa.objects.none()
     for amigo in amigos:
         mapasAmigos = mapasAmigos | Mapa.objects.filter(idusuario=amigo)
-    #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
+    #Pega os n primeiros mapas no BD, com maior quantidade de aprovações e visualizações
     mapas = Mapa.objects.exclude(idtvisibilidade='P')
     mapas = mapas | mapasAmigos
-    offset = num+1
+    usuario = Usuario.objects.filter(idusuario = request.session['usuarioLogado']).first()
+    offset=num
+    num-=1
     mapas = mapas.order_by('-valaprovados', '-valvisualizacoes')[:offset]
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
+    #Define as sugestoes
+    #Pega os interesses por ordem de mais interesse
+    interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
+    dictSugestoes={}
+    for interesse in interesses:
+        tema = interesse.codtema
+        mapasTema = Mapa.objects.filter(codtema=tema)
+        for mapaO in mapasTema:
+            if mapaO.idusuario.idusuario is not usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes
+                dictSugestoes.update({pesoM: mapaO})
+    vals = sorted(dictSugestoes, reverse=True)
+    sugestoes=[]
+    for val in vals:
+        sugestoes.append(dictSugestoes[val])
+    #O usuario nao desativou os recomendados
+    #if recomendacoes:
+    if (num+1)%10==0 and math.floor((num+1)/10)<len(sugestoes):
+        mapa = sugestoes[math.floor((num+1)/10)]
+    else:
+        if num > len(mapas)-1:
+            data = {
+                'erro': 1,
+            }
+            return JsonResponse(data)
+        #Pega o mapa correspondente ao número da requisição Ajax
+        mapa = mapas[num]
+    '''else:
+        if num > len(mapas)-1:
+            data = {
+                'erro': 1,
+            }
+            return JsonResponse(data)
+        #Pega o mapa correspondente ao número da requisição Ajax
+        mapa = mapas[num]
+    '''
     #Inicializa postagem
     postagem = Postagem.objects.none()
     #Pega a postagem do autor do mapa correspondente
@@ -739,6 +780,11 @@ def mapasHome(request):
     num = int(num)
     #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
     mapas = Mapa.objects.exclude(idtvisibilidade='P').order_by('-valaprovados', '-valvisualizacoes')[:10]
+    if num > len(mapas)-1:
+        data = {
+            'erro': 1,
+        }
+        return JsonResponse(data)
     #Pega o mapa correspondente ao número da requisição Ajax
     mapa = mapas[num]
     #Inicializa postagem
