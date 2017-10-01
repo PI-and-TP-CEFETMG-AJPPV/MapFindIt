@@ -8,7 +8,7 @@
 */
 
 //Quantidade de grupos de 10 mapas carregados
-var gruposCarregados = 0;
+//var gruposCarregados = 0;
 
 //Função para exibir o mapa
 function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId) {
@@ -108,6 +108,9 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 					return;
 				}
 			});
+			if(ponto===undefined){
+				continue;
+			}
 			objsPonto.push(ponto);
 			let cor;
 			//Algoritmo para detectar melhor cor da fonte
@@ -193,7 +196,6 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		directionsService.route(request, function(response, status) {
 		if (status == 'OK') {
 			directionsDisplay.setDirections(response);
-			rotasArr.push(directionsDisplay);
 		}
       });
 	});

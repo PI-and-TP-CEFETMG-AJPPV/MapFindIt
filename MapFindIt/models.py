@@ -256,6 +256,7 @@ class Usuario(models.Model):
     ultnomeusuario = models.CharField(db_column='ultNomeUsuario', max_length=50)  # Field name made lowercase.
     txtfrase = models.CharField(db_column="txtFrase", max_length=100, default="No que você está pensando?") #Field name made lowercase
     foto = models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemUsers/', null=True, blank=True)
+    recomendacoes = models.BooleanField(db_column='recomendacoes', default=True)
 
     def __str__(self):
         return self.emailusuario
