@@ -29,7 +29,3 @@ function initMap() {
 		});
 	}
 }
-
-function carregaMapa(pos){
-
-}
