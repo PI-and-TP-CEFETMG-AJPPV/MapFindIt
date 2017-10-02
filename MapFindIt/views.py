@@ -703,19 +703,36 @@ def mapasFeed(request):
     #Pega os interesses por ordem de mais interesse
     interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
     dictSugestoes={}
+    temasPassados = []
+    for interesse in interesses:
+        tema = interesse.codtema
+        mapasTema = Mapa.objects.filter(codtema=tema)
+        temasPassados.append(tema.pk)
+        for mapaO in mapasTema:
+            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes
+                dictSugestoes.update({pesoM: mapaO})
+    interesses = Interesseusuariotema.objects.none()
+    for amigo in amigos:
+        inter = Interesseusuariotema.objects.filter(idusuario = amigo).order_by('-valvisualizacoes')
+        for interesse in inter:
+            if interesse.codtema.pk not in temasPassados:
+                interesses = interesses | interesse
     for interesse in interesses:
         tema = interesse.codtema
         mapasTema = Mapa.objects.filter(codtema=tema)
         for mapaO in mapasTema:
-            if mapaO.idusuario.idusuario is not usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes
+            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7
                 dictSugestoes.update({pesoM: mapaO})
     vals = sorted(dictSugestoes, reverse=True)
     sugestoes=[]
     for val in vals:
         sugestoes.append(dictSugestoes[val])
+    print(sugestoes)
     #O usuario nao desativou os recomendados
     #if recomendacoes:
+    print(math.floor((num+1)/10))
     if (num+1)%10==0 and math.floor((num+1)/10)<len(sugestoes):
         mapa = sugestoes[math.floor((num+1)/10)]
     else:
