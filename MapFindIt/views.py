@@ -1331,6 +1331,9 @@ def mapasMesclar(request):
     pesquisa = request.GET.get('pesquisa')
     #Busca mapas pelo título
     result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='U')
+    amigos1 = Amizade.objects.filter(idusuario1=request.session['usuarioLogado']).values('idusuario2')
+    amigos2 = Amizade.objects.filter(idusuario2=request.session['usuarioLogado']).values('idusuario1')
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
     result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
     result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
