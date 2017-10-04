@@ -681,6 +681,8 @@ def mapasFeed(request):
     #Número do mapa e da div no qual será carregado
     num = request.GET.get('num', None)
     num = int(num)
+    lat = float(request.GET.get('lat', None))
+    lng = float(request.GET.get('lng', None))
     amizades = Amizade.objects.filter(idusuario1 = request.session['usuarioLogado'])
     amigos=[]
     for amizade in amizades:
@@ -710,7 +712,8 @@ def mapasFeed(request):
         temasPassados.append(tema.pk)
         for mapaO in mapasTema:
             if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes
+                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes - (distancia*1000)
                 dictSugestoes.update({pesoM: mapaO})
     interesses = Interesseusuariotema.objects.none()
     for amigo in amigos:
@@ -723,7 +726,8 @@ def mapasFeed(request):
         mapasTema = Mapa.objects.filter(codtema=tema)
         for mapaO in mapasTema:
             if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7
+                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7 - (distancia*1000)
                 dictSugestoes.update({pesoM: mapaO})
     vals = sorted(dictSugestoes, reverse=True)
     sugestoes=[]
