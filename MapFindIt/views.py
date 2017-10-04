@@ -1061,7 +1061,7 @@ def editarMapa(request, idmapa):
     amigos=Amizade.objects.filter(idusuario1=mapa.idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
     amigos=amigos or Amizade.objects.filter(idusuario2=mapa.idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
 
-    if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos) or (mapa.idtvisibilidade=='U'):
+    if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos or mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='U'):
         #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
         primeira=False
         if request.session.__contains__('primeira') and request.session['primeira']=='1':
@@ -1334,8 +1334,11 @@ def mapasMesclar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
     #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P').order_by('valaprovados', 'valvisualizacoes')
-    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='U')
+    amigos1 = Amizade.objects.filter(idusuario1=request.session['usuarioLogado']).values('idusuario2')
+    amigos2 = Amizade.objects.filter(idusuario2=request.session['usuarioLogado']).values('idusuario1')
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
     result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
     for index, mapa in enumerate(result):
@@ -1415,7 +1418,7 @@ def exibirMapa(request, idmapa):
                 amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 print(amigos)
-                if amigos:
+                if amigos or mapa.idusuario.idusuario==request.session['usuarioLogado']:
                     return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
             return HttpResponse('Unauthorized', status=401)
         else:
