@@ -1,3 +1,5 @@
+var gruposCarregados=0;
+
 //Variaveis para guardar os erros
 var erroEmail;
 var erroSenhaConf;

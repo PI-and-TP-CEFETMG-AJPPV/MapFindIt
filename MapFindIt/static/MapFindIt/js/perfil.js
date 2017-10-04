@@ -1,3 +1,5 @@
+var gruposCarregados=0;
+
 //Função para tratar a solicitação de amizade
 function solicitacaoAmizade(){
 		$('#solicitarAmizade').click(function(){
