@@ -9,21 +9,27 @@ function carregarMapas() {
 	//Definição de valores
 	pesquisa = get('pesquisa');
 
-	for(let i=0; i<3; i++){
+	for(let i=0; i<10; i++){
 		$.ajax({
 			url: '/ajax/carregarMapasPesquisa/',
 			data: {
-				'num': 3*(mapasLoaded-1)+i,
+				'num': ((Number(mapasLoaded)-1)*10)+Number(i),
 				'pesquisa': pesquisa
 			},
 			dataType: 'json',
 			success: function (data) {
 				//Se todas as 10 postagens tiverem sido carregas
 				if(data.erro){
+					if(i==0){
+						$('#next').attr("disabled", true);
+						$('#back').click();
+					}else{
+						$('#next').attr("disabled", true);
+					}
 					return;
 				}
 				//Solução para a utilização do prepararPostagem
-				gruposCarregados = mapasLoaded
+				gruposCarregados = (mapasLoaded-1)
 				//Prepara a postagem carregada
 				prepararPostagem($("#divFiltro"), data, i)
 			}
@@ -47,6 +53,12 @@ function carregarGrupos() {
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
+					if(i==0){
+						$('#next').attr("disabled", true);
+						$('#back').click();
+					}else{
+						$('#next').attr("disabled", true);
+					}
 					return;
 				}
 				//Prepara o grupo para ser exibido
@@ -102,6 +114,12 @@ function carregarPessoas() {
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
+					if(i==0){
+						$('#next').attr("disabled", true);
+						$('#back').click();
+					}else{
+						$('#next').attr("disabled", true);
+					}
 					return;
 				}
 				//Prepara o grupo para ser exibido
@@ -157,6 +175,7 @@ $('input:radio').on('click', function(e) {
 
 //Avança uma página no paginamento
 $("#next").on('click', function(e) {
+	$('#back').removeAttr("disabled");
 	//Capta o opção escolhida no filtro
 	op = $( "input[type=radio][name=escolha]:checked" ).val();
 	//Retira os dados atuais
@@ -180,6 +199,7 @@ $("#next").on('click', function(e) {
 
 //Retorna uma página no paginamento
 $("#back").on('click', function(e) {
+	$('#next').removeAttr("disabled");
 	//Capta o opção escolhida no filtro
 	op = $( "input[type=radio][name=escolha]:checked" ).val();
 	//Retira os dados atuais
@@ -187,14 +207,23 @@ $("#back").on('click', function(e) {
 	//Chama o carregamento segundo a opção
 	if(op=="mapas") {
 		mapasLoaded--;
+		if(mapasLoaded==1){
+			$('#back').attr("disabled", true);
+		}
 		carregarMapas();
 	} else {
 		if(op=="pessoas") {
 			pessoasLoaded--;
+			if(pessoasLoaded==1){
+				$('#back').attr("disabled", true);
+			}
 			carregarPessoas();
 		} else {
 			if(op=="grupos") {
 				gruposLoaded--;
+				if(gruposLoaded==1){
+					$('#back').attr("disabled", true);
+				}
 				carregarGrupos();
 			}
 		}
@@ -203,6 +232,7 @@ $("#back").on('click', function(e) {
 
 //Inicializa os mapas
 function initMap() {
+	$('#back').attr("disabled", true);
 	carregarMapas();
 }
 

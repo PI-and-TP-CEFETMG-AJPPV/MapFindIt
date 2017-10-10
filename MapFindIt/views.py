@@ -346,7 +346,7 @@ def perfil(request, idusuario):
 def isAmigos(usuario, amigo):
     amigos=Amizade.objects.filter(idusuario1=usuario).filter(idusuario2=amigo).filter(aceita=False).exists()
     amigos=amigos or Amizade.objects.filter(idusuario2=amigo).filter(idusuario1=usuario).exists()
-    return amigos      
+    return amigos
 
 def getDadosMapa(mapa):
     #Obtem os pontos do mapa
@@ -880,7 +880,7 @@ def mapasPesquisa(request):
     #Retorna todos os mapas encontrados para o texto pesquisado
     mapas = pesquisarMapas(pesquisa)
     #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
+    mapa = mapas[num+1]
     #Inicializa postagem
     postagem = Postagem.objects.none()
     #Pega a postagem do autor do mapa correspondente

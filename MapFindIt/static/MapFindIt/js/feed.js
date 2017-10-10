@@ -1,4 +1,5 @@
 var gruposCarregados=0;
+
 function initMap() {
 	$('#back').attr("disabled", true);
 	carregarMapas();
@@ -18,7 +19,7 @@ function carregarMapas() {
 			lng=position.coords.longitude;
 			console.log(lat);
 			console.log(lng);
-		}, 
+		},
 		function(error){ // callback de erro
 			alert('Erro ao obter localização');
 			console.log('Erro ao obter localização.', error);
