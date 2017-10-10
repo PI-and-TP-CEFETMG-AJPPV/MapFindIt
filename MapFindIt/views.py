@@ -848,25 +848,15 @@ def mapasHome(request):
 #Pesquisa mapas pela String passada
 def pesquisarMapas(pesquisa):
     #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
-    #Contabiliza a quantidade de mapas encontrados pelo titulo
-    controle = 0
-    for n in result:
-        controle += 1
-    #Se for menor do que 10
-    if controle < 10:
-        tema = Tema.objects.filter(nomtema__icontains=pesquisa)
-        for n in tema:
-            result = result | Mapa.objects.filter(codtema=n.id)
-        result = result.order_by('valaprovados', 'valvisualizacoes')
-        #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
-        controle = 0
-        for n in result:
-            controle += 1
-        #Se for menor do que 10 busca mapas pela descrição
-        if controle < 10:
-            result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
-            result = result.order_by('valaprovados', 'valvisualizacoes')
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa)
+    #Busca mapas pelo tema
+    tema = Tema.objects.filter(nomtema__icontains=pesquisa)
+    for n in tema:
+        result = result | Mapa.objects.filter(codtema=n.id)
+    #Busca mapas pela descrição
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    #Ordena a pesquisa
+    result = result.order_by('valaprovados', 'valvisualizacoes')
     #Retorna os mapas encontrados segundo os parâmetros da pesquisa
     return result
 
