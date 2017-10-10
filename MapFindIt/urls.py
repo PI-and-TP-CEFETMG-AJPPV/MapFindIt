@@ -60,5 +60,6 @@ urlpatterns = [
     url(r'^ajax/deletarPonto/$', views.deletarPonto),
     url(r'^ajax/deletarArea/$', views.deletarArea),
     url(r'^ajax/deletarRota/$', views.deletarRota),
-    url(r'^ajax/mapasFeed/$', views.mapasFeed)
+    url(r'^ajax/mapasFeed/$', views.mapasFeed),
+    url(r'^debug/$', views.debug)
 ]

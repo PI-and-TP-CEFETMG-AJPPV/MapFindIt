@@ -855,6 +855,8 @@ def pesquisarMapas(pesquisa):
         result = result | Mapa.objects.filter(codtema=n.id)
     #Busca mapas pela descrição
     result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    #Retira os mapas privados do resultado
+    result = result.exclude(idtvisibilidade='P')    
     #Ordena a pesquisa
     result = result.order_by('valaprovados', 'valvisualizacoes')
     #Retorna os mapas encontrados segundo os parâmetros da pesquisa
@@ -870,16 +872,13 @@ def mapasPesquisa(request):
     #Retorna todos os mapas encontrados para o texto pesquisado
     mapas = pesquisarMapas(pesquisa)
     #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num+1]
+    mapa = mapas[num]
     #Inicializa postagem
     postagem = Postagem.objects.none()
     #Pega a postagem do autor do mapa correspondente
     postagem = Postagem.objects.filter(idmapa=mapa).filter(
     idusuario=mapa.idusuario)
     getpostagem = postagem.first()
-    print("\n\n\n*****\n")
-    print(mapas)
-    print("\n*****\n\n\n")
 
     #Se houver mapas
     if mapa is not None:
@@ -1487,3 +1486,12 @@ def deletarRota(request):
         pontorota.delete()
     rota.delete()
     return JsonResponse({'sucesso':1})
+
+def debug(request):
+    vteste = pesquisarMapas("Teste")
+    print("\n\n\n")
+    print(vteste)
+    print("\n\n\n")
+    print("\n\n\n")
+    print(vteste[5])
+    print("\n\n\n")
