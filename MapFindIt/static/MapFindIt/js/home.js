@@ -13,6 +13,9 @@ var erroEmailExiste;
 var form = document.getElementById('navBarSearchForm');
 var campo = document.getElementById('pesquisa');
 
+//Guarda a quantidade de mapas carregados
+var nMapas = 0;
+
 //Coloca a mascara na data de nascimento
 $('document').ready(function(){
 	jQuery("#dataNascimento").mask("99/99/9999");
@@ -195,10 +198,11 @@ function initMap() {
 				}
 				//Prepara a postagem carregada
 				prepararPostagemVis(div, data, i)
+				nMapas++;
 			}
 	  });
 	}
-	mensagemLimite();
+	setTimeout(function(){ mensagemLimite(); }, 1000);
 }
 
 //Carrega Mapas com Pesquisa
@@ -223,11 +227,10 @@ function pesquisa() {
 			}
 		});
 	}
-	mensagemLimite();
+	setTimeout(function(){ mensagemLimite(); }, 1000);
 }
 
 function mensagemLimite() {
-	nMapas = $(".row").length - 4;
 	if(nMapas == 10) {
 		contentString =`
 			<div class="row" style="order:10; padding-bottom:20px; text-align:center">

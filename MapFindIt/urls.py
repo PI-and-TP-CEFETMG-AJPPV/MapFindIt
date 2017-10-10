@@ -23,6 +23,7 @@ urlpatterns = [
     url(r'^ajax/carregarMapasHome/$', views.mapasHome),
     url(r'^ajax/carregarMapasPesquisa/$', views.mapasPesquisa),
     url(r'^ajax/carregarGruposPesquisa/$', views.gruposPesquisa),
+    url(r'^ajax/carregarPessoasPesquisa/$', views.pessoasPesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
     url(r'^ajax/deletarComentario/$', views.deletarComentario),
     url(r'^ajax/bloqueioComentarios/$', views.bloqueioComentarios),

@@ -4,5 +4,10 @@ MapFindIt/__pycache__/
 
 MapFindIt/migrations/__pycache__/
 *.pyc
+<<<<<<< HEAD
 *.sqlite3
 *.sqlite3
+=======
+
+db\.sqlite3
+>>>>>>> Pagination
