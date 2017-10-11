@@ -1368,11 +1368,13 @@ def redefinirSenha(request):
 def mapasMesclar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
-    #Busca mapas pelo título
-    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='U')
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='U')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='U')
     amigos1 = Amizade.objects.filter(idusuario1=request.session['usuarioLogado']).values('idusuario2')
     amigos2 = Amizade.objects.filter(idusuario2=request.session['usuarioLogado']).values('idusuario1')
     result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
     result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
     result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
@@ -1386,15 +1388,18 @@ def mesclaMapas(id, idEditando):
     mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
     mapaTarget = get_object_or_404(Mapa, idmapa=id)
     #Obtem os pontos do mapa
-    pontos=Ponto.objects.filter(idmapa=mapaTarget, idtponto='P')
+    pontos=Ponto.objects.filter(idmapa=mapaTarget)
     for ponto in pontos:
+        existentes= Ponto.objects.filter(idmapa=mapaEditando, coordx=ponto.coordx, coordy=ponto.coordy)
+        for pontoE in existentes:
+            pontoE.delete()
         novPonto = Ponto.objects.create(coordx = ponto.coordx,
                 coordy=ponto.coordy,
                 idmapa=mapaEditando,
                 nomponto=ponto.nomponto,
                 descponto=ponto.descponto,
                 idusuario=ponto.idusuario,
-                idtponto='P',
+                idtponto=ponto.idtponto,
                 fotoponto=ponto.fotoponto)
         try:
             if ponto.codicone:
@@ -1412,8 +1417,7 @@ def mesclaMapas(id, idEditando):
         novRota.save()
         pontosRota = RotaPonto.objects.filter(idrota=rota).order_by("seqponto")
         for ponto in pontosRota:
-            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='R')
-            novPonto.save()
+            novPonto = Ponto.objects.filter(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idmapa=mapaEditando, idtponto='R').first()
             pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
             pontorota.save()
 
@@ -1423,8 +1427,7 @@ def mesclaMapas(id, idEditando):
         area.save()
         pontosArea = Pontoarea.objects.filter(idarea=area)
         for ponto in pontosArea:
-            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='A')
-            novPonto.save()
+            novPonto = Ponto.objects.filter(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idmapa=mapaEditando, idtponto='A').first()
             pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
             pontoarea.save()
 
@@ -1472,19 +1475,14 @@ def deletarArea(request):
     for pontoarea in areaPontos:
         ponto = pontoarea.idponto
         ponto.delete()
-        pontoarea.delete()
-    area.delete()
     return JsonResponse({'sucesso':1})
 
 def deletarRota(request):
     id = request.POST.get('id')
-    rota = get_object_or_404(Rota, idrota=id)
     rotaPontos = RotaPonto.objects.filter(idrota=id)
     for pontorota in rotaPontos:
         ponto = pontorota.idponto
         ponto.delete()
-        pontorota.delete()
-    rota.delete()
     return JsonResponse({'sucesso':1})
 
 def debug(request):
