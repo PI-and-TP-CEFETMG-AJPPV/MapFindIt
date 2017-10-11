@@ -173,3 +173,24 @@ Mapa
 .mapaMesclar:active{
     border: 2px solid green !important;
 }
+
+.modal-map-dialog {
+  width: 98%;
+  height: 98%;
+  padding: 0;
+  top: -3%;
+}
+
+.modal-map-content {
+  height: 99%;
+}
+
+.modal-map-body{
+  padding: 0px 0px 0px 0px;
+}
+
+.mapaExp{
+   height: 88vh;
+   width: 90vw;
+}
+
