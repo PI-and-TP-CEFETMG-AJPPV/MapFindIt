@@ -8,8 +8,9 @@ var pessoasLoaded = 1;
 function carregarMapas() {
 	//Definição de valores
 	pesquisa = get('pesquisa');
+	fim = false;
 
-	for(let i=0; i<10; i++){
+	for(let i=0; i<10  && fim==false; i++){
 		$.ajax({
 			url: '/ajax/carregarMapasPesquisa/',
 			data: {
@@ -18,14 +19,10 @@ function carregarMapas() {
 			},
 			dataType: 'json',
 			success: function (data) {
-				//Se todas as 10 postagens tiverem sido carregas
+				//Se não houver mais mapas
 				if(data.erro){
-					if(i==0){
-						$('#next').attr("disabled", true);
-						$('#back').click();
-					}else{
-						$('#next').attr("disabled", true);
-					}
+					$('#next').attr("disabled", true);
+					fim = true;
 					return;
 				}
 				//Solução para a utilização do prepararPostagem
@@ -41,24 +38,21 @@ function carregarMapas() {
 function carregarGrupos() {
 	//Definição de valores
 	pesquisa = get('pesquisa');
+	fim = false;
 
-	for(let i=0; i<10; i++){
+	for(let i=0; i<10 && fim==false; i++){
 		$.ajax({
 			url: '/ajax/carregarGruposPesquisa/',
 			data: {
-				'num': 10*(gruposLoaded-1)+i,
+				'num': ((Number(gruposLoaded)-1)*10)+Number(i),
 				'pesquisa': pesquisa
 			},
 			dataType: 'json',
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
-					if(i==0){
-						$('#next').attr("disabled", true);
-						$('#back').click();
-					}else{
-						$('#next').attr("disabled", true);
-					}
+					$('#next').attr("disabled", true);
+					fim = true;
 					return;
 				}
 				//Prepara o grupo para ser exibido
@@ -102,24 +96,21 @@ function prepararGrupo(data) {
 function carregarPessoas() {
 	//Definição de valores
 	pesquisa = get('pesquisa');
+	fim = false;
 
-	for(let i=0; i<10; i++){
+	for(let i=0; i<10 && fim==false; i++){
 		$.ajax({
 			url: '/ajax/carregarPessoasPesquisa/',
 			data: {
-				'num': 10*(pessoasLoaded-1)+i,
+				'num': ((Number(pessoasLoaded)-1)*10)+Number(i),
 				'pesquisa': pesquisa
 			},
 			dataType: 'json',
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
-					if(i==0){
-						$('#next').attr("disabled", true);
-						$('#back').click();
-					}else{
-						$('#next').attr("disabled", true);
-					}
+					$('#next').attr("disabled", true);
+					fim = true;
 					return;
 				}
 				//Prepara o grupo para ser exibido
@@ -154,6 +145,8 @@ function prepararPessoa(data) {
 $('input:radio').on('click', function(e) {
 	//Escolha
 	value = e.currentTarget.value;
+	$('#back').attr("disabled", true);
+	$('#next').attr("disabled", false);
 	//Retira o conteúdo anterior
 	$("#divFiltro").html("");
 	//Reseta a quantidade carregada

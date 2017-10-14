@@ -28,17 +28,16 @@ def mapasPesquisa(request):
     pesquisa = request.GET.get('pesquisa', None)
     #Retorna todos os mapas encontrados para o texto pesquisado
     mapas = pesquisarMapas(pesquisa)
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
-    #Inicializa postagem
-    postagem = Postagem.objects.none()
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagem.objects.filter(idmapa=mapa).filter(
-    idusuario=mapa.idusuario)
-    getpostagem = postagem.first()
-
     #Se houver mapas
-    if mapa is not None:
+    try:
+        #Pega o mapa correspondente ao número da requisição Ajax
+        mapa = mapas[num]
+        #Inicializa postagem
+        postagem = Postagem.objects.none()
+        #Pega a postagem do autor do mapa correspondente
+        postagem = Postagem.objects.filter(idmapa=mapa).filter(
+        idusuario=mapa.idusuario)
+        getpostagem = postagem.first()
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
@@ -58,7 +57,7 @@ def mapasPesquisa(request):
         }
         return JsonResponse(data)
     #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
-    else:
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
@@ -87,10 +86,10 @@ def gruposPesquisa(request):
     pesquisa = request.GET.get('pesquisa', None)
     #Retorna todos os grupos encontrados para o texto pesquisado
     grupos = pesquisarGrupos(pesquisa)
-    #Pega o grupo correspondente ao número da requisição Ajax
-    grupo = grupos[num]
     #Se houver grupos
-    if grupo is not None:
+    try:
+        #Pega o grupo correspondente ao número da requisição Ajax
+        grupo = grupos[num]
         #Retorna ao AJAX todos os dados
         data = {
             'idgrupo': grupo.idgrupo,
@@ -102,8 +101,8 @@ def gruposPesquisa(request):
             'privado': grupo.privado,
         }
         return JsonResponse(data)
-    #Caso já se tenha carregado todas os grupos ou não há correspondentes à pesquisa
-    else:
+    #Caso já se tenha carregado todos os grupos ou não há correspondentes à pesquisa
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
@@ -132,10 +131,10 @@ def pessoasPesquisa(request):
     pesquisa = request.GET.get('pesquisa', None)
     #Retorna todas as pessoas encontrados para o texto pesquisado
     pessoas = pesquisarPessoas(pesquisa)
-    #Pega a pessoa correspondente ao número da requisição Ajax
-    pessoa = pessoas[num]
     #Se houver pessoas
-    if pessoa is not None:
+    try:
+        #Pega a pessoa correspondente ao número da requisição Ajax
+        pessoa = pessoas[num]
         #Retorna ao AJAX todos os dados
         data = {
             'idusuario': pessoa.idusuario,
@@ -148,14 +147,14 @@ def pessoasPesquisa(request):
         }
         return JsonResponse(data)
     #Caso já se tenha carregado todas as pessoas ou não há correspondentes à pesquisa
-    else:
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
         }
         return JsonResponse(data)
 
-#Serve apenas para testes 
+#Serve apenas para testes
 def debug(request):
     vteste = pesquisarMapas("Teste")
     print("\n\n\n")
