@@ -1,5 +1,6 @@
 from django.conf.urls import include, url
 from . import views
+from . import pesquisa
 
 urlpatterns = [
     url(r'^$', views.home),
@@ -21,9 +22,6 @@ urlpatterns = [
     url(r'^ajax/carregarMapasPerfil/$', views.mapasPerfil),
     url(r'^ajax/carregarMapasGrupo/$', views.mapasGrupo),
     url(r'^ajax/carregarMapasHome/$', views.mapasHome),
-    url(r'^ajax/carregarMapasPesquisa/$', views.mapasPesquisa),
-    url(r'^ajax/carregarGruposPesquisa/$', views.gruposPesquisa),
-    url(r'^ajax/carregarPessoasPesquisa/$', views.pessoasPesquisa),
     url(r'^ajax/salvarComentario/$', views.salvarComentario),
     url(r'^ajax/deletarComentario/$', views.deletarComentario),
     url(r'^ajax/bloqueioComentarios/$', views.bloqueioComentarios),
@@ -61,5 +59,9 @@ urlpatterns = [
     url(r'^ajax/deletarArea/$', views.deletarArea),
     url(r'^ajax/deletarRota/$', views.deletarRota),
     url(r'^ajax/mapasFeed/$', views.mapasFeed),
-    url(r'^debug/$', views.debug)
+
+    url(r'^ajax/carregarMapasPesquisa/$', pesquisa.mapasPesquisa),
+    url(r'^ajax/carregarGruposPesquisa/$', pesquisa.gruposPesquisa),
+    url(r'^ajax/carregarPessoasPesquisa/$', pesquisa.pessoasPesquisa),
+    url(r'^pesquisadebug/$', pesquisa.debug)
 ]
