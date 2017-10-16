@@ -126,7 +126,11 @@ def editarGrupo(request):
         grupo.codcor=cor
     grupo.save()
     return JsonResponse({'sucesso': True})
-
+def entrarGrupo(request):
+    grupoFull=get_object_or_404(Grupo, idgrupo=request.GET.get('idgrupo'))
+    usuarioFull=get_object_or_404(Usuario, idusuario=request.GET.get('idusuario'))
+    Membrosgrupo.objects.create(idgrupo=grupoFull, idusuario=usuarioFull, ban=False, admim=False)
+    return JsonResponse({'success': True})
 def getMembrosGrupo(request):
     idGrupo= request.GET.get('idgrupo')
     grupoFull = get_object_or_404(Grupo, idgrupo=idGrupo)
@@ -529,7 +533,24 @@ def adicionarAvaliacao(request):
     mapa.save()
     aval.save()
     return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
+
 def pesquisarMapasGrupo(pesquisa):
+    #Busca mapas pelo título
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa)
+    #Busca mapas pelo tema
+    tema = Tema.objects.filter(nomtema__icontains=pesquisa)
+    for n in tema:
+        result = result | Mapa.objects.filter(codtema=n.id)
+    #Busca mapas pela descrição
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    #Retira os mapas privados do resultado
+    result = result.exclude(idtvisibilidade='P')
+    #Ordena a pesquisa
+    result = result.order_by('valaprovados', 'valvisualizacoes')
+    #Retorna os mapas encontrados segundo os parâmetros da pesquisa
+    return result
+
+def pesquisaMapasGrupo(request):
     #Número do mapa e da div no qual será carregado
     num = request.GET.get('num', None)
     num = int(num)
@@ -537,17 +558,16 @@ def pesquisarMapasGrupo(pesquisa):
     pesquisa = request.GET.get('pesquisa', None)
     #Retorna todos os mapas encontrados para o texto pesquisado
     mapas = pesquisarMapas(pesquisa)
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
-    #Inicializa postagem
-    postagem = Postagem.objects.none()
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagem.objects.filter(idmapa=mapa).filter(
-    idusuario=mapa.idusuario)
-    getpostagem = postagem.first()
-
     #Se houver mapas
-    if mapa is not None:
+    try:
+        #Pega o mapa correspondente ao número da requisição Ajax
+        mapa = mapas[num]
+        #Inicializa postagem
+        postagem = Postagem.objects.none()
+        #Pega a postagem do autor do mapa correspondente
+        postagem = Postagemgrupo.objects.filter(idmapa=mapa).filter(
+        idusuario=mapa.idusuario)
+        getpostagem = postagem.first()
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
@@ -567,65 +587,13 @@ def pesquisarMapasGrupo(pesquisa):
         }
         return JsonResponse(data)
     #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
-    else:
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
         }
         return JsonResponse(data)
-def entrarGrupo(request):
-    #paga o usuario
-    idUsuario=request.GET.get('id')
-    usuarioFull= Usuario.objects.get(idusuario=idUsuario)
-    #pega o grupo
-    idGrupo=request.GET.get('idGrupo')
-    grupoFull=Grupo.objects.get(pk=idGrupo)
-    Membrosgrupo.objects.create(idgrupo=grupoFull, idusuario=usuarioFull,ban=False,admim=False)
-    return JsonResponse({'success':1})
 
-def pesquisaMapasGrupo(request):
-    #Número do mapa e da div no qual será carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    idgrupo=request.GET.get('id')
-    #Texto utilizado para encontrar mapas
-    pesquisa = request.GET.get('pesquisa')
-    #Retorna todos os mapas encontrados para o texto pesquisado
-    mapas = pesquisarMapasGrupo(pesquisa)
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
-
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagemgrupo.objects.filter(idmapa=mapa).filter(
-    idgrupo=idgrupo)
-    getpostagem = postagem.first()
-    #Se houver mapas
-    if mapa is not None:
-        #Chama a função de obter os dados da postagem
-        dados = getDadosPostagem(getpostagem)
-        #Serializa a postagem em JSON
-        postagem = serializers.serialize('json', postagem)
-        #Retorna ao AJAX todos os dados
-        data = {
-            'postagem': postagem,
-            'mapa': dados[0],
-            'pontos': dados[1],
-            'icones': dados[2],
-            'comentarios': dados[3],
-            'autores': dados[4],
-            'rotas': dados[5],
-            'pontoRotas': dados[6],
-            'areas': dados[7],
-            'pontoAreas': dados[8],
-        }
-        return JsonResponse(data)
-    #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
-    else:
-        #Finaliza a requisição Ajax no lado do cliente
-        data = {
-            'erro': 1,
-        }
-        return JsonResponse(data)
 def mapasGrupo(request):
     #Load de 10 ultimos Mapas
     num = int(request.GET.get('num'))
@@ -710,6 +678,8 @@ def mapasFeed(request):
     #Número do mapa e da div no qual será carregado
     num = request.GET.get('num', None)
     num = int(num)
+    lat = float(request.GET.get('lat', None))
+    lng = float(request.GET.get('lng', None))
     amizades = Amizade.objects.filter(idusuario1 = request.session['usuarioLogado'])
     amigos=[]
     for amizade in amizades:
@@ -732,19 +702,38 @@ def mapasFeed(request):
     #Pega os interesses por ordem de mais interesse
     interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
     dictSugestoes={}
+    temasPassados = []
+    for interesse in interesses:
+        tema = interesse.codtema
+        mapasTema = Mapa.objects.filter(codtema=tema)
+        temasPassados.append(tema.pk)
+        for mapaO in mapasTema:
+            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes - (distancia*1000)
+                dictSugestoes.update({pesoM: mapaO})
+    interesses = Interesseusuariotema.objects.none()
+    for amigo in amigos:
+        inter = Interesseusuariotema.objects.filter(idusuario = amigo).order_by('-valvisualizacoes')
+        for interesse in inter:
+            if interesse.codtema.pk not in temasPassados:
+                interesses = interesses | interesse
     for interesse in interesses:
         tema = interesse.codtema
         mapasTema = Mapa.objects.filter(codtema=tema)
         for mapaO in mapasTema:
-            if mapaO.idusuario.idusuario is not usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes
+            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7 - (distancia*1000)
                 dictSugestoes.update({pesoM: mapaO})
     vals = sorted(dictSugestoes, reverse=True)
     sugestoes=[]
     for val in vals:
         sugestoes.append(dictSugestoes[val])
+    print(sugestoes)
     #O usuario nao desativou os recomendados
     #if recomendacoes:
+    print(math.floor((num+1)/10))
     if (num+1)%10==0 and math.floor((num+1)/10)<len(sugestoes):
         mapa = sugestoes[math.floor((num+1)/10)]
     else:
@@ -801,7 +790,6 @@ def mapasFeed(request):
         }
         return JsonResponse(data)
 
-
 #Carrega os mapas da Home
 def mapasHome(request):
     #Número do mapa e da div no qual será carregado
@@ -846,120 +834,6 @@ def mapasHome(request):
         }
         return JsonResponse(data)
     #Caso já se tenha carregado todas as postagens
-    else:
-        #Finaliza a requisição Ajax no lado do cliente
-        data = {
-            'erro': 1,
-        }
-        return JsonResponse(data)
-
-#Pesquisa mapas pela String passada
-def pesquisarMapas(pesquisa):
-    #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
-    #Contabiliza a quantidade de mapas encontrados pelo titulo
-    controle = 0
-    for n in result:
-        controle += 1
-    #Se for menor do que 10
-    if controle < 10:
-        tema = Tema.objects.filter(nomtema__icontains=pesquisa)
-        for n in tema:
-            result = result | Mapa.objects.filter(codtema=n.id)
-        result = result.order_by('valaprovados', 'valvisualizacoes')
-        #Contabiliza a quantidade de mapas encontrados pelo titulo + tema
-        controle = 0
-        for n in result:
-            controle += 1
-        #Se for menor do que 10 busca mapas pela descrição
-        if controle < 10:
-            result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
-            result = result.order_by('valaprovados', 'valvisualizacoes')
-    #Retorna os mapas encontrados segundo os parâmetros da pesquisa
-    return result
-
-#Responde ao Ajax de pesquisa de mapas
-def mapasPesquisa(request):
-    #Número do mapa e da div no qual será carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    #Texto utilizado para encontrar mapas
-    pesquisa = request.GET.get('pesquisa', None)
-    #Retorna todos os mapas encontrados para o texto pesquisado
-    mapas = pesquisarMapas(pesquisa)
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
-    #Inicializa postagem
-    postagem = Postagem.objects.none()
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagem.objects.filter(idmapa=mapa).filter(
-    idusuario=mapa.idusuario)
-    getpostagem = postagem.first()
-
-    #Se houver mapas
-    if mapa is not None:
-        #Chama a função de obter os dados da postagem
-        dados = getDadosPostagem(getpostagem)
-        #Serializa a postagem em JSON
-        postagem = serializers.serialize('json', postagem)
-        #Retorna ao AJAX todos os dados
-        data = {
-            'postagem': postagem,
-            'mapa': dados[0],
-            'pontos': dados[1],
-            'icones': dados[2],
-            'comentarios': dados[3],
-            'autores': dados[4],
-            'rotas': dados[5],
-            'pontoRotas': dados[6],
-            'areas': dados[7],
-            'pontoAreas': dados[8],
-        }
-        return JsonResponse(data)
-    #Caso já se tenha carregado todas as postagens ou não há mapas correspondentes
-    else:
-        #Finaliza a requisição Ajax no lado do cliente
-        data = {
-            'erro': 1,
-        }
-        return JsonResponse(data)
-
-#Pesquisa grupos pela String passada
-def pesquisarGrupos(pesquisa):
-    #Busca grupos pelo nome
-    result1 = Grupo.objects.filter(nomegrupo__icontains=pesquisa).order_by('nomegrupo', 'idgrupo')
-    #Busca grupos pela descrição
-    result2 = Grupo.objects.filter(descgrupo__icontains=pesquisa).order_by('nomegrupo', 'idgrupo')
-    #Junta os resultados em apenas um
-    result = result1 | result2
-    #Retorna os resultados encontrados
-    return result
-
-#Responde ao Ajax de pesquisa de grupos
-def gruposPesquisa(request):
-    #Número do grupo e da div no qual será carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    #Texto utilizado para encontrar grupos
-    pesquisa = request.GET.get('pesquisa', None)
-    #Retorna todos os grupos encontrados para o texto pesquisado
-    grupos = pesquisarGrupos(pesquisa)
-    #Pega o grupo correspondente ao número da requisição Ajax
-    grupo = grupos[num]
-    #Se houver grupos
-    if grupo is not None:
-        #Retorna ao AJAX todos os dados
-        data = {
-            'idgrupo': grupo.idgrupo,
-            'nomegrupo': grupo.nomegrupo,
-            'descgrupo': grupo.descgrupo,
-            'r': grupo.codcor.r,
-            'g': grupo.codcor.g,
-            'b': grupo.codcor.b,
-            'privado': grupo.privado,
-        }
-        return JsonResponse(data)
-    #Caso já se tenha carregado todas os grupos ou não há correspondentes à pesquisa
     else:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
@@ -1069,7 +943,7 @@ def editarMapa(request, idmapa):
     amigos=Amizade.objects.filter(idusuario1=mapa.idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
     amigos=amigos or Amizade.objects.filter(idusuario2=mapa.idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
 
-    if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos) or (mapa.idtvisibilidade=='U'):
+    if (mapa.idtvisibilidade=='P' and mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='A' and amigos or mapa.idusuario.idusuario==request.session.get('usuarioLogado')) or (mapa.idtvisibilidade=='U'):
         #Identifica primeiro acesso para criar ponto em ponto inicial do mapa
         primeira=False
         if request.session.__contains__('primeira') and request.session['primeira']=='1':
@@ -1341,9 +1215,14 @@ def redefinirSenha(request):
 def mapasMesclar(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
-    #Busca mapas pelo título
-    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P').order_by('valaprovados', 'valvisualizacoes')
-    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa)
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='U')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='U')
+    amigos1 = Amizade.objects.filter(idusuario1=request.session['usuarioLogado']).values('idusuario2')
+    amigos2 = Amizade.objects.filter(idusuario2=request.session['usuarioLogado']).values('idusuario1')
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='A').filter(Q(idusuario__in=amigos1) | Q(idusuario__in=amigos2)) | result
+    result = Mapa.objects.filter(descmapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idtvisibilidade='P',  idusuario=request.session['usuarioLogado']) | result
     result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
     for index, mapa in enumerate(result):
@@ -1356,15 +1235,18 @@ def mesclaMapas(id, idEditando):
     mapaEditando = get_object_or_404(Mapa, idmapa=idEditando)
     mapaTarget = get_object_or_404(Mapa, idmapa=id)
     #Obtem os pontos do mapa
-    pontos=Ponto.objects.filter(idmapa=mapaTarget, idtponto='P')
+    pontos=Ponto.objects.filter(idmapa=mapaTarget)
     for ponto in pontos:
+        existentes= Ponto.objects.filter(idmapa=mapaEditando, coordx=ponto.coordx, coordy=ponto.coordy)
+        for pontoE in existentes:
+            pontoE.delete()
         novPonto = Ponto.objects.create(coordx = ponto.coordx,
                 coordy=ponto.coordy,
                 idmapa=mapaEditando,
                 nomponto=ponto.nomponto,
                 descponto=ponto.descponto,
                 idusuario=ponto.idusuario,
-                idtponto='P',
+                idtponto=ponto.idtponto,
                 fotoponto=ponto.fotoponto)
         try:
             if ponto.codicone:
@@ -1382,8 +1264,7 @@ def mesclaMapas(id, idEditando):
         novRota.save()
         pontosRota = RotaPonto.objects.filter(idrota=rota).order_by("seqponto")
         for ponto in pontosRota:
-            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='R')
-            novPonto.save()
+            novPonto = Ponto.objects.filter(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idmapa=mapaEditando, idtponto='R').first()
             pontorota = RotaPonto.objects.create(idrota=novRota, idponto=novPonto, seqponto=ponto.seqponto)
             pontorota.save()
 
@@ -1393,8 +1274,7 @@ def mesclaMapas(id, idEditando):
         area.save()
         pontosArea = Pontoarea.objects.filter(idarea=area)
         for ponto in pontosArea:
-            novPonto = Ponto.objects.create(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idusuario=ponto.idponto.idusuario, idmapa=mapaEditando, idtponto='A')
-            novPonto.save()
+            novPonto = Ponto.objects.filter(coordx=ponto.idponto.coordx, coordy=ponto.idponto.coordy, idmapa=mapaEditando, idtponto='A').first()
             pontoarea = Pontoarea.objects.create(idarea=novArea, idponto=novPonto)
             pontoarea.save()
 
@@ -1423,7 +1303,7 @@ def exibirMapa(request, idmapa):
                 amigos=Amizade.objects.filter(idusuario1=idusuario).filter(idusuario2=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 print(amigos)
-                if amigos:
+                if amigos or mapa.idusuario.idusuario==request.session['usuarioLogado']:
                     return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
             return HttpResponse('Unauthorized', status=401)
         else:
@@ -1442,17 +1322,12 @@ def deletarArea(request):
     for pontoarea in areaPontos:
         ponto = pontoarea.idponto
         ponto.delete()
-        pontoarea.delete()
-    area.delete()
     return JsonResponse({'sucesso':1})
 
 def deletarRota(request):
     id = request.POST.get('id')
-    rota = get_object_or_404(Rota, idrota=id)
     rotaPontos = RotaPonto.objects.filter(idrota=id)
     for pontorota in rotaPontos:
         ponto = pontorota.idponto
         ponto.delete()
-        pontorota.delete()
-    rota.delete()
     return JsonResponse({'sucesso':1})
