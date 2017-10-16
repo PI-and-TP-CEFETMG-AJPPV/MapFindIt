@@ -532,13 +532,10 @@ def adicionarAvaliacao(request):
     #Atualiza tabelas
     mapa.save()
     aval.save()
-<<<<<<< HEAD
+
     return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
 
-=======
-    return JsonResponse({'sucesso': True, 'valapv': mapa.valaprovados, 'valrepv': mapa.valreprovados})
 
->>>>>>> master
 def pesquisarMapasGrupo(pesquisa):
     #Busca mapas pelo título
     result = Mapa.objects.filter(titulomapa__icontains=pesquisa)
@@ -597,13 +594,8 @@ def pesquisaMapasGrupo(request):
         data = {
             'erro': 1,
         }
-<<<<<<< HEAD
         return JsonResponse(data)
 
-=======
-        return JsonResponse(data)
-
->>>>>>> master
 def mapasGrupo(request):
     #Load de 10 ultimos Mapas
     num = int(request.GET.get('num'))
@@ -713,7 +705,7 @@ def mapasFeed(request):
     interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
     dictSugestoes={}
     temasPassados = []
-<<<<<<< HEAD
+
     for interesse in interesses:
         tema = interesse.codtema
         mapasTema = Mapa.objects.filter(codtema=tema)
@@ -729,32 +721,12 @@ def mapasFeed(request):
         for interesse in inter:
             if interesse.codtema.pk not in temasPassados:
                 interesses = interesses | interesse
-=======
->>>>>>> master
-    for interesse in interesses:
-        tema = interesse.codtema
-        mapasTema = Mapa.objects.filter(codtema=tema)
-        temasPassados.append(tema.pk)
-        for mapaO in mapasTema:
-            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
-<<<<<<< HEAD
-=======
-                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes - (distancia*1000)
-                dictSugestoes.update({pesoM: mapaO})
-    interesses = Interesseusuariotema.objects.none()
-    for amigo in amigos:
-        inter = Interesseusuariotema.objects.filter(idusuario = amigo).order_by('-valvisualizacoes')
-        for interesse in inter:
-            if interesse.codtema.pk not in temasPassados:
-                interesses = interesses | interesse
     for interesse in interesses:
         tema = interesse.codtema
         mapasTema = Mapa.objects.filter(codtema=tema)
         for mapaO in mapasTema:
             if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
                 distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
->>>>>>> master
                 pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7 - (distancia*1000)
                 dictSugestoes.update({pesoM: mapaO})
     vals = sorted(dictSugestoes, reverse=True)
@@ -820,11 +792,6 @@ def mapasFeed(request):
             'erro': 1,
         }
         return JsonResponse(data)
-<<<<<<< HEAD
-
-=======
-
->>>>>>> master
 #Carrega os mapas da Home
 def mapasHome(request):
     #Número do mapa e da div no qual será carregado
@@ -875,11 +842,6 @@ def mapasHome(request):
             'erro': 1,
         }
         return JsonResponse(data)
-<<<<<<< HEAD
-
-=======
-
->>>>>>> master
 def novoMapa(request):
     if request.method=="POST" and request.POST.__contains__("temas"):
         if request.POST.get("opcInicio")=='P':
