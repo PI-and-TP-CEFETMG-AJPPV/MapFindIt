@@ -139,9 +139,9 @@
         <div class="col-md-2">
 			<aside id="sticky-social">
 				<ul>
-					<li onclick="selecionar(0);" id="pontoLi"><a href="#" class="claro" id="selecPonto"><span>Ponto</span><img src="{{baseUrl}}MapFindIt/iconesEditar/PontoIcone.png"/></a></li>
-					<li onclick="selecionar(1);" id="areaLi"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
-					<li onclick="selecionar(2);" id="rotaLi"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
+					<li onclick="ferramentaSelec==-1||ferramentaSelec==0?selecionar(0):mostrarModal(0);" id="pontoLi"><a href="#" class="claro" id="selecPonto"><span>Ponto</span><img src="{{baseUrl}}MapFindIt/iconesEditar/PontoIcone.png"/></a></li>
+					<li onclick="ferramentaSelec==-1||ferramentaSelec==0?selecionar(1):mostrarModal(1);" id="areaLi"><a href="#" class="escuro" id="selecArea"><span>Área</span><img src="{{baseUrl}}MapFindIt/iconesEditar/AreaIcone.png"/></a></li>
+					<li onclick="ferramentaSelec==-1||ferramentaSelec==0?selecionar(2):mostrarModal(2);" id="rotaLi"><a href="#" class="claro" id="selecRota"><span>Rota</span><img src="{{baseUrl}}MapFindIt/iconesEditar/RotaIcone.png"/></a></li>
 					<li>&nbsp;</li>
 					<li onclick="modalIcone()"><a data-toggle="modal" class="escuro"><span>Criar Icone</span><i class="fa fa-plus" aria-hidden="true"></i></a></li>
 					<li onclick="selIcone({{usuario.idusuario}})"><a href="#" data-toggle="modal" class="claro"><span>Editar Icone</span><i class="fa fa-pencil" aria-hidden="true"></i></a></li>
@@ -197,6 +197,25 @@
 							<button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Icone </button>
 							<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
 						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<!-- Modal de confirmar mudança de ferramenta !-->
+
+		<div class="modal fade" id="confirm-delete" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						Confirmar Mudança
+					</div>
+					<div class="modal-body">
+						Você realmente deseja mudar de ferramenta? Todo o trabalho não concluído será perdido
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+						<button id="confirmaMudanca" class="btn btn-danger btn-ok">Mudar</button>
 					</div>
 				</div>
 			</div>

@@ -1,26 +1,27 @@
 var map;
 
+//Desenha o icone de marker
 function pinSymbol(color) {
 		//Retorna o desenho de um ponto de determinada cor
 		if(color=='#000' || color=='#000000' || color=='rgb(0,0,0)'){
 			//Se o ponto for preto o contorno é branco
 			return {
-	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        path: google.maps.SymbolPath.CIRCLE,
 	        fillColor: color,
 	        fillOpacity: 1,
 	        strokeColor: '#FFF',
 	        strokeWeight: 1,
-	        scale: 1,
+	        scale: 10,
 	   };
 		}else{
 			//Para outras cores o contorno é preto
 			return {
-	        path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+	        path: google.maps.SymbolPath.CIRCLE,
 	        fillColor: color,
 	        fillOpacity: 1,
 	        strokeColor: '#000',
 	        strokeWeight: 2,
-	        scale: 1,
+	        scale: 10,
 	   };
 		}
 }
@@ -125,92 +126,124 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 	//Para cada rota
 	rotas.forEach(function (item, index) {
 		//Pontos que compõe essa rota
-		let pontosRota = pontoRotas[index];
+		let pontosRota=pontoRotas[index];
 		//Serviço de direções do google
 		let directionsService = new google.maps.DirectionsService();
 		//Serviço de exibição das rotas
 		let directionsDisplay = new google.maps.DirectionsRenderer({
-			polylineOptions: {
+		  polylineOptions: {
 				//Cor da rota
-				strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
+		    strokeColor: `rgb(${item.fields.codcor[0]}, ${item.fields.codcor[1]}, ${item.fields.codcor[2]})`,
 				//Grossura do traçado
 				strokeWeight: 5
 			},
 			//Remove o indicador de pontos padrão da google
 			suppressMarkers: true,
-			preserveViewport: true
+        	preserveViewport: true
 		});
 		//Cor dos pontos de uma rota
 		let pinColor = `rgb(${item.fields.codcor[0]},${item.fields.codcor[1]},${item.fields.codcor[2]})`;
+		//Pontos da rota
+		let objsPonto=[];
 		//Para cada ponto cria uma marcacao com a cor da rota, e cria um evento de click para as marcacoes
-		for (let x = 0; x < pontosRota.length; x++) {
+		for(let x=0; x<pontosRota.length; x++){
+			let ponto;
+			pontos.forEach(function(item){
+				if(item.pk==pontosRota[x].fields.idponto){
+					ponto=item;
+					return;
+				}
+			});
+			if(ponto===undefined){
+				continue;
+			}
+			objsPonto.push(ponto);
+			let cor;
+			//Algoritmo para detectar melhor cor da fonte
+			let a = 1 - ( 0.299 * item.fields.codcor[0] + 0.587 * item.fields.codcor[1] + 0.114 * item.fields.codcor[2])/255;
+			if (a < 0.5)
+				cor='black';
+			else
+				cor='white';
 			let marker = new google.maps.Marker({
-				position: new google.maps.LatLng(pontosRota[x].fields.idponto[0], pontosRota[x].fields.idponto[1]),
+				position: new google.maps.LatLng(ponto.fields.coordy, ponto.fields.coordx),
 				map: map,
+				label: {
+					text: (pontosRota[x].fields.seqponto+1).toString(),
+					fontWeight: 'bold',
+					fontSize: '12px',
+					fontFamily: '"Courier New", Courier,Monospace',
+					color: cor
+				},
 				icon: pinSymbol(pinColor)
 			});
-			let contentString =
+			if(ponto.fields.fotoponto!=""){
+				//Se o ponto possui foto
+				contentString =
 				`<div id="content">
-		          <h2 id="firstHeading" class="firstHeading">${item.fields.nomerota}</h2>
-		          <div id="bodyContent">
-		             <p>${item.fields.descrota}</p>
-		          </div>
-		       </div>`;
+					<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+					<div id="bodyContent">
+						<img class="img-responsive" style="margin: 0 auto;" src="${imgUrl}MapFindIt/ImagemPonto/${ponto.pk}.png">
+						<p>${ponto.fields.descponto}</p>
+						<hr>
+						<h2 class="firstHeading">${item.fields.nomerota}</h2>
+						<div id="bodyContent">
+							<p>${item.fields.descrota}</p>
+						</div>
+					</div>
+				</div>`;
+			}else{
+				//Se o ponto não possui foto
+				contentString =
+					`<div id="content">
+						<h1 id="firstHeading" class="firstHeading">${ponto.fields.nomponto}</h1>
+						<div id="bodyContent">
+							<p>${ponto.fields.descponto}</p>
+							<hr>
+							<h2 class="firstHeading">${item.fields.nomerota}</h2>
+							<div id="bodyContent">
+								<p>${item.fields.descrota}</p>
+							</div>
+						</div>
+					</div>`;
+			}
 			let infowindow = new google.maps.InfoWindow({
 				content: contentString
 			});
-			marker.addListener('click', function () {
+			marker.addListener('click', function() {
 				infowindow.open(map, marker);
 			});
 		}
 		//Array para os pontos do "meio" da rota, sem incluir o primeiro e ultimo
-		let waypts = Array();
-		for (let x = 1; x < pontosRota.length - 1; x++) {
-			waypts.push({
-				location: {
-					lat: pontosRota[x].fields.idponto[0],
-					lng: pontosRota[x].fields.idponto[1]
-				},
-				stopover: false
-			});
+		let waypts=Array();
+		for(let x=1; x<pontosRota.length-1; x++){
+			waypts.push({location:{lat: objsPonto[x].fields.coordy, lng: objsPonto[x].fields.coordx}, stopover:false});
 		}
 		//Define o mapa da rota
 		directionsDisplay.setMap(map);
 		let request;
-		if (waypts.length > 0) {
+		if(waypts.length>0){
 			//Se existem mais de dois pontos
 			request = {
-				origin: {
-					lat: pontosRota[0].fields.idponto[0],
-					lng: pontosRota[0].fields.idponto[1]
-				},
-				destination: {
-					lat: pontosRota[pontosRota.length - 1].fields.idponto[0],
-					lng: pontosRota[pontosRota.length - 1].fields.idponto[1]
-				},
+				origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+				destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 				waypoints: waypts,
 				travelMode: 'DRIVING'
 			};
-		} else {
+		}else{
 			//Se existem apenas dois pontos
 			request = {
-				origin: {
-					lat: pontosRota[0].fields.idponto[0],
-					lng: pontosRota[0].fields.idponto[1]
-				},
-				destination: {
-					lat: pontosRota[pontosRota.length - 1].fields.idponto[0],
-					lng: pontosRota[pontosRota.length - 1].fields.idponto[1]
-				},
+				origin: {lat: objsPonto[0].fields.coordy, lng: objsPonto[0].fields.coordx},
+				destination: {lat: objsPonto[pontosRota.length-1].fields.coordy, lng: objsPonto[pontosRota.length-1].fields.coordx},
 				travelMode: 'DRIVING'
 			};
 		}
 		//Requisita a rota ao servidor da google
-		directionsService.route(request, function (response, status) {
-			if (status == 'OK') {
-				directionsDisplay.setDirections(response);
-			}
-		});
+		directionsService.route(request, function(response, status) {
+		if (status == 'OK') {
+			directionsDisplay.setDirections(response);
+		}
+      });
 	});
 	//Para cada uma das areas criadas
 	areas.forEach(function (item, index) {
@@ -252,49 +285,52 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			infowindow.open(map);
 		});
 	});
-	var legend = document.createElement('div');
-	$(legend).html("<h4>Legenda</h4>");
-	$(legend).addClass("legend");
-	//Para cada icone
-	for (let i = 0; i < icones.length; i++) {
-		let icon = icones[i];
-		let name = icon.fields.nomeicone;
-		let icone = imgUrl + 'MapFindIt/ImagemIcones/' + icon.pk + '.png';
-		let div = document.createElement('div');
+	//Se for um mapa expandido
+	if (mapId.substring(3, 6)=="Exp") {
+		var legend = document.createElement('div');
+		$(legend).html("<h4>Legenda</h4>");
+		$(legend).addClass("legend");
+		//Para cada icone
+		for (let i = 0; i < icones.length; i++) {
+			let icon = icones[i];
+			let name = icon.fields.nomeicone;
+			let icone = imgUrl + 'MapFindIt/ImagemIcones/' + icon.pk + '.png';
+			let div = document.createElement('div');
+			//Cria uma div com a imagem do icone e o seu nome
+			div.innerHTML =
+				`<div style="display:flex; flex-direction: row; justify-content: space-between;">
+					<img src="${icone}">&nbsp;&nbsp;
+					<p>${name}</p>
+				</div>
+				`;
+			//Adiciona essa div à div de legenda
+			legend.appendChild(div);
+			//Adiciona uma quebra de linha
+			let br = document.createElement('br');
+			legend.appendChild(br);
+		}
+		//Caso não exista legendas esconde a div de legenda
+		if (icones.length == 0) {
+			legend.innerHTML = "";
+			legend.className = "";
+		}
+		//Adiciona a div de legendas ao mapa
+		map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
+		//Adiciona botão de mapa de calor
+		div = document.createElement('div');
 		//Cria uma div com a imagem do icone e o seu nome
 		div.innerHTML =
 			`<div style="display:flex; flex-direction: row; justify-content: space-between;">
-				<img src="${icone}">&nbsp;&nbsp;
-				<p>${name}</p>
+				<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
 			</div>
 			`;
-		//Adiciona essa div à div de legenda
-		legend.appendChild(div);
-		//Adiciona uma quebra de linha
-		let br = document.createElement('br');
-		legend.appendChild(br);
+		div.addEventListener('click', function() {
+			mapa.coordyinicial=map.getCenter().lat();
+			mapa.coordxinicial=map.getCenter().lng();
+			mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
+        });
+		map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 	}
-	//Caso não exista legendas esconde a div de legenda
-	if (icones.length == 0) {
-		legend.innerHTML = "";
-		legend.className = "";
-	}
-	//Adiciona a div de legendas ao mapa
-	map.controls[google.maps.ControlPosition.RIGHT_BOTTOM].push(legend);
-	//Adiciona botão de mapa de calor
-	div = document.createElement('div');
-	//Cria uma div com a imagem do icone e o seu nome
-	div.innerHTML =
-		`<div style="display:flex; flex-direction: row; justify-content: space-between;">
-			<button type="button" id="densidade${mapId}" class="btn btn-default"><small>Densidade</small></button>
-		</div>
-		`;
-	div.addEventListener('click', function() {
-		mapa.coordyinicial=map.getCenter().lat();
-		mapa.coordxinicial=map.getCenter().lng();
-   		mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
-    });
-	map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 
 }
 
@@ -327,7 +363,7 @@ function mapaCalor(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, m
 	div.addEventListener('click', function() {
 		mapa.coordyinicial=map.getCenter().lat();
 		mapa.coordxinicial=map.getCenter().lng();
-    	setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
+		setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, mapId);
     });
 	map.controls[google.maps.ControlPosition.BOTTOM_LEFT].push(div);
 }

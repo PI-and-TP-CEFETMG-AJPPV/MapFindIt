@@ -60,6 +60,16 @@ class Grupo(models.Model):
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor', blank=True, null=True)  # Field name made lowercase.
     privado = models.BooleanField(db_column='Privacidade',default=False )
+    
+    def delete(self):
+        membros = Membrosgrupo.objects.filter(idgrupo=self.idgrupo)
+        for m in membros:
+            m.delete()
+        postagens = Postagemgrupo.objects.filter(idgrupo=self.idgrupo)
+        for p in postagens:
+            p.delete()
+        super(Grupo, self).delete()
+
     def __str__(self):
         return self.nomegrupo
 
@@ -114,6 +124,27 @@ class Mapa(models.Model):
     valreprovados = models.IntegerField(db_column='valReprovados')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
 
+    def delete(self):
+        postagens = Postagem.objects.filter(idmapa=self.idmapa)
+        for p in postagens:
+            p.delete()
+        pontos = Ponto.objects.filter(idmapa=self.idmapa)
+        for p in pontos:
+            p.delete()
+        rota = Rota.objects.filter(idmapa=self.idmapa)
+        for r in rota:
+            r.delete()
+        areas = Area.objects.filter(idmapa=self.idmapa)
+        for a in areas:
+            a.delete()
+        avaliacao = Avaliacao.objects.filter(idmapa=self.idmapa)
+        for a in avaliacao:
+            a.delete()
+        perm = Permissaocolaboracao.objects.filter(idmapa=self.idmapa)
+        for p in perm:
+            p.delete()
+        super(Mapa, self).delete()
+
     def __str__(self):
         return self.titulomapa
 
@@ -165,6 +196,25 @@ class Ponto(models.Model):
     def natural_key(self):
         return (self.coordy, self.coordx)
 
+    def delete(self):
+        rota = RotaPonto.objects.filter(idponto=self.idponto)
+        for r in rota:
+            if RotaPonto.objects.filter(idrota=r.idrota).count()>1:
+                r.delete()
+            else:
+                rot = Rota.objects.filter(idrota=r.idrota.idrota).first()
+                rot.delete()
+                r.delete()
+        area = Pontoarea.objects.filter(idponto=self.idponto)
+        for a in area:
+            if Pontoarea.objects.filter(idarea=a.idarea).count()>1:
+                a.delete()
+            else:
+                are = Area.objects.filter(idarea=a.idarea.idarea).first()
+                are.delete()
+                a.delete()
+        super(Ponto, self).delete()
+
     def __str__(self):
         if(self.nomponto):
             return self.nomponto
@@ -193,6 +243,12 @@ class Postagem(models.Model):
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario')  # Field name made lowercase.
     censurada = models.BooleanField(db_column='censurada', default='False')# Fild name Mode lowercase
 
+    def delete(self):
+        com = Comentario.objects.filter(idpostagem=self.idpostagem)
+        for c in com:
+            c.delete()
+        super(Comentario, self).delete()
+
     class Meta:
         db_table = 'postagem'
 
@@ -219,6 +275,7 @@ class Rota(models.Model):
     codcor = models.ForeignKey(Cor, models.DO_NOTHING, db_column='codCor')  # Field name made lowercase.
     idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.
     idmapa = models.ForeignKey('Mapa', models.DO_NOTHING, db_column='idMapa', blank=True, null=True)
+
     def __str__(self):
         return self.nomerota
 
@@ -257,6 +314,12 @@ class Usuario(models.Model):
     txtfrase = models.CharField(db_column="txtFrase", max_length=100, default="No que você está pensando?") #Field name made lowercase
     foto = models.ImageField(upload_to='MapFindIt/static/MapFindIt/imagemUsers/', null=True, blank=True)
     recomendacoes = models.BooleanField(db_column='recomendacoes', default=True)
+
+    def delete(self):
+        mapa = Mapa.objects.filter(idusuario=self.idusuario)
+        for m in mapa:
+            m.delete()
+        super(Usuario, self).delete()
 
     def __str__(self):
         return self.emailusuario

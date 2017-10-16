@@ -75,12 +75,12 @@
   top: -3%;
 }
 
-.infoPostagem{
-  color: #505050 !important;
-}
-
 .modal-map-content {
   height: 99%;
+}
+
+.infoPostagem{
+  color: #505050 !important;
 }
 
 .modal-map-body{
