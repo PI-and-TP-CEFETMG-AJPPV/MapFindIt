@@ -41,18 +41,11 @@
             	<br>
             	<div class="center">
               	<h1>{{grupo.nomegrupo}}</h1>
+                <br>
+                <h4>{{grupo.descgrupo}}</h1>
             	</div>
           	</div>
         	</div>
-        	<br>
-        	<div class="row">
-						<div class="col-md-8 col-md-offset-2 white" style="background-color:rgb({{r}},{{g}},{{b}})">
-							<br>
-							<div class="center">
-								<h4>{{grupo.descgrupo}}</h1>
-								</div>
-							</div>
-						</div>
         	<br>
           <div class="row">
 					 <div class="col-md-8 col-md-offset-2" >
@@ -69,18 +62,21 @@
 										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim" ><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
 										{% endif %}
 										{% else %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="entrar({{usuarioFull.idusuario}}, {{grupo.idgrupo}})" >Entar</a>
+										<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="entrar({{usuario.idusuario}})" >Entar</a>
 										{% endif %}
 									</div>
 								</div>
               </div>
-              <br>
               <div id="opcMenu"></div>
               <div id="modalDinamico"></div>
               <br>
               <div class="row">
-                <div class="col-md-8 col-md-offset-2" >
+                <div class="col-md-12 " >
                   <div id="divMapas"></div>
+                  <div style="text-align:center;">
+          					<button class="btn button" id="back"><-</button>
+          					<button class="btn button" id="next">-></button>
+          				</div>
                 </div>
               </div>
 								<div class="menu pmd-floating-action"  role="navigation">
@@ -166,7 +162,7 @@
 			var imgUrl='{{baseUrl}}';
 			var idUsuarioLogado='{{usuario.idusuario}}';
 			var idUsuarioPagina = '{{idPag.idusuario}}';
-      var idGrupo = '{{grupo.idgrupo}}';
+      var idGrupo = Number('{{grupo.idgrupo}}');
 		</script>
 
 		<script src="{% static "MapFindIt/js/jquery.min.js"%}"></script>

@@ -16,7 +16,7 @@ function modalPublicar(idgrupo){
                         <div class="input-group">
                                     <input type="text" class="form-control" placeholder="Pesquise o mapa a ser postado" id="pesquisarMapas" name="pesquisaMescla" value="">
                         <div class="input-group-btn">
-                            <button type="submit" class="btn btn-primary">Pesquisar</button>
+                            <button type="submit" class="btn btn-default" style="border=1px">Pesquisar</button>
                         </div>
                             </div>
                     </form>
@@ -98,36 +98,15 @@ function modalRemoverMapa(idgrupo){
 		$('#modalDinamico').html(conteudo);
 		$('#modalPublicar-mapa').modal('show');
 }
-function entrar(id, idgrupo){
+function entrar(id){
   $.ajax({
     url: '/ajax/entrarGrupo/',
     data: {
       'id': id,
-      'idgrupo': idgrupo
+      'idGrupo': idGrupo
     },
     dataType: 'json',
     success: function (data) {
-      $('#modalDinamico').empty();
-      let conteudo=`<div class="modal fade" id="modalentrou" aria-hidden="true">
-          <div class="modal-dialog">
-              <div class="modal-content">
-                  <div class="modal-header">
-                      <button type="button" class="close" onclick="$('#modalentrou').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" aria-hidden="true">
-                          ×
-                      </button>
-                      <h4 class="modal-title">
-                          Você ingressou no grupo com sucesso
-                      </h4>
-                  </div>
-                  <div class="modal-body">
-                      <div class="modal-footer">
-                          <button class="btn btn-success" onclick="window.location.reload()" id="ok">Ok</button>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>`;
-        $('#modalDinamico').html(conteudo);
     }
   });
 }
@@ -196,60 +175,53 @@ function pesquisarMapas(idgrupo){
         },
         dataType: 'json',
         success: function (data) {
-           mapas=JSON.parse(data.mapas);
-           $('#mapasPostar').empty();
-           for(let i=0; i<mapas.length; i++){
-               $('#mapasPostar').append(`<div class="col-md-12">
-              <div class="card-container mapaMesclar" id="mapaMesclar${mapas[i][0]}">
-                <div class="card">
-                  <div class="content">
-                      <div class="main">
-                          <h4>${mapas[i][1]}</h4>
-                          <p style="text-align: left">${mapas[i][2]}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>`);
-              $('#mapaMesclar'+mapas[i][0]).on('click', function(){
-                  let id = $(this).attr('id').substring(11);
-                    let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
-                        <div class="modal-dialog">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" onclick="$('#modal-confirmar-post').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" aria-hidden="true">
-                                        ×
-                                    </button>
-                                    <h4 class="modal-title">
-                                        Confirmar Postagen
-                                    </h4>
-                                </div>
-                                <div class="modal-body">
-                                    <h4>Você tem certeza que deseja esse mapa?</h4>
-                                    <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="publicar(${id},${idgrupo});$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" id="confirmarpublicacao" data-dismiss="modal">Confirmar</button>
-                                        <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
-                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" data-dismiss="modal">Cancelar</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>`;
+          mapas=JSON.parse(data.mapas);
+          $('#mapasMesclar').empty();
+          for(let i=0; i<mapas.length; i++){
+              $('#mapasPostar').append(`<div class="col-md-12">
+             <div class="card-container mapaMesclar" id="mapasPostar${mapas[i][0]}">
+               <div class="card">
+                 <div class="content">
+                     <div class="main">
+                         <h4>${mapas[i][1]}</h4>
+                         <p style="text-align: left">${mapas[i][2]}</p>
+                         <a class="small" style="text-align: left" href="/exibirMapa/${mapas[i][0]}">Ver Mapa</a>
+                     </div>
+                   </div>
+                 </div>
+               </div>
+             </div>`);
+             $('#mapasPostar'+mapas[i][0]).on('click', function(){
+                 let id = $(this).attr('id').substring(11);
+                 $("#modalPublicar-mapa").modal("hide");
+                 $('#modalDinamico').empty();
+                   let conteudo=`<div class="modal fade" id="modal-confirmar-post" aria-hidden="true">
+                       <div class="modal-dialog">
+                           <div class="modal-content">
+                               <div class="modal-header">
+                                   <button type="button" class="close" onclick="$('#modalPublicar-mapa').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();" aria-hidden="true">
+                                       ×
+                                   </button>
+                                   <h4 class="modal-title">
+                                       Confirmar Mescla
+                                   </h4>
+                               </div>
+                               <div class="modal-body">
+                                   <h4>Você tem certeza que deseja publicar esse mapa?</h4>
+                                   <div class="modal-footer">
+                                       <button class="btn btn-success" onclick="publicar(${id},${idGrupo});" id="confirmarMesclaBtn">Confirmar</button>
+                                       <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>`;
                     $('#modalDinamico').html(conteudo);
                     $('#modal-confirmar-post').modal('show');
               })
            }
         }
     });
-}
-//Função para converter cores
-function hexToRgb(hex) {
-    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16)
-    } : null;
 }
 //lista os usuarios
 function getMembro(idgrupo){
@@ -359,7 +331,10 @@ function publicar(id, idgrupo){
     },
     dataType: 'json',
     success: function (data) {
-      $(".btn-warning").click();
+      $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();
+      $('#modal-confirmar-post').modal('hide');
+      $('#modalDinamico').empty();
+      carregarMapas(idGrupo);
     }
   });
 }
@@ -382,28 +357,43 @@ function pesquisarBar(){
     </div>`;
     $('#opcMenu').html(conteudo);
 }
-//Carrega o grupo de 10 mapas
-function carregarMapas(){
-	//Seleciona a div dos mapas
-	let div=$("#divMapas");
-	gruposCarregados++;
+
+//Variáveis globais
+//Os itens são carregados em grupos de 10 em 10
+var mapasLoaded = 1;
+
+//Busca mapas segundo a pesquisa passada
+function carregarMapas(idgrupo) {
+  $("#divMapas").empty();
+  let div=$("#divMapas");
 	for(let i=0; i<10; i++){
 		$.ajax({
-	      url: '/ajax/carregarMapasGrupo/',
-	      data: {
-          'num':i,
-	        'id': idGrupo
-	      },
-	      dataType: 'json',
-	      success: function (data) {
-					//Se todas as postagens tiverem sido carregas
-					if(data.erro){
-						return;
+			url: '/ajax/carregarMapasGrupo/',
+			data: {
+				'num': ((Number(mapasLoaded)-Number(1))*Number(10))+Number(i),
+        'id': parseInt(idGrupo)
+			},
+			dataType: 'json',
+			success: function (data) {
+				//Se todas as 10 postagens tiverem sido carregas
+				if(data.erro){
+					if(i==0){
+						$('#next').attr("disabled", true);
+						$('#back').click();
+					}else{
+						$('#next').attr("disabled", true);
 					}
-					//Prepara a postagem carregada
-					prepararPostagem(div, data, i)
+					return;
 				}
-	  });
+				//Solução para a utilização do prepararPostagem
+				gruposCarregados = mapasLoaded
+				//Prepara a postagem carregada
+				prepararPostagem(div, data, i)
+				if(i==1){
+
+				}
+			}
+		});
 	}
 }
 function modalAdicionar(){
@@ -439,7 +429,7 @@ $('#modalDinamico').html(conteudo);
 }
 
 //Carrega o grupo de 10 mapas
-function pesquisarMapas(){
+function pesquisarMapasGrupo(){
 	//Seleciona a div dos mapas
 	let div=$("#divPeesquisa");
 	gruposCarregados++;
