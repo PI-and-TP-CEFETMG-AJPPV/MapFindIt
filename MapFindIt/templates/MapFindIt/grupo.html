@@ -58,7 +58,7 @@
                <li class="sidebar-brand">
                  <div class="row">
                    <div class="col-md-9 col-md-offset-3">
-                     <a href="/perfil/{{user.idusuario}}" class="navbar-brand">
+                     <a href="/perfil/{{usuario.idusuario}}" class="navbar-brand">
                        {% if usuario.foto %}
                           <img id="img" class="img-circle img-responsive" style="width:150px; height:150px" src="{{baseUrl}}MapFindIt/ImagemUsers/{{user.idusuario}}.png"></img>
                        {% else %}
@@ -139,12 +139,13 @@
                <li>
                  <div class="row">
                    <div class="col-md-11 col-md-offset-1">
-                      <a class="btn btn-default" href="/meusMapas">Meus Mapas</a>
+                      <a class="btn btn-primary btn-lg" href="/meusMapas" style=" box-shadow: 2px 2px 2px black;align-text:center; color:white;"><b>Meus Mapas</b></a>
                     </div>
                   </div>
+                  <br>
                   <div class="row">
-                    <div class="col-md-11 col-md-offset-1">
-                        <a href="/deslogar/" class="btn btn-default">Sair</a>
+                    <div class="col-md-11 col-md-offset-1" >
+                        <a href="/deslogar/" class="btn btn-danger btn-lg" style="background:#f70e0e; align-text:center; color:white; box-shadow: 2px 2px 2px black;"><b>Sair</b></a>
                     </div>
                   </div>
                </li>
