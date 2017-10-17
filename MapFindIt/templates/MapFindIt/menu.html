@@ -1,132 +1,131 @@
 {% load static %}
 {% static "" as baseUrl %}
-  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:skyblue;">
-    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-      <span id="menu-icon" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
-     </button>
-    <div style="display: flex; justify-content: space-between;">
-        <div class="navbar-header">
-
-           <div style="order:1;">
-             <a class="navbar-brand" href="#menu-toggle" id="menu-toggle"><span id="menu-icon" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
-             <a href="/" style="display:inline-block; margin-left: 30px; z-index:20; height:50px; width:100px;"><img border="0" src="{% static "MapFindIt/img/Logo.jpg" %}" style="width:100px; height:50px"></a>
-           </div>
+<nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background:skyblue;">
+  <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+    <span id="menu-icon" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
+   </button>
+  <div style="display: flex; justify-content: space-between;">
+      <div class="navbar-header">
+         <div style="order:1;">
+           <a class="navbar-brand" href="#menu-toggle" id="menu-toggle"><span id="menu-icon" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span></a>
+           <a href="/" style="display:inline-block; margin-left: 30px; z-index:20; height:50px; width:100px;"><img border="0" src="{% static "MapFindIt/img/Logo.jpg" %}" style="width:100px; height:50px"></a>
          </div>
-         <div id="navbar" class="collapse navbar-collapse">
-
-               <form class=" navbar-form navbar-center" id="navBarSearchForm"  method="GET" action="/filtro/" style="order:2;">
-                 <div class="input-group" id="inputGrup">
-                   <input type="text" class="form-control" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="background: white; color: black; font-weight: bold;border:none;">
-                   <div class="input-group-btn">
-            	       <button type="submit" class="btn button-default" style="background: white; color: black; font-weight: bold;border:none;"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.0em;"></span></button>
-                   </div>
-  				       </div>
-               </form>
-
-         </div>
-     </div>
-   </nav>
-    <div id="wrapper" class="toggled">
-      <div class="container-fluid">
-        <div id="sidebar-wrapper" style="overflow: hidden;">
-          <ul class="sidebar-nav">
-        	   <li class="sidebar-brand">
-               <br>
-             </li>
-             <li class="sidebar-brand">
-               <div class="row">
-                 <div class="col-md-9 col-md-offset-3">
-                   <a href="/perfil/{{user.idusuario}}" class="navbar-brand">
-                     {% if usuario.foto %}
-                        <img id="img" class="img-circle img-responsive" style="width:150px; height:150px" src="{{baseUrl}}MapFindIt/ImagemUsers/{{user.idusuario}}.png"></img>
-                     {% else %}
-                        <img id="img" class="img-circle img-responsive" style="width:150px; height:150px" src="{% static "MapFindIt/img/default_user.png" %}"></img>
-                     {% endif %}
-                     <br>
-                     <label for="img">{{usuario.primnomeusuario}} {{usuario.ultnomeusuario}}</label>
-                   </a>
+       </div>
+       <div id="navbar" class="collapse navbar-collapse">
+            <form class=" navbar-form navbar-center" id="navBarSearchForm"  method="GET" action="/filtro/" style="order:2;">
+              <div class="input-group white" id="inputGrup" >
+                <input type="text" class="form-control" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="background: white; color: black; font-weight: bold;border:none;">
+                <div class="input-group-btn">
+                   <button type="submit" class="btn button-default btn-sm" style="background: white; color: black; font-weight: bold;border:none;"><span class="glyphicon glyphicon-search" style="color: black; font-size:1.0em;"></span></button>
                  </div>
                </div>
-             </li>
-             <li>
-               <br><br><br><br>
-               <div class="row">
-                 <div class="col-md-11 col-md-offset-1">
-                   <div class="panel panel-primary">
-                     <div class="panel-heading" style="padding:0px">
-                       <b>Meus Grupos</b>
-                     </div>
-          			     <div class="panel-body" style="padding:2px 0px 0px 0px; padding-bottom:10px">
-                       {% for grupo in grupos %}
-                         <div style="height:5vh;">
-                           <a href="/grupo/{{grupo.idgrupo}}" title="{{grupo.nomegrupo}}">
-                             <span style="">{{grupo.nomegrupo}}</span>
-                             <span style="float:right; height:3vh; padding:0px;"><span style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
-                               &nbsp;&nbsp;&nbsp;
-                             </span>&nbsp;&nbsp;</span>
-                           </a>
-                         </div>
-                       {% endfor %}
-          				   </div>
+             </form>
+
+       </div>
+   </div>
+ </nav>
+  <div id="wrapper" class="toggled">
+    <div class="container-fluid">
+      <div id="sidebar-wrapper" style="overflow: hidden;">
+        <ul class="sidebar-nav">
+           <li class="sidebar-brand">
+             <br>
+           </li>
+           <li class="sidebar-brand">
+             <div class="row">
+               <div class="col-md-9 col-md-offset-3">
+                 <a href="/perfil/{{user.idusuario}}" class="navbar-brand">
+                   {% if usuario.foto %}
+                      <img id="img" class="img-circle img-responsive" style="width:150px; height:150px" src="{{baseUrl}}MapFindIt/ImagemUsers/{{user.idusuario}}.png"></img>
+                   {% else %}
+                      <img id="img" class="img-circle img-responsive" style="width:150px; height:150px" src="{% static "MapFindIt/img/default_user.png" %}"></img>
+                   {% endif %}
+                   <br>
+                   <label for="img">{{usuario.primnomeusuario}} {{usuario.ultnomeusuario}}</label>
+                 </a>
+               </div>
+             </div>
+           </li>
+           <li>
+             <br><br><br><br>
+             <div class="row">
+               <div class="col-md-11 col-md-offset-1">
+                 <div class="panel panel-primary">
+                   <div class="panel-heading" style="padding:0px">
+                     <b>Meus Grupos</b>
                    </div>
-                  </div>
-                </div>
-             </li>
-             <li>
-               <div class="row">
-                 <div class="col-md-11 col-md-offset-1">
-                   <div class="panel panel-primary">
-                     <div class="panel-heading" style="padding:0px">
-                       <b>Meus Amigos</b>
-                     </div>
-                     <div class="panel-body" style="padding:2px 0px 0px 0px">
-                       <div class="centerDiv">
-                          <input id="filtrarAmigos" type="text" placeholder="Filtrar amigos" style="width:96%; height:90%;">
+                   <div class="panel-body" style="padding:2px 0px 0px 0px; padding-bottom:10px">
+                     {% for grupo in grupos %}
+                       <div style="height:5vh;">
+                         <a href="/grupo/{{grupo.idgrupo}}" title="{{grupo.nomegrupo}}">
+                           <span style="">{{grupo.nomegrupo}}</span>
+                           <span style="float:right; height:3vh; padding:0px;"><span style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
+                             &nbsp;&nbsp;&nbsp;
+                           </span>&nbsp;&nbsp;</span>
+                         </a>
                        </div>
-          			       <div style="display:flex;flex-direction: row;flex-wrap: wrap; padding:2px 0px 0px 0px">
-          				      {% for amizade in amigos %}
-                          {% if not amizade.aceita %}
-                            {% ifequal amizade.idusuario1 usuario %}
-                               {% with amigo=amizade.idusuario2 %}
-                                  <div class="amigo" id="amigo{{amigo.idusuario}}">
-                                    {% if amigo.foto %}
-                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
-                                    {% else %}
-                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
-                                    {% endif %}
-                                  </div>
-                                {% endwith %}
-                            {% else %}
-                               {% with amigo=amizade.idusuario1 %}
-                                  <div class="amigo" id="amigo{{amigo.idusuario}}">
-                                    {% if amigo.foto %}
-                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
-                                    {% else %}
-                                       <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
-                                    {% endif %}
-                                  </div>
-                               {% endwith %}
-                            {% endifequal %}
-                          {% endif %}
-                        {% endfor %}
-          				     </div>
+                     {% endfor %}
                    </div>
-                  </div>
+                 </div>
                 </div>
-             </li>
-             <li>
-               <div class="row">
-                 <div class="col-md-11 col-md-offset-1">
-                    <a class="btn btn-default" href="/meusMapas">Meus Mapas</a>
-                  </div>
+              </div>
+           </li>
+           <li>
+             <div class="row">
+               <div class="col-md-11 col-md-offset-1">
+                 <div class="panel panel-primary">
+                   <div class="panel-heading" style="padding:0px">
+                     <b>Meus Amigos</b>
+                   </div>
+                   <div class="panel-body" style="padding:2px 0px 0px 0px">
+                     <div class="centerDiv">
+                        <input id="filtrarAmigos" type="text" placeholder="Filtrar amigos" style="width:96%; height:90%;">
+                     </div>
+                     <div style="display:flex;flex-direction: row;flex-wrap: wrap; padding:2px 0px 0px 0px">
+                      {% for amizade in amigos %}
+                        {% if not amizade.aceita %}
+                          {% ifequal amizade.idusuario1 usuario %}
+                             {% with amigo=amizade.idusuario2 %}
+                                <div class="amigo" id="amigo{{amigo.idusuario}}">
+                                  {% if amigo.foto %}
+                                     <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+                                  {% else %}
+                                     <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
+                                  {% endif %}
+                                </div>
+                              {% endwith %}
+                          {% else %}
+                             {% with amigo=amizade.idusuario1 %}
+                                <div class="amigo" id="amigo{{amigo.idusuario}}">
+                                  {% if amigo.foto %}
+                                     <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" style="width:50px; height:50px" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" src="{{baseUrl}}MapFindIt/ImagemUsers/{{amigo.idusuario}}.png"></img></a>
+                                  {% else %}
+                                     <a href="/perfil/{{amigo.idusuario}}" style="padding-left:4px; padding-bottom: 4px;"><img id="img" class="img-circle img-responsive" title="{{amigo.primnomeusuario}} {{amigo.ultnomeusuario}}" style="width:50px; height:50px" src="{% static "MapFindIt/img/default_user.png" %}"></img></a>
+                                  {% endif %}
+                                </div>
+                             {% endwith %}
+                          {% endifequal %}
+                        {% endif %}
+                      {% endfor %}
+                     </div>
+                 </div>
                 </div>
-                <div class="row">
-                  <div class="col-md-11 col-md-offset-1">
-                      <a href="/deslogar/" class="btn btn-default">Sair</a>
-                  </div>
+              </div>
+           </li>
+           <li>
+             <div class="row">
+               <div class="col-md-11 col-md-offset-1">
+                  <a class="btn btn-primary btn-lg" href="/meusMapas" style=" box-shadow: 2px 2px 2px black;align-text:center; color:white;"><b>Meus Mapas</b></a>
                 </div>
-             </li>
-          </ul>
-        </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-md-11 col-md-offset-1" >
+                    <a href="/deslogar/" class="btn btn-danger btn-lg" style="background:#f70e0e; align-text:center; color:white; box-shadow: 2px 2px 2px black;"><b>Sair</b></a>
+                </div>
+              </div>
+           </li>
+        </ul>
       </div>
-    <br><br><br><br>
+    </div>
+  <br><br><br><br>
