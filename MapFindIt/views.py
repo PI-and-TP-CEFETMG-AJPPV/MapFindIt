@@ -1293,7 +1293,8 @@ def exibirMapa(request, idmapa):
     if mapa.idtvisibilidade=='P':
         if request.session.__contains__('usuarioLogado'):
             if mapa.idusuario.idusuario==request.session['usuarioLogado']:
-                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
+                resultado=getDadosMenu(request)
+                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'log': True, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
         return HttpResponse('Unauthorized', status=401)
     else:
         if mapa.idtvisibilidade=='A':
@@ -1303,10 +1304,15 @@ def exibirMapa(request, idmapa):
                 amigos=amigos or Amizade.objects.filter(idusuario2=idusuario).filter(idusuario1=request.session.get('usuarioLogado')).filter(aceita=False).exists()
                 print(amigos)
                 if amigos or mapa.idusuario.idusuario==request.session['usuarioLogado']:
-                    return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
+                    resultado=getDadosMenu(request)
+                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'log': True, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
             return HttpResponse('Unauthorized', status=401)
         else:
-            return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa})
+            if request.session.__contains__('usuarioLogado'):
+                resultado=getDadosMenu(request)
+                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'log': True, 'usuario': resultado[0], 'todosAmigos': resultado[1], 'grupos': resultado[2]})
+            else:
+                return render(request, 'MapFindIt/exibirMapa.html', {'mapa': mapa, 'log': False})
 
 def deletarPonto(request):
     id = request.POST.get('id')
