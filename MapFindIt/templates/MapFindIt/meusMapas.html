@@ -30,10 +30,15 @@
         <div class="col-md-10 col-md-offset-1">
 					<div class="list-group">
 					{% for mapa in mapas %}
-						<a href="/exibirMapa/{{mapa.idmapa}}" class="list-group-item">
-							<h2 id={{mapa.idmapa}}>{{mapa.titulomapa}}</h2>
-							<label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>
-						</a>
+						<div class="list-group-item">			
+							<a href="/exibirMapa/{{mapa.idmapa}}" class="link">
+								<h2 id={{mapa.idmapa}}>{{mapa.titulomapa}}</h2>
+								<label for={{mapa.idmapa}}>{{mapa.descmapa}}</label>
+							</a>
+							<button class="btn btn-default" style="float:right;" onclick="location.href='/editarMapa/{{mapa.idmapa}}'">Editar Mapa</button>
+							<br>
+						</div>
+						<br>
 					{% endfor %}
 					</div>
 				</div>
