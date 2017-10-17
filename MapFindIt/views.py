@@ -142,13 +142,13 @@ def getMembrosGrupo(request):
 def publicarGrupo(request):
     #pega os dado do request
     idmapa= request.GET.get('id')
-    #se o mapa ja existir retorna falso
-    if Postagemgrupo.objects.filter(idmapa=idmapa).exists():
-        return JsonResponse({'sucesso': False})
     idgrupo= request.GET.get('idgrupo')
-    grupoFull= Grupo.objects.get(pk=idgrupo)
-    mapaFull= Mapa.objects.get(pk=idmapa)
-    usuarioFull= Usuario.objects.get(pk=mapaFull.idusuario.idusuario)
+    #se o mapa ja existir retorna falso
+    if Postagemgrupo.objects.filter(idmapa=idmapa).filter(idgrupo=idgrupo).exists():
+        return JsonResponse({'sucesso': False})
+    grupoFull= Grupo.objects.get(idgrupo=idgrupo)
+    mapaFull= Mapa.objects.get(idmapa=idmapa)
+    usuarioFull= Usuario.objects.get(idusuario=mapaFull.idusuario.idusuario)
     #formata data e hora
     now = datetime.datetime.now().strftime('%H:%M:%S')
     today = datetime.date.today()
@@ -249,17 +249,15 @@ def mapasPublicar(request):
 def mapasRemover(request):
     #Obtem texto de pesquisa
     pesquisa = request.GET.get('pesquisa')
-    idGrupo = request.GET.get('id')
     #Busca mapas pelo título
-    result = Postagemgrupo.objects.filter(idgrupo=idGrupo)
-    for val in result:
-        result = result | val.objects.filter(titulomapa__icontains=pesquisa).order_by('valaprovados', 'valvisualizacoes')
-        result = result | val.objects.filter(descmapa__icontains=pesquisa)
+    result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idusuario=request.session['usuarioLogado']).order_by('valaprovados', 'valvisualizacoes')
+    result = result | Mapa.objects.filter(descmapa__icontains=pesquisa, idusuario=request.session['usuarioLogado'])
+    result = result.order_by('valaprovados', 'valvisualizacoes')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
     for index, mapa in enumerate(result):
         mapas[index][0]=mapa.idmapa
-        mapas[index][1]=mapa.idmapa.titulomapa
-        mapas[index][2]=mapa.idmapa.descmapa
+        mapas[index][1]=mapa.titulomapa
+        mapas[index][2]=mapa.descmapa
     return JsonResponse({'mapas': json.dumps(mapas)})
 def perfil(request, idusuario):
     if not request.session.__contains__('usuarioLogado'):

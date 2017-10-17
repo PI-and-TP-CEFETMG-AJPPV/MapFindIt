@@ -209,7 +209,7 @@ function pesquisarMapas(idgrupo){
                                <div class="modal-body">
                                    <h4>Você tem certeza que deseja publicar esse mapa?</h4>
                                    <div class="modal-footer">
-                                       <button class="btn btn-success" onclick="publicar(${id},${idGrupo});" id="confirmarMesclaBtn">Confirmar</button>
+                                       <button class="btn btn-success" onclick="publicar(${id});" id="confirmarMesclaBtn">Confirmar</button>
                                        <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
                                    </div>
                                </div>
@@ -322,12 +322,13 @@ function Remover(id, idgrupo){
     }
   });
 }
-function publicar(id, idgrupo){
+function publicar(id){
+
   $.ajax({
     url: '/ajax/publicarGrupo/',
     data: {
       'id': id,
-      'idgrupo': idgrupo
+      'idgrupo': idGrupo
     },
     dataType: 'json',
     success: function (data) {
