@@ -796,7 +796,7 @@ def mapasHome(request):
     num = request.GET.get('num', None)
     num = int(num)
     #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
-    mapas = Mapa.objects.exclude(idtvisibilidade='P').excludes(idtvisibilidade='A').order_by('-valaprovados', '-valvisualizacoes')[:10]
+    mapas = Mapa.objects.exclude(idtvisibilidade='P').exclude(idtvisibilidade='A').order_by('-valaprovados', '-valvisualizacoes')[:10]
     if num > len(mapas)-1:
         data = {
             'erro': 1,
