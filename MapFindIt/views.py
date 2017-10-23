@@ -240,6 +240,7 @@ def mapasPublicar(request):
     result = Mapa.objects.filter(titulomapa__icontains=pesquisa, idusuario=request.session['usuarioLogado']).order_by('valaprovados', 'valvisualizacoes')
     result = result | Mapa.objects.filter(descmapa__icontains=pesquisa, idusuario=request.session['usuarioLogado'])
     result = result.order_by('valaprovados', 'valvisualizacoes')
+    result = result.exclude(idtvisibilidade='P')
     mapas = [[0 for i in range(3)] for j in range(result.count())]
     for index, mapa in enumerate(result):
         mapas[index][0]=mapa.idmapa
