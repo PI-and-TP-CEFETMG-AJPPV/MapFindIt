@@ -21,6 +21,13 @@ function carregarMapas() {
 			success: function (data) {
 				//Se não houver mais mapas
 				if(data.erro){
+					if(i==0) {
+						contentString =`
+							<div class="row" style="order:10; padding-bottom:20px; text-align:center">
+								<h3>Nenhum resultado encontrado...</h3>
+							</div>`;
+						$("#divFiltro").append(contentString);
+					}
 					$('#next').attr("disabled", true);
 					fim = true;
 					return;
@@ -51,6 +58,13 @@ function carregarGrupos() {
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
+					if(i==0) {
+						contentString =`
+							<div class="row" style="order:10; padding-bottom:20px; text-align:center">
+								<h3>Nenhum resultado encontrado...</h3>
+							</div>`;
+						$("#divFiltro").append(contentString);
+					}
 					$('#next').attr("disabled", true);
 					fim = true;
 					return;
@@ -109,6 +123,13 @@ function carregarPessoas() {
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
+					if(i==0) {
+						contentString =`
+							<div class="row" style="order:10; padding-bottom:20px; text-align:center">
+								<h3>Nenhum resultado encontrado...</h3>
+							</div>`;
+						$("#divFiltro").append(contentString);
+					}
 					$('#next').attr("disabled", true);
 					fim = true;
 					return;
