@@ -1,3 +1,7 @@
 body{
   background:#4388CC;
 }
+.icon-group {
+    background-image: "../img/glyphicons_free/glyphicons/png/glyphicons-44-group.png";
+    background-position: center center;
+}
