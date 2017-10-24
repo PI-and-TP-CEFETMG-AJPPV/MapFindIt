@@ -24,6 +24,7 @@
 
 	</head>
 	<body>
+  <div id="corpo" onload="definirCorFonte({{r}},{{g}},{{b}})">
     <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
       <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
         <span id="menu-icon" class="glyphicon glyphicon-align-justify" aria-hidden="true"></span>
@@ -48,7 +49,7 @@
            </div>
        </div>
      </nav>
-      <div id="wrapper" class="toggled">
+      <div id="wrapper" class="toggled" style="overflow: hidden;">
         <div class="container-fluid">
           <div id="sidebar-wrapper" style="overflow: hidden;">
             <ul class="sidebar-nav">
@@ -139,13 +140,15 @@
                <li>
                  <div class="row">
                    <div class="col-md-11 col-md-offset-1">
-                      <a class="btn btn-primary btn-lg" href="/meusMapas" style=" box-shadow: 2px 2px 2px black;align-text:center; color:white;"><b>Meus Mapas</b></a>
+                      <a class="btn btn-primary" href="/meusMapas" style=" box-shadow: 2px 2px 2px black;align-text:center; color:white;"><b>Meus Mapas</b></a>
                     </div>
                   </div>
-                  <br>
+                </li>
+                <br>
+                <li>
                   <div class="row">
                     <div class="col-md-11 col-md-offset-1" >
-                        <a href="/deslogar/" class="btn btn-danger btn-lg" style="background:#f70e0e; align-text:center; color:white; box-shadow: 2px 2px 2px black;"><b>Sair</b></a>
+                        <a href="/deslogar/" class="btn btn-danger" style="background:#f70e0e; align-text:center; color:white; box-shadow: 2px 2px 2px black;"><b>Sair</b></a>
                     </div>
                   </div>
                </li>
@@ -167,32 +170,34 @@
 				{% else %}
 					<div class="row">
           	<div class="col-md-8 col-md-offset-2 white" style="background-color:rgb({{r}},{{g}},{{b}})" >
-            	<br>
             	<div class="center">
-              	<h1>{{grupo.nomegrupo}}</h1>
+                {% if admim %}
+                	<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim" id="texto" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); top: 70%; left:45%; font-size:2.0em;"><span class="glyphicon glyphicon-cog" ></span></a>
+                {% endif %}
+                <h1 id="texto">{{grupo.nomegrupo}}</h1>
                 <br>
                 <h4>{{grupo.descgrupo}}</h1>
             	</div>
           	</div>
         	</div>
         	<br>
-          <div class="row">
-					 <div class="col-md-8 col-md-offset-2" >
-						<div class="btn-group btn-group-justified" >
-							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="pesquisarBar()" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">Pesquisar</a>
-							<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="getMembro({{grupo.idgrupo}})" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">Membros</a>
+             	<div class="row" style="display: flex; justify-content: space-between">
+                <div class="col-md-8" >
 							{% if member %}
-								<a role="button" onclick="modalPublicar({{grupo.idgrupo}})" class="btn pmd-ripple-effect btn-primary" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">postar</a>
-								<a role="button" data-toggle="modal" dara-target="#modal-convidar" class="btn pmd-ripple-effect btn-primary" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">convidar</a>
-								{% if admim %}
-									{% if grupo.privado %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" dara-target="#modal-convidar"style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">convidar</a>
-										{% endif %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary" data-toggle="modal" data-target="#modal-container-admim" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); "><span class="glyphicon glyphicon-cog" style="color: white"></span></a>
-										{% endif %}
-										{% else %}
-										<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="entrar({{usuario.idusuario}})" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">Entar</a>
-										{% endif %}
+                    <div class="row" style="display: flex; justify-content: space-between">
+                  		<button type="button" class="btn btn-default" onclick="pesquisarBar()" id="texto">pesquisar</button>
+                  		<button type="button" class="btn btn-default" onclick="pesquisarBar2()">membros</button>
+                  		<button type="button" class="btn btn-default" onclick ="pesquisarBar()">adicionar</button>
+							{% else %}
+                {% if grupo.privado %}
+                  <button type="button" class="btn btn-default" onclick="pesquisarBar()" id="texto">pesquisar</button>
+                  <button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">membros</button>
+                  <button type="button" class="btn btn-default" onclick="entrar({{usuario.idusuario}})">Entrar</button>
+                  {% else %}
+                  <button type="button" class="btn btn-default" onclick="entrar({{usuario.idusuario}})">Entrar</button>
+                  {% endif %}
+							{% endif %}
+                    </div>
 									</div>
 								</div>
               </div>
@@ -209,17 +214,17 @@
                 </div>
               </div>
 								<div class="menu pmd-floating-action"  role="navigation">
-									<a onclick="modalGrupos()" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Grupo" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
+									<a onclick="modalRemoverMapa({{grupo.idgrupo}})" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Remover Postagem" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
 										<span class="pmd-floating-hidden">Primary</span>
-										<i><span class="glyphicon glyphicon-user" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+                    <i style="font-size:1.5em;">- &nbsp<span class="fa fa-map-o" aria-hidden="true"></span></i>
 									</a>
-									<a href="/novoMapa/" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Novo Mapa" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
+									<a  onclick="modalPublicar({{grupo.idgrupo}})" class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-info" data-title="Postar" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
 										<span class="pmd-floating-hidden">Primary</span>
-										<i><span class="glyphicon glyphicon-map-marker" style="font-size:1.5em; color:white" aria-hidden="true"></span></i>
+                    <i style="font-size:1.5em;">+ &nbsp<span class="fa fa-map"  aria-hidden="true"></span></i>
 									</a>
-									<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Novo" href="#" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
+									<a class="pmd-floating-action-btn btn btn-lg pmd-btn-fab pmd-btn-raised pmd-ripple-effect btn-primary" data-title="Grupo" href="#" style="background: rgb({{grupo.codcor.r}}, {{grupo.codcor.g}}, {{grupo.codcor.b}}); ">
 										<span class="pmd-floating-hidden">Primary</span>
-										<i> <span class="fa fa-users" style="font-size:1.5em; color:white; align:center;" aria-hidden="true"></span></i>
+										<i> <span class="fa fa-users" style="font-size:1.5em;  align:center;" aria-hidden="true"></span></i>
 									</a>
 								</div>
 
@@ -251,7 +256,7 @@
 					           	<div class="row">
 												<div class="col-xs-4 col-sm-4 col-md-4" align="center">
 					               	<div class="form-group">
-														<div class="form-item"><label for="color">Cor:</label><input type="color" id="corGrupo" class="form-control" style="background-color:rgb({{r}},{{g}},{{b}})" required></div>
+														<div class="form-item"><label for="color">Cor:</label><input type="color" id="corGrupo" class="form-control" style="background-color:rgb({{r}},{{g}},{{b}})" required value="{{grupo.codcor}}"></div>
 					               	</div>
 					             	</div>
 												<div class="col-xs-4 col-sm-4 col-md-4" align="center">
@@ -271,11 +276,6 @@
 											</div>
 											<div id="conteudoDinamico"></div>
 					         	</form>
-					       		<div class="btn-group btn-group-justified">
-									 		<a role="button" class="btn pmd-ripple-effect btn-primary">adimistrador</a>
-									 		<a role="button" class="btn pmd-ripple-effect btn-primary" onclick="modalRemoverMapa({{grupo.idgrupo}})">Remover Mapa</a>
-											<a role="button" class="btn pmd-ripple-effect btn-primary">Banidos</a>
-					         	</div>
 					       	</div>
 					     		<div class="modal-footer" >
 					       		<div align="center">
@@ -286,7 +286,9 @@
 					    </div>
 					  </div>
 					</div>
-
+</div>
+</div>
+</div>
 		<script>
 			var imgUrl='{{baseUrl}}';
 			var idUsuarioLogado='{{usuario.idusuario}}';

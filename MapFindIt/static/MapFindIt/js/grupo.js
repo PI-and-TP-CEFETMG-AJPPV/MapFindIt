@@ -151,9 +151,10 @@ function pesquisarMapasRemover(idgrupo){
                                 <div class="modal-body">
                                     <h4>Você tem certeza que deseja remover esse mapa?</h4>
                                     <div class="modal-footer">
-                                        <button class="btn btn-success" onclick="Remover(${id},${idgrupo});" id="confirmarpublicacao">Confirmar</button>
+                                        <button class="btn btn-success" onclick="Remover(${id},${idgrupo});$('#modalPublicar-mapa').modal('hide');
+                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();$('#modal-confirmar-post').modal('hide')" id="confirmarpublicacao">Confirmar</button>
                                         <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide');
-                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
+                                        $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();$('#modal-confirmar-post').modal('hide')">Cancelar</button>
                                     </div>
                                 </div>
                             </div>
@@ -166,8 +167,18 @@ function pesquisarMapasRemover(idgrupo){
         }
     });
 }
+function definirCorFonte(r, g,b){
+  let cor;
+  //Algoritmo para detectar melhor cor da fonte
+  let a = 1 - ( 0.299 * Number(r) + 0.587 * Number(g) + 0.114 * Number(b)/255);
+  if (a < 0.5)
+    $("#texto").css('color', 'white');
+  else
+    $("#texto").css('color', 'black');
+
+}
 function pesquisarMapas(idgrupo){
-   let pesquisa = $("#pesquisarMapas").val();
+   let pesquisa = $('#pesquisarMapas').val();
    $.ajax({
         url: '/ajax/mapasPublicar/',
         data: {
@@ -210,7 +221,7 @@ function pesquisarMapas(idgrupo){
                                    <h4>Você tem certeza que deseja publicar esse mapa?</h4>
                                    <div class="modal-footer">
                                        <button class="btn btn-success" onclick="publicar(${id});" id="confirmarMesclaBtn">Confirmar</button>
-                                       <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();">Cancelar</button>
+                                       <button class="btn btn-danger" onclick="$('#modalPublicar-mapa').modal('hide'); $('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();$('#modal-confirmar-post').modal('hide');">Cancelar</button>
                                    </div>
                                </div>
                            </div>
@@ -318,7 +329,7 @@ function Remover(id, idgrupo){
     success: function (data) {
         $('#modal-confirmar-post').modal('hide');
         $('#modalDinamico').empty();
-        $('#modal-container-admim').modal('show')
+        carregarMapas(idGrupo);
     }
   });
 }
@@ -339,13 +350,26 @@ function publicar(id){
     }
   });
 }
+function pesquisarBar2(){
+  $('#divMapas').empty();
+  let conteudo=`<div class="row">
+    <div class="col-md-8 col-md-offset-2 white" >
+      <div class="center">
+        <h1 id="texto">{{grupo.nomegrupo}}</h1>
+        <br>
+        <h4>{{grupo.descgrupo}}</h1>
+      </div>
+    </div>
+  </div>`;
+    $('#opcMenu').html(conteudo);
+}
 function pesquisarBar(){
   $('#opcMenu').empty();
   let conteudo=`<div class="row">
     <div class="col-md-8 col-md-offset-2" >
       <br>
       <div class="center">
-        <form class="form-group" id="SearchForm" action="javascript:pesquisarMapas()"  method="GET" style="order:2;background: white">
+        <form class="form-group" id="SearchForm" action="javascript:pesquisarMapasGrupo()"  method="GET" style="order:2;background: white">
           <div class="input-group" style="border:1px solid #444;">
             <input type="text" class="form-control input-lg" placeholder="Digite o que será pesquisado" id="pesquisa" name="pesquisa" value="" style="border: none;">
               <div class="input-group-btn">
@@ -358,11 +382,16 @@ function pesquisarBar(){
     </div>`;
     $('#opcMenu').html(conteudo);
 }
-
 //Variáveis globais
 //Os itens são carregados em grupos de 10 em 10
 var mapasLoaded = 1;
 
+//Definição de valores
+//Função para pegar o valor de um parâmetro request
+function get(name){
+	if(name=(new RegExp('[?&]'+encodeURIComponent(name)+'=([^&]*)')).exec(location.search))
+	return decodeURIComponent(name[1]);
+}
 //Busca mapas segundo a pesquisa passada
 function carregarMapas(idgrupo) {
   $("#divMapas").empty();
@@ -428,31 +457,52 @@ function modalAdicionar(){
 </div>`;
 $('#modalDinamico').html(conteudo);
 }
+function rgbToHex(R,G,B) {
+  return toHex(R)+toHex(G)+toHex(B);
 
+}
+function toHex(n) {
+ n = parseInt(n,10);
+ if (isNaN(n)) return "00";
+ n = Math.max(0,Math.min(n,255));
+ return "0123456789ABCDEF".charAt((n-n%16)/16)
+      + "0123456789ABCDEF".charAt(n%16);
+}
 //Carrega o grupo de 10 mapas
 function pesquisarMapasGrupo(){
-	//Seleciona a div dos mapas
-	let div=$("#divPeesquisa");
-	gruposCarregados++;
-	for(let i=0; i<10; i++){
-		$.ajax({
-	      url: '/ajax/PesquisaGrupo/',
-	      data: {
-          'num':i,
-	        'id': idGrupo,
-          'pesquisa' : $('#pesquisarBar').val()
-	      },
-	      dataType: 'json',
-	      success: function (data) {
-					//Se todas as postagens tiverem sido carregas
-					if(data.erro){
-						return;
-					}
-					//Prepara a postagem carregada
-					prepararPostagem(div, data, i)
-				}
-	  });
-	}
+  //Definição de valores
+  pesquisa = get('pesquisa');
+  fim = false;
+
+  for(let i=0; i<10  && fim==false; i++){
+    $.ajax({
+      url: '/ajax/pesquisaGrupo/',
+      data: {
+        'num': ((Number(mapasLoaded)-1)*10)+Number(i),
+        'pesquisa': pesquisa
+      },
+      dataType: 'json',
+      success: function (data) {
+        //Se não houver mais mapas
+        if(data.erro){
+          if(i==0) {
+            contentString =`
+              <div class="row" style="order:10; padding-bottom:20px; text-align:center">
+                <h3>Nenhum resultado encontrado...</h3>
+              </div>`;
+            $("#divFiltro").append(contentString);
+          }
+          $('#next').attr("disabled", true);
+          fim = true;
+          return;
+        }
+        //Solução para a utilização do prepararPostagem
+        gruposCarregados = (mapasLoaded-1)
+        //Prepara a postagem carregada
+        prepararPostagem($("#divFiltro"), data, i)
+      }
+    });
+  }
 }
 function initMap(){
 		//Carrega o primeiro grupo de postagens

@@ -11,7 +11,7 @@ urlpatterns = [
     url(r'^ajax/removerGrupo/$', views.removerMapasGrupo),
     url(r'^ajax/mapasRemover/$', views.mapasRemover),
     url(r'^ajax/criarGrupo/$', views.criarGrupo),
-    url(r'^ajax/PesquisaGrupo/$', views.pesquisaMapasGrupo),
+    url(r'^ajax/pesquisaGrupo/$', views.pesquisaMapasGrupo),
     url(r'^ajax/editarGrupo/$', views.editarGrupo),
     url(r'^ajax/entrarGrupo/$', views.entrarGrupo),
     url(r'^ajax/getMembrosGrupo/$', views.getMembrosGrupo),

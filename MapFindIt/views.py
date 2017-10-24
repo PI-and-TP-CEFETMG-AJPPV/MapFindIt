@@ -556,17 +556,19 @@ def pesquisaMapasGrupo(request):
     num = request.GET.get('num', None)
     num = int(num)
     #Texto utilizado para encontrar mapas
-    pesquisa = request.GET.get('pesquisa', None)
+    pesquisa = request.GET.get('pesquisa')
     #Retorna todos os mapas encontrados para o texto pesquisado
-    mapas = pesquisarMapas(pesquisa)
+    mapas = pesquisarMapasGrupo(pesquisa)
     #Se houver mapas
     try:
+        id = request.GET.get('id')
+        grupo = Grupo.objects.get(idgrupo=id)
         #Pega o mapa correspondente ao número da requisição Ajax
         mapa = mapas[num]
         #Inicializa postagem
-        postagem = Postagem.objects.none()
+        postagem = Postagemgrupo.objects.none()
         #Pega a postagem do autor do mapa correspondente
-        postagem = Postagemgrupo.objects.filter(idmapa=mapa).filter(
+        postagem = Postagemgrupo.objects.filter(idgrupo=grupo).filter(idmapa=mapa).filter(
         idusuario=mapa.idusuario)
         getpostagem = postagem.first()
         #Chama a função de obter os dados da postagem
