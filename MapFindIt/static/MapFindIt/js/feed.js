@@ -9,9 +9,10 @@ function initMap() {
 //Os itens são carregados em grupos de 10 em 10
 var mapasLoaded = 1;
 var lat=0, lng=0;
-
+var fim;
 //Busca mapas segundo a pesquisa passada
 function carregarMapas() {
+	fim=false;
 	let div=$("#divMapas");
 	if(navigator.geolocation) {
 		navigator.geolocation.getCurrentPosition(function(position){ // callback de sucesso
@@ -28,7 +29,7 @@ function carregarMapas() {
 		console.log('Navegador não suporta Geolocalização!');
 	}
 	setTimeout(function(){
-		for(let i=0; i<10; i++){
+		for(let i=0; i<10 && !fim; i++){
 			$.ajax({
 				url: '/ajax/mapasFeed/',
 				data: {
@@ -40,18 +41,17 @@ function carregarMapas() {
 				success: function (data) {
 					//Se todas as 10 postagens tiverem sido carregas
 					if(data.erro){
+						$('#next').attr("disabled", true);
+						fim=true;
 						if(i==0){
-							$('#next').attr("disabled", true);
 							$('#back').click();
-						}else{
-							$('#next').attr("disabled", true);
 						}
 						return;
 					}
 					//Solução para a utilização do prepararPostagem
 					gruposCarregados = mapasLoaded
 					//Prepara a postagem carregada
-					prepararPostagem(div, data, i+2000)
+					prepararPostagem(div, data, i)
 				}
 			});
 		}

@@ -1,4 +1,5 @@
 var gruposCarregados=0;
+var fim = false;
 
 //Função para tratar a solicitação de amizade
 function solicitacaoAmizade(){
@@ -170,24 +171,34 @@ function formatarData(input) {
     return input.replace(ptrn, '$3/$2/$1');
 };
 
+//Os itens são carregados em grupos de 10 em 10
+var mapasLoaded = 1;
+
 //Carrega o grupo de 10 mapas
 function carregarMapas(){
+  fim=false;
 	//Seleciona a div dos mapas
 	let div=$("#divMapas");
-	gruposCarregados++;
-	for(let i=0; i<10; i++){
+	for(let i=0; i<10 && !fim; i++){
 		$.ajax({
 	      url: '/ajax/carregarMapasPerfil/',
 	      data: {
-	        'num': 10*(gruposCarregados-1)+i,
+	        'num':((Number(mapasLoaded)-1)*10)+Number(i),
 	        'id': idUsuarioPagina
 	      },
 	      dataType: 'json',
 	      success: function (data) {
 					//Se todas as postagens tiverem sido carregas
 					if(data.erro){
+						$('#next').attr("disabled", true);
+						fim=true;
+						if(i==0){
+							$('#back').click();
+						}
 						return;
 					}
+					//Solução para a utilização do prepararPostagem
+					gruposCarregados = mapasLoaded
 					//Prepara a postagem carregada
 					prepararPostagem(div, data, i)
 				}
@@ -202,11 +213,25 @@ function initMap(){
 		solicitacaoAmizade();
 }
 
-$(window).on('scroll', function(){
-    if( $(window).scrollTop() > $(document).height() - $(window).height() ) {
-			//Carrega mais dez mapas
-			carregarMapas();
-    }
+//Avança uma página no paginamento
+$("#next").on('click', function(e) {
+	$('#back').removeAttr("disabled");
+	//Retira os dados atuais
+	$("#divMapas").html("");
+	mapasLoaded++;
+	carregarMapas();
+});
+
+//Retorna uma página no paginamento
+$("#back").on('click', function(e) {
+	//Retira os dados atuais
+	$('#next').removeAttr("disabled");
+	$("#divMapas").html("");
+	mapasLoaded--;
+	if(mapasLoaded==1){
+		$('#back').attr("disabled", true);
+	}
+	carregarMapas();
 });
 
 function aceitarAmizade(id){
