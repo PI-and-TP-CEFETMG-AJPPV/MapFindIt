@@ -499,7 +499,7 @@ function prepararPostagem(div, data, i) {
 	}
 	div.append(`
 	  ${i==2000?'<h3 class="center">Mapa Sugerido</h3>':''}
-	  <div class='row' data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${10*(gruposCarregados-1)+i}; padding-bottom:20px;">
+	  <div class='row id' contagem="${10*(gruposCarregados-1)+i}" data-tooltip="#desc${10*(gruposCarregados-1)+i}" id="linha${10*(gruposCarregados-1)+i}" style="order:${10*(gruposCarregados-1)+i}; padding-bottom:20px;">
         <div title="${mapa.descmapa}" class='col-md-8 col-md-offset-2 white center centerDiv divPostagem' style='padding-bottom: 20px; display: block; box-shadow: 10px 10px 5px grey;'>
          <a href='#modal_mapa${10*(gruposCarregados-1)+i}' class='tituloMapa'
 				 data-toggle='modal' id='titulo_mapa${10*(gruposCarregados-1)+i}'><h4>${mapa.titulomapa}</h4></a>
@@ -562,6 +562,13 @@ function prepararPostagem(div, data, i) {
 		$('.close').on('click', function(){
 				$('.divPostagem').tooltip({ track: true});
 		});
+	//Fix order
+	var divList = $(".id");
+	divList.sort(function(a, b) {
+    return $(a).attr("contagem") - $(b).attr("contagem")
+	});
+	div.html(divList);
+
 	//Se não existirem comentários cria aviso de que não existem comentários
 	if (postagem.censurada) {
 		$('#comentarios' + (10 * (gruposCarregados - 1) + i)).append(`
