@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.core import serializers
 from django.utils import timezone
 from django.db.models import Q
+from django.core.mail import send_mail
 from PIL import Image
 from .models import *
 import binascii
@@ -826,6 +827,7 @@ def mapasHome(request):
         }
         return JsonResponse(data)
 def novoMapa(request):
+    resultado=getDadosMenu(request)
     if request.method=="POST" and request.POST.__contains__("temas"):
         if request.POST.get("opcInicio")=='P':
             #Se voltou do formulário de finalizar o mapa
@@ -835,6 +837,20 @@ def novoMapa(request):
                                     coordyinicial = request.POST.get('Lat'), valaprovados = 0,
                                     valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
             mapa.save()
+            colaborador=request.POST.get('colab')
+            if colaborador!="":
+                txt = 'Você foi convidado por '+mapa.idusuario.primnomeusuario+' '+mapa.idusuario.ultnomeusuario+' a editar o mapa: '+mapa.titulomapa+'.'
+                send_mail(
+                    'MapFindITt - Você foi convidado a colaborar com um mapa.',
+                    txt+'\nAcesse www.mapfindit.com/editarMapa/'+str(mapa.idmapa)+' para colaborar.',
+                    'mapfindit@gmail.com',
+                    [Usuario.objects.filter(idusuario=colaborador).first().emailusuario],
+                    fail_silently=False,
+                )
+
+                notif=Notificacao.objects.create(txtNotificacao = txt, linkNotificacao = 'http://localhost:8000/editarMapa/'+str(mapa.idmapa), idusuario = Usuario.objects.filter(idusuario=colaborador).first(), 
+                                                dataNotificacao = timezone.now(), horaNotificacao = datetime.datetime.now().replace(microsecond=0))
+
             request.session['primeira']='1'
         else:
             mapaCopiado = get_object_or_404(Mapa, idmapa=int(request.POST.get('idCopia')))
@@ -851,7 +867,7 @@ def novoMapa(request):
             postagem.save()
         return redirect("/editarMapa/"+str(mapa.pk))
     else:
-        return render(request, 'MapFindIt/CMVisib.html', {})
+        return render(request, 'MapFindIt/CMVisib.html', {'todosAmigos': resultado[1]})
 
 def criarAmizade(request):
     idCriador=int(request.GET.get('usuario', None))
@@ -900,6 +916,20 @@ def getTemas(request):
     data = {
         'temas': temas,
     }
+    return JsonResponse(data)
+
+def getNotif(request):
+    #Pega o usuario logado
+    resultado=getDadosMenu(request)
+    #pega notificacoes do usuario
+    notificacoes=Notificacao.objects.filter(nova=True, idusuario=resultado[0])
+
+    notificacoes = serializers.serialize('json', notificacoes)
+    data = {
+        'notificacoes': notificacoes,
+    }
+
+    Notificacao.objects.filter(nova=True, idusuario=resultado[0]).update(nova=False)
     return JsonResponse(data)
 
 def adicionarTema(request):

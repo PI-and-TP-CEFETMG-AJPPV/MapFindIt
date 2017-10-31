@@ -116,3 +116,22 @@ corRGB = hexToRgb($('#corGrupo').val());
       }
   });
 }
+
+function atualizaNotif(){
+  $.ajax({
+    url: '/ajax/getNotif/',
+    data: {
+
+    },
+    dataType: 'json',
+    success: function (data) {
+       let notificacoes=JSON.parse(data.notificacoes);
+       for(let i=0; i<notificacoes.length; i++){
+         $('#notifBar').prepend(`<li><a href=${notificacoes[i].fields.linkNotificacao}>${notificacoes[i].fields.txtNotificacao}</a></li><li class="divider"></li>`);
+         document.getElementById("notifIcon").innerHTML++
+       }
+    }
+  });
+}
+
+setInterval(function(){ atualizaNotif(); }, 7000);
