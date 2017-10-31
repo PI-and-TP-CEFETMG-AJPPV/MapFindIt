@@ -62,12 +62,12 @@ corRGB = hexToRgb($('#corGrupo').val());
       dataType: 'json',
       success: function (data) {
         $('#modalGrupos').modal('hide');
+
       }
   });
 }
 function modalRemoverMapa(idgrupo){
   $('#modalDinamico').empty();
-  $('#modal-container-admim').modal('hide')
 	let conteudo=`<div class="modal fade" id="modalPublicar-mapa" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -98,12 +98,12 @@ function modalRemoverMapa(idgrupo){
 		$('#modalDinamico').html(conteudo);
 		$('#modalPublicar-mapa').modal('show');
 }
-function entrar(id){
+function entrar(id, idgrupo){
   $.ajax({
     url: '/ajax/entrarGrupo/',
     data: {
       'id': id,
-      'idGrupo': idGrupo
+      'idGrupo': idgrupo
     },
     dataType: 'json',
     success: function (data) {

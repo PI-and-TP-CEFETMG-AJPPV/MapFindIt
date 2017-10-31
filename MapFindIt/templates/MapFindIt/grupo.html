@@ -186,12 +186,10 @@
 							{% if member %}
                     <div class="row" style="display: flex; justify-content: space-between">
                   		<button type="button" class="btn btn-default" onclick="pesquisarBar()" id="texto">pesquisar</button>
-                  		<button type="button" class="btn btn-default" onclick="pesquisarBar2()">membros</button>
                   		<button type="button" class="btn btn-default" onclick ="pesquisarBar()">adicionar</button>
 							{% else %}
                 {% if grupo.privado %}
                   <button type="button" class="btn btn-default" onclick="pesquisarBar()" id="texto">pesquisar</button>
-                  <button type="button" class="btn btn-default" href="#modal-solicitacoes" data-toggle="modal">membros</button>
                   <button type="button" class="btn btn-default" onclick="entrar({{usuario.idusuario}})">Entrar</button>
                   {% else %}
                   <button type="button" class="btn btn-default" onclick="entrar({{usuario.idusuario}})">Entrar</button>
@@ -279,8 +277,8 @@
 					       	</div>
 					     		<div class="modal-footer" >
 					       		<div align="center">
-					         		<button type="button" onclick="editarGrupo({{grupo.idgrupo}});" class="btn button"data-dismiss="modal"> Confirmar </button>
-					         		<button type="button" data-dismiss="modal" class="btn button"> Cancelar </button>
+					         		<button type="button" onclick="editarGrupo({{grupo.idgrupo}});$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();window.location.reload();" class="btn button"data-dismiss="modal"> Confirmar </button>
+					         		<button type="button" data-dismiss="modal" class="btn button"onclick="$('body').removeClass().removeAttr('style');$('.modal-backdrop').remove();"> Cancelar </button>
 					       	</div>
 					     	</div>
 					    </div>

@@ -72,7 +72,7 @@ function modalGrupos(){
 						</div>
 					</form>
 				<div class="modal-footer">
-					<button type="submit" form="criarIconeForm"  class="btn btn-success"> Criar Grupo </button>
+					<button type="submit" form="criarIconeForm"  class="btn btn-success" onclick="window.location.reload();"> Criar Grupo </button>
 					<button type="button" data-dismiss="modal" class="btn btn-default"> Cancelar </button>
 				</div>
 			</div>
@@ -115,4 +115,5 @@ corRGB = hexToRgb($('#corGrupo').val());
         $('#modalGrupos').modal('hide');
       }
   });
+
 }
