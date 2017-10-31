@@ -8,6 +8,7 @@ from django.core.mail import send_mail
 from django.core import serializers
 from django.utils import timezone
 from django.db.models import Q
+from django.core.mail import send_mail
 from PIL import Image
 from .models import *
 import binascii
@@ -634,16 +635,14 @@ def mapasGrupo(request):
         return JsonResponse(data)
 
 def mapasPerfil(request):
-    #Pega a posicao do mapa que deve ser carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    #Pega o ID do usuario
-    id = request.GET.get('id', None)
-    #Carrega todas as postagens do usuario logado, ordenando pela datada postagem
-    todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
-    #Verifica se as postagens já foram todas carregadas
-    if todasPostagens.count()>int(num):
-        #Caso ainda tenham postagens não carregadas
+    try:
+        #Pega a posicao do mapa que deve ser carregado
+        num = request.GET.get('num', None)
+        num = int(num)
+        #Pega o ID do usuario
+        id = request.GET.get('id', None)
+        #Carrega todas as postagens do usuario logado, ordenando pela datada postagem
+        todasPostagens=Postagem.objects.filter(idusuario=id).order_by('-datapostagem')
         #Serializa a postagem em JSON
         postagem = serializers.serialize('json', [ todasPostagens[num], ]);
         #Chama a função de obter os dados da postagem
@@ -662,8 +661,8 @@ def mapasPerfil(request):
             'pontoAreas': dados[8],
         }
         return JsonResponse(data)
-    else:
-        #Caso já se tenha carregado todas as postagens
+    except IndexError:
+        #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
         }
@@ -678,96 +677,86 @@ def filtro(request):
 
 #Carrega os mapas do feed
 def mapasFeed(request):
-    #Número do mapa e da div no qual será carregado
-    num = request.GET.get('num', None)
-    num = int(num)
-    lat = float(request.GET.get('lat', None))
-    lng = float(request.GET.get('lng', None))
-    amizades = Amizade.objects.filter(idusuario1 = request.session['usuarioLogado'])
-    amigos=[]
-    for amizade in amizades:
-        amigos.append(amizade.idusuario2)
-    amizades = Amizade.objects.filter(idusuario2 = request.session['usuarioLogado'])
-    for amizade in amizades:
-        amigos.append(amizade.idusuario1)
-    #inicializa vazio
-    mapasAmigos=Mapa.objects.none()
-    for amigo in amigos:
-        mapasAmigos = mapasAmigos | Mapa.objects.filter(idusuario=amigo)
-    #Pega os n primeiros mapas no BD, com maior quantidade de aprovações e visualizações
-    mapas = Mapa.objects.exclude(idtvisibilidade='P')
-    mapas = mapas | mapasAmigos
-    usuario = Usuario.objects.filter(idusuario = request.session['usuarioLogado']).first()
-    offset=num
-    num-=1
-    mapas = mapas.order_by('-valaprovados', '-valvisualizacoes')[:offset]
-    #Define as sugestoes
-    #Pega os interesses por ordem de mais interesse
-    interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
-    dictSugestoes={}
-    temasPassados = []
+    try:
+        #Número do mapa e da div no qual será carregado
+        num = request.GET.get('num', None)
+        num = int(num)
+        lat = float(request.GET.get('lat', None))
+        lng = float(request.GET.get('lng', None))
+        amizades = Amizade.objects.filter(idusuario1 = request.session['usuarioLogado'])
+        amigos=[]
+        for amizade in amizades:
+            amigos.append(amizade.idusuario2)
+        amizades = Amizade.objects.filter(idusuario2 = request.session['usuarioLogado'])
+        for amizade in amizades:
+            amigos.append(amizade.idusuario1)
+        #inicializa vazio
+        mapasAmigos=Mapa.objects.none()
+        for amigo in amigos:
+            mapasAmigos = mapasAmigos | Mapa.objects.filter(idusuario=amigo)
+        #Pega os n primeiros mapas no BD, com maior quantidade de aprovações e visualizações
+        mapas = Mapa.objects.exclude(idtvisibilidade='P')
+        mapas = mapas | mapasAmigos
+        usuario = Usuario.objects.filter(idusuario = request.session['usuarioLogado']).first()
+        offset=num
+        num-=1
+        mapas = mapas.order_by('-valaprovados', '-valvisualizacoes')[:offset]
+        #Define as sugestoes
+        #Pega os interesses por ordem de mais interesse
+        interesses = Interesseusuariotema.objects.filter(idusuario=usuario).order_by('-valvisualizacoes')
+        dictSugestoes={}
+        temasPassados = []
 
-    for interesse in interesses:
-        tema = interesse.codtema
-        mapasTema = Mapa.objects.filter(codtema=tema)
-        temasPassados.append(tema.pk)
-        for mapaO in mapasTema:
-            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
-                pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes - (distancia*1000)
-                dictSugestoes.update({pesoM: mapaO})
-    interesses = Interesseusuariotema.objects.none()
-    for amigo in amigos:
-        inter = Interesseusuariotema.objects.filter(idusuario = amigo).order_by('-valvisualizacoes')
-        for interesse in inter:
-            if interesse.codtema.pk not in temasPassados:
-                interesses = interesses | interesse
-    for interesse in interesses:
-        tema = interesse.codtema
-        mapasTema = Mapa.objects.filter(codtema=tema)
-        for mapaO in mapasTema:
-            if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
-                distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
-                pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7 - (distancia*1000)
-                dictSugestoes.update({pesoM: mapaO})
-    vals = sorted(dictSugestoes, reverse=True)
-    sugestoes=[]
-    for val in vals:
-        sugestoes.append(dictSugestoes[val])
-    print(sugestoes)
-    #O usuario nao desativou os recomendados
-    #if recomendacoes:
-    print(math.floor((num+1)/10))
-    if (num+1)%10==0 and math.floor((num+1)/10)<len(sugestoes):
-        mapa = sugestoes[math.floor((num+1)/10)]
-    else:
-        if num > len(mapas)-1:
-            data = {
-                'erro': 1,
-            }
-            return JsonResponse(data)
-        #Pega o mapa correspondente ao número da requisição Ajax
-        mapa = mapas[num]
-    '''else:
-        if num > len(mapas)-1:
-            data = {
-                'erro': 1,
-            }
-            return JsonResponse(data)
-        #Pega o mapa correspondente ao número da requisição Ajax
-        mapa = mapas[num]
-    '''
-    #Inicializa postagem
-    postagem = Postagem.objects.none()
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagem.objects.filter(idmapa=mapa).filter(
-    idusuario=mapa.idusuario)
-    getpostagem = postagem.first()
-    if getpostagem is None:
-        postagem = Postagem.objects.filter(idmapa=mapa)
-        getpostagem = Postagem.objects.filter(idmapa=mapa).first()
-    #Se houver mapas
-    if mapa is not None:
+        for interesse in interesses:
+            tema = interesse.codtema
+            mapasTema = Mapa.objects.filter(codtema=tema)
+            temasPassados.append(tema.pk)
+            for mapaO in mapasTema:
+                if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                    distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                    pesoM = mapaO.valvisualizacoes*0.5 + mapaO.valaprovados - mapaO.valreprovados + interesse.valvisualizacoes - (distancia*1000)
+                    dictSugestoes.update({pesoM: mapaO})
+        interesses = Interesseusuariotema.objects.none()
+        for amigo in amigos:
+            inter = Interesseusuariotema.objects.filter(idusuario = amigo).order_by('-valvisualizacoes')
+            for interesse in inter:
+                if interesse.codtema.pk not in temasPassados:
+                    interesses = interesses | interesse
+        for interesse in interesses:
+            tema = interesse.codtema
+            mapasTema = Mapa.objects.filter(codtema=tema)
+            for mapaO in mapasTema:
+                if mapaO.idusuario.idusuario!=usuario.idusuario and not isAmigos(mapaO.idusuario, usuario) and mapaO.idtvisibilidade is 'U':
+                    distancia = math.sqrt(math.pow(mapaO.coordxinicial-lng, 2) + math.pow(mapaO.coordyinicial-lat, 2))
+                    pesoM = mapaO.valvisualizacoes*0.2 + mapaO.valaprovados*0.5 - mapaO.valreprovados*0.5 + interesse.valvisualizacoes*0.7 - (distancia*1000)
+                    dictSugestoes.update({pesoM: mapaO})
+        vals = sorted(dictSugestoes, reverse=True)
+        sugestoes=[]
+        for val in vals:
+            sugestoes.append(dictSugestoes[val])
+        print(sugestoes)
+        #O usuario nao desativou os recomendados
+        #if recomendacoes:
+        print(math.floor((num+1)/10))
+        if (num+1)%10==0 and math.floor((num+1)/10)<len(sugestoes):
+            mapa = sugestoes[math.floor((num+1)/10)]
+        else:
+            if num > len(mapas)-1:
+                data = {
+                    'erro': 1,
+                }
+                return JsonResponse(data)
+            #Pega o mapa correspondente ao número da requisição Ajax
+            mapa = mapas[num]
+        #Inicializa postagem
+        postagem = Postagem.objects.none()
+        #Pega a postagem do autor do mapa correspondente
+        postagem = Postagem.objects.filter(idmapa=mapa).filter(
+        idusuario=mapa.idusuario)
+        getpostagem = postagem.first()
+        if getpostagem is None:
+            postagem = Postagem.objects.filter(idmapa=mapa)
+            getpostagem = Postagem.objects.filter(idmapa=mapa).first()
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
@@ -786,8 +775,7 @@ def mapasFeed(request):
             'pontoAreas': dados[8],
         }
         return JsonResponse(data)
-    #Caso já se tenha carregado todas as postagens
-    else:
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
@@ -805,19 +793,18 @@ def mapasHome(request):
             'erro': 1,
         }
         return JsonResponse(data)
-    #Pega o mapa correspondente ao número da requisição Ajax
-    mapa = mapas[num]
-    #Inicializa postagem
-    postagem = Postagem.objects.none()
-    #Pega a postagem do autor do mapa correspondente
-    postagem = Postagem.objects.filter(idmapa=mapa).filter(
-    idusuario=mapa.idusuario)
-    getpostagem = postagem.first()
-    if getpostagem is None:
-        postagem = Postagem.objects.filter(idmapa=mapa)
-        getpostagem = Postagem.objects.filter(idmapa=mapa).first()
-    #Se houver mapas
-    if mapa is not None:
+    try:
+        #Pega o mapa correspondente ao número da requisição Ajax
+        mapa = mapas[num]
+        #Inicializa postagem
+        postagem = Postagem.objects.none()
+        #Pega a postagem do autor do mapa correspondente
+        postagem = Postagem.objects.filter(idmapa=mapa).filter(
+        idusuario=mapa.idusuario)
+        getpostagem = postagem.first()
+        if getpostagem is None:
+            postagem = Postagem.objects.filter(idmapa=mapa)
+            getpostagem = Postagem.objects.filter(idmapa=mapa).first()
         #Chama a função de obter os dados da postagem
         dados = getDadosPostagem(getpostagem)
         #Serializa a postagem em JSON
@@ -836,14 +823,14 @@ def mapasHome(request):
             'pontoAreas': dados[8],
         }
         return JsonResponse(data)
-    #Caso já se tenha carregado todas as postagens
-    else:
+    except IndexError:
         #Finaliza a requisição Ajax no lado do cliente
         data = {
             'erro': 1,
         }
         return JsonResponse(data)
 def novoMapa(request):
+    resultado=getDadosMenu(request)
     if request.method=="POST" and request.POST.__contains__("temas"):
         if request.POST.get("opcInicio")=='P':
             #Se voltou do formulário de finalizar o mapa
@@ -853,6 +840,20 @@ def novoMapa(request):
                                     coordyinicial = request.POST.get('Lat'), valaprovados = 0,
                                     valreprovados = 0, idusuario=get_object_or_404(Usuario, idusuario=request.session.get('usuarioLogado')))
             mapa.save()
+            colaborador=request.POST.get('colab')
+            if colaborador!="":
+                txt = 'Você foi convidado por '+mapa.idusuario.primnomeusuario+' '+mapa.idusuario.ultnomeusuario+' a editar o mapa: '+mapa.titulomapa+'.'
+                send_mail(
+                    'MapFindITt - Você foi convidado a colaborar com um mapa.',
+                    txt+'\nAcesse www.mapfindit.com/editarMapa/'+str(mapa.idmapa)+' para colaborar.',
+                    'mapfindit@gmail.com',
+                    [Usuario.objects.filter(idusuario=colaborador).first().emailusuario],
+                    fail_silently=False,
+                )
+
+                notif=Notificacao.objects.create(txtNotificacao = txt, linkNotificacao = 'http://localhost:8000/editarMapa/'+str(mapa.idmapa), idusuario = Usuario.objects.filter(idusuario=colaborador).first(), 
+                                                dataNotificacao = timezone.now(), horaNotificacao = datetime.datetime.now().replace(microsecond=0))
+
             request.session['primeira']='1'
         else:
             mapaCopiado = get_object_or_404(Mapa, idmapa=int(request.POST.get('idCopia')))
@@ -869,7 +870,7 @@ def novoMapa(request):
             postagem.save()
         return redirect("/editarMapa/"+str(mapa.pk))
     else:
-        return render(request, 'MapFindIt/CMVisib.html', {})
+        return render(request, 'MapFindIt/CMVisib.html', {'todosAmigos': resultado[1]})
 
 def criarAmizade(request):
     idCriador=int(request.GET.get('usuario', None))
@@ -918,6 +919,20 @@ def getTemas(request):
     data = {
         'temas': temas,
     }
+    return JsonResponse(data)
+
+def getNotif(request):
+    #Pega o usuario logado
+    resultado=getDadosMenu(request)
+    #pega notificacoes do usuario
+    notificacoes=Notificacao.objects.filter(nova=True, idusuario=resultado[0])
+
+    notificacoes = serializers.serialize('json', notificacoes)
+    data = {
+        'notificacoes': notificacoes,
+    }
+
+    Notificacao.objects.filter(nova=True, idusuario=resultado[0]).update(nova=False)
     return JsonResponse(data)
 
 def adicionarTema(request):

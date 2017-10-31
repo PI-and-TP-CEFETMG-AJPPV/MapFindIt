@@ -354,3 +354,13 @@ class CodigoRecuperarSenha(models.Model):
 
     class Meta:
         db_table = 'CodigoRecuperarSenha'
+
+class Notificacao(models.Model):
+    idNotificacao = models.AutoField(db_column='idNotificacao', primary_key=True) #id da Notificacao
+    txtNotificacao = models.TextField(db_column='txtNotificacao') #texto da notificacao
+    linkNotificacao = models.TextField(db_column='linkNotificacao') #link para onde a notificacao redireciona
+    lida = models.BooleanField(db_column='lida', default=False)
+    nova = models.BooleanField(db_column='nova', default=True)
+    dataNotificacao = models.DateField(db_column='dataNotificacao')  # Field name made lowercase.
+    horaNotificacao = models.TimeField(db_column='horaNotificacao')  # Field name made lowercase.
+    idusuario = models.ForeignKey('Usuario', models.DO_NOTHING, db_column='idUsuario', blank=True, null=True)  # Field name made lowercase.

@@ -23,6 +23,7 @@ from .models import Tema
 from .models import Usuario
 from .models import Area
 from .models import CodigoRecuperarSenha
+from .models import Notificacao
 
 # Register your models here.
 
@@ -46,3 +47,4 @@ admin.site.register(Tema)
 admin.site.register(Usuario)
 admin.site.register(Area)
 admin.site.register(CodigoRecuperarSenha)
+admin.site.register(Notificacao)
