@@ -519,8 +519,8 @@ function prepararPostagem(div, data, i) {
          <br>
          <b id="valapv${(10*(gruposCarregados-1)+i)}">${mapa.valaprovados}</b>
 				 &nbsp;
-				 <a id="btnaprov${(10*(gruposCarregados-1)+i)}" class="btn btn-success"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
-				 <a id="btnreprov${(10*(gruposCarregados-1)+i)}"class="btn btn-danger"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
+				 <a id="btnaprov${(10*(gruposCarregados-1)+i)}" class="btn btn-success" onclick="avaliar(${m.pk}, 1, ${(10*(gruposCarregados-1)+i)})"><i class="fa fa-thumbs-up" aria-hidden="true"></i></a>
+				 <a id="btnreprov${(10*(gruposCarregados-1)+i)}"class="btn btn-danger" onclick="avaliar(${m.pk}, -1, ${(10*(gruposCarregados-1)+i)})"><i class="fa fa-thumbs-down" aria-hidden="true"></i></a>
          &nbsp;
          <b id="valrepv${(10*(gruposCarregados-1)+i)}">${mapa.valreprovados}</b>
          <div class='modal fade' id='modal_mapa${10*(gruposCarregados-1)+i}' name="modalMap" aria-hidden='true'>
@@ -670,17 +670,19 @@ function prepararPostagem(div, data, i) {
 			setMapa(mapa, JSON.parse(data.pontos), JSON.parse(data.icones), rotas, pontoRotas, areas, pontoAreas, "mapExp" + (10 * (gruposCarregados - 1) + i));
 		}, 1000);
 	});
+	/*
 	//Botao de aprovacao chama avaliar com +1
-	$("#btnaprov" + (10 * (gruposCarregados - 1) + i)).click(function () {
-		avaliar(m.pk, 1, (10 * (gruposCarregados - 1) + i));
+	$("#btnaprov" + (10*(gruposCarregados-1)+i)).click(function () {
+		avaliar(m.pk, 1, (10*(gruposCarregados-1)+i));
 	});
 	//Botao de aprovacao chama avaliar com -1
-	$("#btnreprov" + (10 * (gruposCarregados - 1) + i)).click(function () {
-		avaliar(m.pk, -1, (10 * (gruposCarregados - 1) + i));
+	$("#btnreprov" + (10*(gruposCarregados-1)+i)).click(function () {
+		avaliar(m.pk, -1, (10*(gruposCarregados-1)+i));
 	});
+	*/
 	//Botao bloquear comentários
 	$('#bloq' + pos.pk).click(function () {
-		bloqueioComentarios((10 * (gruposCarregados - 1) + i), pos.pk, !postagem.censurada);
+		bloqueioComentarios((10*(gruposCarregados-1)+i), pos.pk, !postagem.censurada);
 	});
 
 	//Seta o mapa do feed
