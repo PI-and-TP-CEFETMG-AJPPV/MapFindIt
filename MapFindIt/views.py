@@ -788,11 +788,6 @@ def mapasHome(request):
     num = int(num)
     #Pega os dez primeiros mapas no BD, com maior quantidade de aprovações e visualizações
     mapas = Mapa.objects.exclude(idtvisibilidade='P').exclude(idtvisibilidade='A').order_by('-valaprovados', '-valvisualizacoes')[:10]
-    if num > len(mapas)-1:
-        data = {
-            'erro': 1,
-        }
-        return JsonResponse(data)
     try:
         #Pega o mapa correspondente ao número da requisição Ajax
         mapa = mapas[num]
@@ -829,6 +824,7 @@ def mapasHome(request):
             'erro': 1,
         }
         return JsonResponse(data)
+        
 def novoMapa(request):
     resultado=getDadosMenu(request)
     if request.method=="POST" and request.POST.__contains__("temas"):
@@ -851,7 +847,7 @@ def novoMapa(request):
                     fail_silently=False,
                 )
 
-                notif=Notificacao.objects.create(txtNotificacao = txt, linkNotificacao = 'http://localhost:8000/editarMapa/'+str(mapa.idmapa), idusuario = Usuario.objects.filter(idusuario=colaborador).first(), 
+                notif=Notificacao.objects.create(txtNotificacao = txt, linkNotificacao = 'http://localhost:8000/editarMapa/'+str(mapa.idmapa), idusuario = Usuario.objects.filter(idusuario=colaborador).first(),
                                                 dataNotificacao = timezone.now(), horaNotificacao = datetime.datetime.now().replace(microsecond=0))
 
             request.session['primeira']='1'

@@ -1,12 +1,9 @@
-var gruposCarregados=0;
+//Exigência para se utilizar o prepararPostagem
+gruposCarregados=0;
 
 //Variaveis para guardar os erros
-var erroEmail;
-var erroSenhaConf;
-var erroSenha;
-var erroSexo;
-var erroTermo;
-var erroData;
+var erroEmail; var erroSenhaConf; var erroSenha;
+var erroSexo; var erroTermo; var erroData;
 var erroEmailExiste;
 
 //Form e Campo com a pesquisa do Usuário
@@ -192,22 +189,23 @@ function initMap() {
 	    },
 	    dataType: 'json',
 	    success: function (data) {
-				//Se todas as postagens tiverem sido carregas
-				if(data.erro){
-					return;
-				}
-				//Prepara a postagem carregada
+        //Prepara a postagem carregada
 				prepararPostagemVis(div, data, i)
-				nMapas++;
 			}
 	  });
 	}
-	setTimeout(function(){ mensagemLimite(); }, 1000);
+  contentString =`
+    <div class="row" style="order:10; padding-bottom:20px; text-align:center">
+      <h3>Você atingiu o seu limite de mapas como visitante,
+      logue ou se cadastre para continuar</h3>
+    </div>`;
+  $("#divMapas").append(contentString);
 }
 
 //Carrega Mapas com Pesquisa
 function pesquisa() {
-	$("#divMapas").html("");
+  nMapas = 0;
+  $("#divMapas").html("");
 	let div=$("#divMapas");
 	for(let i=0; i<10; i++){
 		$.ajax({
@@ -220,24 +218,29 @@ function pesquisa() {
 			success: function (data) {
 				//Se todas as postagens tiverem sido carregas
 				if(data.erro){
-					return;
+          if(i==0) {
+            contentString =`
+              <div class="row" style="order:10; padding-bottom:20px; text-align:center">
+                <h3>Nenhum resultado encontrado...</h3>
+              </div>`;
+            $("#divMapas").append(contentString);
+          }
+          return;
 				}
-				//Prepara a postagem carregada
-				prepararPostagemVis(div, data, i)
+        //Prepara a postagem carregada
+				prepararPostagemVis(div, data, i);
+        nMapas++;
+
+        if(nMapas==9) {
+          contentString =`
+            <div class="row" style="order:10; padding-bottom:20px; text-align:center">
+              <h3>Você atingiu o seu limite de mapas como visitante,
+              logue ou se cadastre para continuar</h3>
+            </div>`;
+          $("#divMapas").append(contentString);
+        }
 			}
 		});
-	}
-	setTimeout(function(){ mensagemLimite(); }, 1000);
-}
-
-function mensagemLimite() {
-	if(nMapas == 10) {
-		contentString =`
-			<div class="row" style="order:10; padding-bottom:20px; text-align:center">
-				<h3>Você atingiu o seu limite de mapas como visitante,
-				logue ou se cadastre para continuar</h3>
-			</div>`;
-		$("#divMapas").append(contentString);
 	}
 }
 
