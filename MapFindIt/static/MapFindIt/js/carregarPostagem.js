@@ -244,8 +244,21 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 		var legend = document.createElement('div');
 		$(legend).html("<h4>Legenda</h4>");
 		$(legend).addClass("legend");
+		//Para não repetir icones
+		let nomesUsados=[];
+		let repetido=false;
 		//Para cada icone
 		for (let i = 0; i < icones.length; i++) {
+			repetido=false;
+			for(let j=0; j<nomesUsados.length; j++){
+				if(icones[i].fields.nomeicone==nomesUsados[j]){
+					repetido=true;
+					continue;
+				}
+			}
+			if(repetido){
+				continue;
+			}
 			let icon = icones[i];
 			let name = icon.fields.nomeicone;
 			let icone = imgUrl + 'MapFindIt/ImagemIcones/' + icon.pk + '.png';
@@ -262,6 +275,7 @@ function setMapa(mapa, pontos, icones, rotas, pontoRotas, areas, pontoAreas, map
 			//Adiciona uma quebra de linha
 			let br = document.createElement('br');
 			legend.appendChild(br);
+			nomesUsados.push(name);
 		}
 		//Caso não exista legendas esconde a div de legenda
 		if (icones.length == 0) {
